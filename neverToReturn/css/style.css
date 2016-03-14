@@ -1,0 +1,94 @@
+#App {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.layoutDIV {
+  border: 1px dashed blue;
+  display: inline-block;
+  position: absolute;
+}
+
+#PlayerDIV{
+  top:0;
+  left:0;
+  height:100%; 
+  width:15%;
+}
+
+#ChatDIV{
+  height:5%; 
+  width:100%;
+  bottom: 0;
+  left:0;
+  
+}
+
+#ActionAREA {
+  bottom: 0;
+  left: 15%;
+  height:45%; 
+  width:40%;
+}
+
+
+#PlayerCardsDIV{
+  bottom: 0;
+  right: 0;
+  height:45%; 
+  width:45%;
+}
+
+#NeckDIV{
+  top:0;
+  right:0;
+  height:55%; 
+  width:85%;
+}
+
+#allCardsDIV{
+  display: flex;
+  top: 5%;
+}
+
+.cardDIV{
+  border: 1px dashed green;
+  display: inline;
+  vertical-align: top;
+  height: 90%;
+  width: 14%;
+  order: 2;
+  position: relative;
+}
+
+
+/*OBJECTS*/
+
+.playerPiece {
+  width: 60px;
+  height: 60px;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  text-align: center;
+
+  display: inline-flex;
+  z-index: 1;
+
+  position: relative;
+  top: 0;
+  left: 0;
+  
+}
+.card{
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+  bottom: 0;
+  left: 0;
+  display: inline-flex;
+
+
+}
+
