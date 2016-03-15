@@ -19771,22 +19771,27 @@
 	'use strict';
 
 	var React = __webpack_require__(1);
-
 	var CardDIV = __webpack_require__(164);
+
+	var neck = [0, 1, 2, 3, 4, 5, 6];
 
 	var NeckDIV = React.createClass({
 	  displayName: 'NeckDIV',
 
 	  render: function render() {
+
+	    var cardsInNeck = neck.map(function (card) {
+	      var key = "cardDIV" + card;
+	      return React.createElement(CardDIV, { className: 'cardDIV', key: key });
+	    });
+
 	    return React.createElement(
 	      'div',
 	      { className: 'layoutDIV', id: 'NeckDIV' },
-	      'NeckDIV',
 	      React.createElement(
 	        'div',
 	        { id: 'allCardsDIV', className: 'layoutDIV' },
-	        'allCardsDIV',
-	        React.createElement(CardDIV, null)
+	        cardsInNeck
 	      )
 	    );
 	  }

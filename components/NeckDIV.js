@@ -13,7 +13,7 @@ var NeckDIV = React.createClass({
 
     return (
       <div  className="layoutDIV" id='NeckDIV'>
-        NeckDIV
+        
         <div id="allCardsDIV" className="layoutDIV">
         	{cardsInNeck}
         </div>

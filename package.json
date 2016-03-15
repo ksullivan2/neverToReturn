@@ -5,8 +5,8 @@
   "main": "bundle.js",
   "scripts": {
     "prestart": "npm run task",
-    "start": "node server/server.js",
-    "start-dev": "webpack-dev-server --hot --colors --progress --config webpack.dev.config.js",
+    "start": "node server.js",
+    "start-dev": "NODE_ENV='DEVELOPMENT' node server.js & webpack-dev-server --hot --colors --progress --output-public-path='http://localhost:8080/build' --config webpack.dev.config.js",
     "lint": "eslint components",
     "task": "webpack"
   },
@@ -40,4 +40,5 @@
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.12.1"
   }
+
 }
