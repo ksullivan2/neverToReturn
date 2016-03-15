@@ -25,5 +25,10 @@ module.exports = {
         include: path.join(__dirname, 'components')
       }
     ]
+  },
+  devServer: {
+    publicPath: config.output.publicPath,
+    hot: true,
+    historyApiFallback: true
   }
 };
