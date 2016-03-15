@@ -4,7 +4,7 @@ var webpack = require('webpack');
 module.exports = {
   devtool: 'eval',
   entry: [
-    'webpack-dev-server/client?http://localhost:3000',
+    'webpack-dev-server/client?http://localhost:8080',
     'webpack/hot/only-dev-server',
     './components/App'
   ],
@@ -13,9 +13,7 @@ module.exports = {
     filename: 'bundle.js',
     publicPath: '/build/'
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin()
-  ],
+  
   module: {
     loaders: [
       { test: /\.css$/, loader: "style!css" },
@@ -25,10 +23,5 @@ module.exports = {
         include: path.join(__dirname, 'components')
       }
     ]
-  },
-  devServer: {
-    publicPath: config.output.publicPath,
-    hot: true,
-    historyApiFallback: true
   }
 };

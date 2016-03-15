@@ -6,7 +6,7 @@
   "scripts": {
     "prestart": "npm run task",
     "start": "node server/server.js",
-    "start-dev": "webpack-dev-server",
+    "start-dev": "webpack-dev-server --hot --colors --progress --config webpack.dev.config.js",
     "lint": "eslint components",
     "task": "webpack"
   },
