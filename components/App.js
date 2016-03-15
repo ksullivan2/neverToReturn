@@ -16,9 +16,7 @@ socket.on("name taken", function(data){
   getName(data);
 });
 
-socket.on('new player added', function(data){
-  console.log("new player added")
-})
+
 
 
 
@@ -36,15 +34,30 @@ function getName(data){
 
 
 
+
 //REACT RENDER APP---------------------------------------------------------------------------------------------------------
 var App = React.createClass({
+  getInitialState: function(){
+    return{
+      players: []
+    }
+  },
+
+  componentDidMount(){
+    self = this;
+    socket.on('new player added', function(data){
+      console.log (data.players)
+      self.setState({players: data.players});
+      })
+  },
+
   render: function () {
     return (
       <div id='App'>
-        <OpponentsDIV />
+        <OpponentsDIV players={this.state.players}/>
         <ActionAREA />
         <MyCardsDIV />
-        <NeckDIV />
+        <NeckDIV/>
       </div>
     )
   }

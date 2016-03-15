@@ -48,10 +48,10 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var PlayerDIV = __webpack_require__(159);
-	var ActionAREA = __webpack_require__(161);
-	var PlayerCardsDIV = __webpack_require__(162);
-	var NeckDIV = __webpack_require__(163);
+	var OpponentsDIV = __webpack_require__(159);
+	var ActionAREA = __webpack_require__(162);
+	var MyCardsDIV = __webpack_require__(163);
+	var NeckDIV = __webpack_require__(164);
 
 	//EVENTS--------------------------------------------------------------------------------------------------------------
 	var socket = io();
@@ -62,10 +62,6 @@
 
 	socket.on("name taken", function (data) {
 	  getName(data);
-	});
-
-	socket.on('new player added', function (data) {
-	  console.log("new player added");
 	});
 
 	//INTERACT WITH HUMAN--------------------------------------------------------------------------------------------------------
@@ -82,13 +78,28 @@
 	var App = React.createClass({
 	  displayName: 'App',
 
+	  getInitialState: function getInitialState() {
+	    return {
+	      players: []
+	    };
+	  },
+
+	  componentDidMount: function componentDidMount() {
+	    self = this;
+	    socket.on('new player added', function (data) {
+	      console.log(data.players);
+	      self.setState({ players: data.players });
+	    });
+	  },
+
+
 	  render: function render() {
 	    return React.createElement(
 	      'div',
 	      { id: 'App' },
-	      React.createElement(PlayerDIV, null),
+	      React.createElement(OpponentsDIV, { players: this.state.players }),
 	      React.createElement(ActionAREA, null),
-	      React.createElement(PlayerCardsDIV, null),
+	      React.createElement(MyCardsDIV, null),
 	      React.createElement(NeckDIV, null)
 	    );
 	  }
@@ -19706,18 +19717,49 @@
 	'use strict';
 
 	var React = __webpack_require__(1);
+	var PlayerDIV = __webpack_require__(160);
+	var ChatDIV = __webpack_require__(161);
+	var socket = io();
 
-	var ChatDIV = __webpack_require__(160);
+	var OpponentsDIV = React.createClass({
+	  displayName: 'OpponentsDIV',
+
+	  render: function render() {
+	    console.log("OpponentsDIV rendering", this.props.players);
+
+	    var playerList = this.props.players.map(function (player) {
+	      var key = "player" + player.name;
+	      return React.createElement(PlayerDIV, { name: key, key: key });
+	    });
+
+	    return React.createElement(
+	      'div',
+	      { className: 'layoutDIV', id: 'OpponentsDIV' },
+	      'OpponentsDIV',
+	      playerList,
+	      React.createElement(ChatDIV, null)
+	    );
+	  }
+	});
+
+	module.exports = OpponentsDIV;
+
+/***/ },
+/* 160 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(1);
 
 	var PlayerDIV = React.createClass({
-	  displayName: 'PlayerDIV',
+	  displayName: "PlayerDIV",
 
 	  render: function render() {
 	    return React.createElement(
-	      'div',
-	      { className: 'layoutDIV', id: 'PlayerDIV' },
-	      'PlayerDIV',
-	      React.createElement(ChatDIV, null)
+	      "div",
+	      { className: "PlayerDIV" },
+	      this.props.name
 	    );
 	  }
 	});
@@ -19725,7 +19767,7 @@
 	module.exports = PlayerDIV;
 
 /***/ },
-/* 160 */
+/* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19747,7 +19789,7 @@
 	module.exports = ChatDIV;
 
 /***/ },
-/* 161 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19769,35 +19811,35 @@
 	module.exports = ActionAREA;
 
 /***/ },
-/* 162 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-
-	var PlayerCardsDIV = React.createClass({
-	  displayName: 'PlayerCardsDIV',
-
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      { className: 'layoutDIV', id: 'PlayerCardsDIV' },
-	      'PlayerCardsDIV'
-	    );
-	  }
-	});
-
-	module.exports = PlayerCardsDIV;
-
-/***/ },
 /* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var CardDIV = __webpack_require__(164);
+
+	var MyCardsDIV = React.createClass({
+	  displayName: 'MyCardsDIV',
+
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      { className: 'layoutDIV', id: 'MyCardsDIV' },
+	      'MyCardsDIV'
+	    );
+	  }
+	});
+
+	module.exports = MyCardsDIV;
+
+/***/ },
+/* 164 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var CardDIV = __webpack_require__(165);
 
 	var neck = [0, 1, 2, 3, 4, 5, 6];
 
@@ -19826,7 +19868,7 @@
 	module.exports = NeckDIV;
 
 /***/ },
-/* 164 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";

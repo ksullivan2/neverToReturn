@@ -10,7 +10,7 @@ function gameLogic(){
 	this.players = [];
 	this.activePlayer = null;
 	this.socketList = [];
-	this.neck = [];
+	this.neck = [0,1,2,3,4,5,6];
 }
 
 
@@ -63,7 +63,6 @@ gameLogic.prototype.addPlayer = function(name, socket) {
 gameLogic.prototype.lookupPlayerIndex= function(name){
 	for (var i = 0; i < this.players.length; i++){
 		if (this.players[i].name === name){
-			console.log("player is at index ",i)
 			return i;
 		}
 	}
@@ -71,6 +70,5 @@ gameLogic.prototype.lookupPlayerIndex= function(name){
 }
 
 gameLogic.prototype.resetSocket = function(playerIndex, socket){
-	console.log("resetting socket")
 	this.socketList[playerIndex] = socket;
 }
