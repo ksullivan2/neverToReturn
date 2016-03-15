@@ -1,22 +1,31 @@
+//SETUP SERVER------------------------------------------------------------------------------------------------------------------
 var express = require('express');
 var path = require('path');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var session = require("express-session")({
+  secret: "hope and joy",
+  resave: true,
+  saveUninitialized: true
+});
+var sharedsession = require("express-socket.io-session");
 
+// attach session
+app.use(session); 
+
+//share session with io sockets
+io.use(sharedsession(session, {
+    autoSave:true
+})); 
 
 app.use(express.static("build"));
 
-console.log("TEST", process.env.NODE_ENV);
-
 app.get('/', function(req,res) {
-	console.log("within", process.env.NODE_ENV);
 	if(process.env.NODE_ENV!="DEVELOPMENT"){
-		console.log("env", process.env.NODE_ENV);
 		res.sendFile(__dirname + '/index.html');
 		
 	} else{
-		console.log("dev", process.env.NODE_ENV);
 		res.sendFile(__dirname + '/index-dev.html');
 	}
 });
@@ -26,10 +35,35 @@ server.listen(3000, function() {
 
 });
 
+//game-specific libraries------------------------------------------------------------------------------------------------------------------
+var gameLogic = require("./gameLogic.js");
+
+
+//SOCKET EVENTS------------------------------------------------------------------------------------------------------------------
 io.on('connection', function (socket) {
-	console.log("it worked")
-  socket.emit('news', { hello: 'world' });
-  socket.emit('my other event', function (data) {
-    console.log(data);
+	if (!socket.handshake.session.userdata){
+    //tell the game we have a new player and if Player 1,2, etc.
+    socket.emit("new player", {playerIndex: gameLogic.players.length+1});
+  }else{
+    //overwrite the socket data for that player, using cookie data
+    var name = socket.handshake.session.userdata.name;
+    gameLogic.resetSocket(gameLogic.lookupPlayerIndex(name),socket);
+  }
+
+
+  socket.on('create player', function(data){
+  	var validName = gameLogic.addPlayer(data.name, socket);
+    if (!validName){
+      socket.emit("name taken", {playerIndex: gameLogic.players.length+1});
+    } else{
+      socket.handshake.session.userdata = data;
+      io.sockets.emit("new player added", {players: gameLogic.players})
+    }
   });
+
+
+
+
+
+
 });
