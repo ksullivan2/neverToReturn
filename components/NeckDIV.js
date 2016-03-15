@@ -13,15 +13,17 @@ var NeckDIV = React.createClass({
     return {neck: dummyNeck};
   },
 
-  componentDidMount: function(){
+  componentDidMount(){
     self = this;
-    socket.on("game started", function(data){
-      self.setState({neck: data.neck})
-    })
+    socket.on("game started", this.__updateNeck);
+  },
+
+  __updateNeck(data) {
+    this.setState({neck: data.neck});
   },
 
   render: function () {
-
+    console.log("render", this.state.neck[2].name)
     var cardsInNeck = this.state.neck.map(function(card){
       return <LocationDIV className="cardDIV" card={card} />
     })

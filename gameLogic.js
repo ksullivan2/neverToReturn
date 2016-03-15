@@ -10,7 +10,7 @@ function gameLogic(){
 	this.players = [];
 	this.activePlayer = null;
 	this.socketList = [];
-	this.neck = [0,1,2,3,4,5,6];
+	this.neck = [];
 }
 
 
@@ -36,6 +36,7 @@ gameLogic.prototype.nextTurn = function() {
 
 //NEW NECK------------------------------------------------------------------------------------------------------------------
 gameLogic.prototype.newNeck = function() {
+	this.neck = [];
 	this.neck.push(new cardTypes.terrainCard("start"));
 	for (var i = 1; i <= 5; i++){
 		this.neck.push(new cardTypes.terrainCard("fogRiddenSwamp"));

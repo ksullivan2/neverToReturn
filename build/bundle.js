@@ -64,16 +64,6 @@
 	  getName(data);
 	});
 
-	socket.on('end turn', function () {
-	  gameLogic.nextTurn();
-	  io.sockets.emit('update active player', { activePlayerName: gameLogic.activePlayer.name });
-	});
-
-	socket.on('start game button', function () {
-	  gameLogic.startGame();
-	  io.sockets.emit('game started', { players: gameLogic.players, activePlayerName: gameLogic.activePlayer.name, neck: gameLogic.neck });
-	});
-
 	//INTERACT WITH HUMAN--------------------------------------------------------------------------------------------------------
 	function getName(data) {
 	  var name = null;
@@ -97,9 +87,17 @@
 	  componentDidMount: function componentDidMount() {
 	    self = this;
 	    socket.on('new player added', function (data) {
-	      console.log(data.players);
 	      self.setState({ players: data.players });
 	    });
+
+	    socket.on('game started', function (data) {
+	      //dealNeck(data);
+	      //createPlayerPieces(data);
+	      //highlightActivePlayer(data.activePlayerName);
+	      //destroyStartGameButton();
+
+	    });
+	    //DATA IS:{players: gameLogic.players, activePlayerName: gameLogic.activePlayer.name, neck:gameLogic.neck}
 	  },
 
 
@@ -29722,18 +29720,37 @@
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var CardDIV = __webpack_require__(166);
+	var LocationDIV = __webpack_require__(166);
+	var cardTypes = __webpack_require__(167);
+	var socket = io();
 
-	var neck = [0, 1, 2, 3, 4, 5, 6];
+	var dummyNeck = [];
+	for (var i = 0; i <= 6; i++) {
+	  dummyNeck.push(new cardTypes.terrainCard("start"));
+	}
 
 	var NeckDIV = React.createClass({
 	  displayName: 'NeckDIV',
 
-	  render: function render() {
+	  getInitialState: function getInitialState() {
+	    return { neck: dummyNeck };
+	  },
 
-	    var cardsInNeck = neck.map(function (card) {
-	      var key = "cardDIV" + card;
-	      return React.createElement(CardDIV, { className: 'cardDIV', key: key });
+	  componentDidMount: function componentDidMount() {
+	    self = this;
+
+	    socket.on("game started", function (data) {
+	      console.log("DATANECK ", data.neck[2].name);
+	      self.setState({ neck: data.neck });
+	      console.log("STATENECK ", this.state.neck[2].name);
+	    });
+	  },
+
+
+	  render: function render() {
+	    console.log("render", this.state.neck[2].name);
+	    var cardsInNeck = this.state.neck.map(function (card) {
+	      return React.createElement(LocationDIV, { className: 'cardDIV', card: card });
 	    });
 
 	    return React.createElement(
@@ -29758,19 +29775,67 @@
 
 	var React = __webpack_require__(1);
 
-	var CardDIV = React.createClass({
-	  displayName: "CardDIV",
+	var LocationDIV = React.createClass({
+	  displayName: "LocationDIV",
 
 	  render: function render() {
 	    return React.createElement(
 	      "div",
 	      { className: "cardDIV" },
-	      "CardDIV"
+	      this.props.card.name,
+	      React.createElement("img", { src: this.props.card.imgSRC, className: "card" })
 	    );
 	  }
 	});
 
-	module.exports = CardDIV;
+	module.exports = LocationDIV;
+
+/***/ },
+/* 167 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	module.exports = { terrainCard: terrainCard, monsterCard: monsterCard, playerCard: playerCard };
+
+	function terrainCard(name) {
+		this.name = name;
+		this.onEncounter = {
+			check: { type: "pain", exists: true },
+			effect: { type: "pain", value: -2, stop: true }
+		};
+		this.onTurnStart = {
+			check: { type: "pain", exists: true },
+			effect: { type: "pain", value: -2, stop: true }
+		};
+
+		this.imgSRC = "assets/terrainCards/" + name + ".jpg";
+	}
+
+	function monsterCard() {
+		this.name = "";
+		this.imageSRC = "";
+		this.onEncounter = {
+			check: { type: "madness", exists: true },
+			checkReducesHitPoints: true,
+			effect: { type: "madness", value: -2, stop: true }
+		};
+		this.onTurnStart = {
+			check: { type: "madness", exists: true },
+			checkReducesHitPoints: false,
+			effect: { type: "madness", value: -2, stop: true }
+		};
+
+		this.type = "m";
+		this.hitPoints = 2;
+	}
+
+	function playerCard() {
+		this.name = "";
+		this.painPoints = 5;
+		this.madnessPoints = 6;
+		this.specialAbility = "";
+	}
 
 /***/ }
 /******/ ]);
