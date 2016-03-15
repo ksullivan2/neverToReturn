@@ -2,17 +2,17 @@ var React = require('react');
 
 var ChatDIV = require('./ChatDIV');
 
-var PlayerDIV = React.createClass({
+var OpponentsDIV = React.createClass({
   render: function () {
     return (
-      <div  className="layoutDIV" id='PlayerDIV'>
-        PlayerDIV
+      <div  className="layoutDIV" id='OpponentsDIV'>
+        OpponentsDIV
         <ChatDIV />
       </div>
     )
   }
 });
 
-module.exports = PlayerDIV;
+module.exports = OpponentsDIV;
 
 

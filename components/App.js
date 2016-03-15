@@ -1,8 +1,8 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var PlayerDIV = require('./PlayerDIV');
+var OpponentsDIV = require('./OpponentsDIV');
 var ActionAREA = require('./ActionAREA');
-var PlayerCardsDIV = require('./PlayerCardsDIV');
+var MyCardsDIV = require('./MyCardsDIV');
 var NeckDIV = require('./NeckDIV');
 
 //EVENTS--------------------------------------------------------------------------------------------------------------
@@ -41,9 +41,9 @@ var App = React.createClass({
   render: function () {
     return (
       <div id='App'>
-        <PlayerDIV />
+        <OpponentsDIV />
         <ActionAREA />
-        <PlayerCardsDIV />
+        <MyCardsDIV />
         <NeckDIV />
       </div>
     )

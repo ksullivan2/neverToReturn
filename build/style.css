@@ -10,7 +10,7 @@
   position: absolute;
 }
 
-#PlayerDIV{
+#OpponentsDIV{
   top:0;
   left:0;
   height:100%; 
@@ -31,7 +31,7 @@
   width:40%;
 }
 
-#PlayerCardsDIV{
+#MyCardsDIV{
   bottom: 0;
   right: 0;
   height:45%; 
