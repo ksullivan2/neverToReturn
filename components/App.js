@@ -20,6 +20,7 @@ socket.on("name taken", function(data){
 
 
 
+
 //INTERACT WITH HUMAN--------------------------------------------------------------------------------------------------------
 function getName(data){
   var name = null;
@@ -46,9 +47,17 @@ var App = React.createClass({
   componentDidMount(){
     self = this;
     socket.on('new player added', function(data){
-      console.log (data.players)
       self.setState({players: data.players});
       })
+
+    socket.on('game started', function(data){
+      //dealNeck(data);
+      //createPlayerPieces(data);
+      //highlightActivePlayer(data.activePlayerName);
+      //destroyStartGameButton();
+
+    })
+    //DATA IS:{players: gameLogic.players, activePlayerName: gameLogic.activePlayer.name, neck:gameLogic.neck}
   },
 
   render: function () {

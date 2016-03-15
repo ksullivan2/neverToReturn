@@ -62,7 +62,15 @@ io.on('connection', function (socket) {
   });
 
 
+  socket.on('end turn', function(){
+    gameLogic.nextTurn()
+    io.sockets.emit('update active player',{activePlayerName: gameLogic.activePlayer.name})
+  });
 
+	socket.on('start game button', function(){
+    	gameLogic.startGame();
+    	io.sockets.emit('game started', {players: gameLogic.players, activePlayerName: gameLogic.activePlayer.name, neck:gameLogic.neck})  
+	});
 
 
 

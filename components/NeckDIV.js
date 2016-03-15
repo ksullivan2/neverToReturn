@@ -1,14 +1,29 @@
 var React = require('react');
-var CardDIV = require('./CardDIV');
+var LocationDIV = require('./LocationDIV');
+var cardTypes = require("../cardTypes.js");
+var socket = io();
 
-var neck =[0,1,2,3,4,5,6]
+var dummyNeck =[]
+for (var i = 0; i <= 6; i++){
+    dummyNeck.push(new cardTypes.terrainCard("start"));
+  }
 
 var NeckDIV = React.createClass({
+  getInitialState: function(){
+    return {neck: dummyNeck};
+  },
+
+  componentDidMount: function(){
+    self = this;
+    socket.on("game started", function(data){
+      self.setState({neck: data.neck})
+    })
+  },
+
   render: function () {
 
-    var cardsInNeck = neck.map(function(card){
-      var key = "cardDIV" + card
-      return <CardDIV className="cardDIV" key={key} />
+    var cardsInNeck = this.state.neck.map(function(card){
+      return <LocationDIV className="cardDIV" card={card} />
     })
 
     return (
