@@ -11,7 +11,7 @@ var OpponentsDIV = React.createClass({
 
   	var playerList = this.props.players.map(function(player){
   		var key = "player"+ player.name;
-  		return <PlayerDIV name={player.name} key={key} />
+  		return <PlayerDIV player={player} key={key} />
   	});
 
     return (
