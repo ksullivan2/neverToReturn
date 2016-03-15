@@ -53,6 +53,32 @@
 	var PlayerCardsDIV = __webpack_require__(162);
 	var NeckDIV = __webpack_require__(163);
 
+	//EVENTS--------------------------------------------------------------------------------------------------------------
+	var socket = io();
+
+	socket.on("new player", function (data) {
+	  getName(data);
+	});
+
+	socket.on("name taken", function (data) {
+	  getName(data);
+	});
+
+	socket.on('new player added', function (data) {
+	  console.log("new player added");
+	});
+
+	//INTERACT WITH HUMAN--------------------------------------------------------------------------------------------------------
+	function getName(data) {
+	  var name = null;
+	  do {
+	    name = prompt("What is your name?", "Player " + data.playerIndex);
+	  } while (!name);
+
+	  socket.emit("create player", { name: name });
+	}
+
+	//REACT RENDER APP---------------------------------------------------------------------------------------------------------
 	var App = React.createClass({
 	  displayName: 'App',
 
