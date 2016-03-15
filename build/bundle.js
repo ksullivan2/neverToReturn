@@ -60,7 +60,6 @@
 	    return React.createElement(
 	      'div',
 	      { id: 'App' },
-	      'App',
 	      React.createElement(PlayerDIV, null),
 	      React.createElement(ActionAREA, null),
 	      React.createElement(PlayerCardsDIV, null),
@@ -19690,7 +19689,7 @@
 	  render: function render() {
 	    return React.createElement(
 	      'div',
-	      { id: 'PlayerDIV' },
+	      { className: 'layoutDIV', id: 'PlayerDIV' },
 	      'PlayerDIV',
 	      React.createElement(ChatDIV, null)
 	    );
@@ -19713,7 +19712,7 @@
 	  render: function render() {
 	    return React.createElement(
 	      'div',
-	      { id: 'ChatDIV' },
+	      { className: 'layoutDIV', id: 'ChatDIV' },
 	      'ChatDIV'
 	    );
 	  }
@@ -19735,7 +19734,7 @@
 	  render: function render() {
 	    return React.createElement(
 	      'div',
-	      { id: 'ActionAREA' },
+	      { className: 'layoutDIV', id: 'ActionAREA' },
 	      'ActionAREA'
 	    );
 	  }
@@ -19757,7 +19756,7 @@
 	  render: function render() {
 	    return React.createElement(
 	      'div',
-	      { id: 'PlayerCardsDIV' },
+	      { className: 'layoutDIV', id: 'PlayerCardsDIV' },
 	      'PlayerCardsDIV'
 	    );
 	  }
@@ -19781,9 +19780,14 @@
 	  render: function render() {
 	    return React.createElement(
 	      'div',
-	      { id: 'NeckDIV' },
+	      { className: 'layoutDIV', id: 'NeckDIV' },
 	      'NeckDIV',
-	      React.createElement(CardDIV, null)
+	      React.createElement(
+	        'div',
+	        { id: 'allCardsDIV', className: 'layoutDIV' },
+	        'allCardsDIV',
+	        React.createElement(CardDIV, null)
+	      )
 	    );
 	  }
 	});
@@ -19794,18 +19798,18 @@
 /* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	var React = __webpack_require__(1);
 
 	var CardDIV = React.createClass({
-	  displayName: 'CardDIV',
+	  displayName: "CardDIV",
 
 	  render: function render() {
 	    return React.createElement(
-	      'div',
-	      { id: 'CardDIV' },
-	      'CardDIV'
+	      "div",
+	      { className: "cardDIV" },
+	      "CardDIV"
 	    );
 	  }
 	});
