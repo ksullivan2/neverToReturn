@@ -36,7 +36,7 @@ server.listen(3000, function() {
 });
 
 //game-specific libraries------------------------------------------------------------------------------------------------------------------
-var gameLogic = require("./gameLogic.js");
+var gameLogic = require("./game_modules/gameLogic.js");
 
 
 //SOCKET EVENTS------------------------------------------------------------------------------------------------------------------

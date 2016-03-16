@@ -1,7 +1,6 @@
 var React = require('react');
 var LocationDIV = require('./LocationDIV');
 var PlayerPiece = require('./PlayerPiece');
-var cardTypes = require("../cardTypes.js");
 var socket = io();
 
 
