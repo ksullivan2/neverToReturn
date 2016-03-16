@@ -66,7 +66,7 @@ var App = React.createClass({
         <OpponentsDIV players={this.state.players}/>
         <ActionAREA />
         <MyCardsDIV />
-        <NeckDIV/>
+        <NeckDIV players={this.state.players}/>
       </div>
     )
   }

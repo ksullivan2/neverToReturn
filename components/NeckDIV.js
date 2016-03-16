@@ -1,5 +1,6 @@
 var React = require('react');
 var LocationDIV = require('./LocationDIV');
+var PlayerPiece = require('./PlayerPiece');
 var cardTypes = require("../cardTypes.js");
 var socket = io();
 
@@ -15,24 +16,34 @@ var NeckDIV = React.createClass({
 
   componentDidMount(){
     self = this;
-    socket.on("game started", this.__updateNeck);
+    socket.on("game started", this.__gameStarted);
   },
 
-  __updateNeck(data) {
+  __gameStarted(data){
+    this.updateNeck(data);
+    
+  },
+
+  updateNeck(data) {
     this.setState({neck: data.neck});
   },
 
+  
+
   render: function () {
-    console.log("render", this.state.neck[2].name)
     var cardsInNeck = this.state.neck.map(function(card){
-      return <LocationDIV className="cardDIV" card={card} />
+      return <LocationDIV card={card} />
+    })
+
+    var playersInGame = this.props.players.map(function(player){
+      return <PlayerPiece player={player} />
     })
 
     return (
       <div  className="layoutDIV" id='NeckDIV'>
-        
         <div id="allCardsDIV" className="layoutDIV">
-        	{cardsInNeck}
+          {playersInGame}
+          {cardsInNeck}
         </div>
       </div>
     )

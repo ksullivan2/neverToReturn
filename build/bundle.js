@@ -29738,12 +29738,20 @@
 
 	  componentDidMount: function componentDidMount() {
 	    self = this;
-
-	    socket.on("game started", function (data) {
-	      console.log("DATANECK ", data.neck[2].name);
-	      self.setState({ neck: data.neck });
-	      console.log("STATENECK ", this.state.neck[2].name);
-	    });
+	    socket.on("game started", this.__gameStarted);
+	  },
+	  __gameStarted: function __gameStarted(data) {
+	    this.updateNeck(data);
+	    this.createPlayerPieces(data);
+	  },
+	  updateNeck: function updateNeck(data) {
+	    this.setState({ neck: data.neck });
+	  },
+	  createPlayerPieces: function createPlayerPieces(data) {
+	    for (var i = 0; i < data.players.length; i++) {
+	      var pieceStyle = { backgroundColor: data.players[i].color };
+	      this.createElement("<div id='playerPiece" + (i + 1) + "+' class='playerPiece style={pieceStyle}><br>" + data.players[i].name + "</div>");
+	    };
 	  },
 
 
