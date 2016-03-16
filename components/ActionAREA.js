@@ -1,5 +1,5 @@
 var React = require('react');
-var $ = require('jQuery');
+var $ = require('jquery');
 var socket = io();
 
 //bind buttons----------------------------------------------------------------------------------------------------------
