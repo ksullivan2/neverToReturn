@@ -22,8 +22,10 @@ var NeckDIV = React.createClass({
 
     return (
       <div  className="layoutDIV" id='NeckDIV'>
-        <div id="allCardsDIV" className="layoutDIV">
+        <div id="playerPiecesDIV">
           {playersInGame}
+        </div>
+        <div id="allCardsDIV" className="layoutDIV">
           {cardsInNeck}
         </div>
       </div>

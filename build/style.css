@@ -45,11 +45,17 @@
   width:85%;
 }
 
+#playerPiecesDIV{
+  position: relative;
+  display: flex;
+}
+
 #allCardsDIV{
   display: flex;
   top: 5%;
   width: 100%;
   height: 90%;
+  position: relative;
 }
 
 .cardDIV{
@@ -76,7 +82,7 @@
   display: inline-flex;
   z-index: 1;
 
-  position: relative;
+  position: absolute;
   top: 0;
   left: 0;
   
