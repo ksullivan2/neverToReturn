@@ -11,7 +11,6 @@ var socket = io();
 
 
 socket.on("new player", function(data){
-  console.log("new player event caught")
   getName(data);
 });
 
@@ -73,7 +72,6 @@ var App = React.createClass({
       //destroyStartGameButton();
 
     })
-    //DATA IS:{players: gameLogic.players, activePlayerName: gameLogic.activePlayer.name, neck:gameLogic.neck}
   },
 
   render: function () {

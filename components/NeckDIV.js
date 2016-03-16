@@ -9,15 +9,18 @@ var socket = io();
 var NeckDIV = React.createClass({
   render: function () {
 
-    var count = 0;
+    var cardCount = 0;
     var cardsInNeck = this.props.neck.map(function(card){
-      var key = "card" + count;
-      count++
+      var key = "card" + cardCount;
+      cardCount++
       return <LocationDIV card={card} key={key} name={key}/>
     })
 
+    var playerCount = 0;
     var playersInGame = this.props.players.map(function(player){
-      return <PlayerPiece player={player} />
+      var key = "player" + (playerCount+1);
+      playerCount++
+      return <PlayerPiece player={player} key={key}/>
     })
 
     return (

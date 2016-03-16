@@ -41,14 +41,12 @@ var gameLogic = require("./gameLogic.js");
 
 //SOCKET EVENTS------------------------------------------------------------------------------------------------------------------
 io.on('connection', function (socket) {
-  console.log("gameLogic",gameLogic)
   socket.emit("pass initial state", {neck: gameLogic.neck, players: gameLogic.players})
   
 
 	if (!socket.handshake.session.userdata){
     //tell the game we have a new player and if Player 1,2, etc.
     socket.emit("new player", {playerIndex: gameLogic.players.length+1});
-    console.log("new player event emitted")
   }else{
     //overwrite the socket data for that player, using cookie data
     var name = socket.handshake.session.userdata.name;
