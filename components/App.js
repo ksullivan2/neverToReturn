@@ -64,9 +64,11 @@ var App = React.createClass({
 
     socket.on('game started', function(data){
       self.setState({neck: data.neck, activePlayer: data.activePlayer})
-      //highlightActivePlayer(data.activePlayerName);
       //destroyStartGameButton();
+    })
 
+    socket.on('next turn', function(data){
+      self.setState({activePlayer: data.activePlayer})
     })
   },
 

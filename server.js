@@ -66,7 +66,7 @@ io.on('connection', function (socket) {
 
   socket.on('end turn', function(){
     gameLogic.nextTurn()
-    io.sockets.emit('update active player',{activePlayerName: gameLogic.activePlayer.name})
+    io.sockets.emit('next turn',{activePlayer: gameLogic.activePlayer.name})
   });
 
 	socket.on('start game button', function(){
