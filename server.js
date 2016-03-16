@@ -36,17 +36,19 @@ server.listen(process.env.PORT || 3000, function(){
 
 //game-specific libraries------------------------------------------------------------------------------------------------------------------
 var gameLogic = require("./game_modules/gameLogic.js");
+var gameStates = require("./game_modules/gameStates.js");
 
 
 //SOCKET EVENTS------------------------------------------------------------------------------------------------------------------
 io.on('connection', function (socket) {
-  socket.emit("pass initial state", {neck: gameLogic.neck, players: gameLogic.players, activePlayer: gameLogic.activePlayer.name})
+  socket.emit("pass initial state", {neck: gameLogic.neck, 
+    players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, gameState: gameLogic.gameState})
   
 
-	if (!socket.handshake.session.userdata){
+	if (!socket.handshake.session.userdata && gameLogic.gameState === gameStates.gatherPlayers){
     //tell the game we have a new player and if Player 1,2, etc.
     socket.emit("new player", {playerIndex: gameLogic.players.length+1});
-  }else{
+  }else if (socket.handshake.session.userdata){
     //overwrite the socket data for that player, using cookie data
     var name = socket.handshake.session.userdata.name;
     gameLogic.resetSocket(gameLogic.lookupPlayerIndex(name),socket);
@@ -68,9 +70,10 @@ io.on('connection', function (socket) {
     io.sockets.emit('next turn',{activePlayer: gameLogic.activePlayer.name})
   });
 
-	socket.on('start game button', function(){
+	socket.on('Start Game', function(){
     	gameLogic.startGame();
-    	io.sockets.emit('game started', {players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, neck:gameLogic.neck})  
+    	io.sockets.emit('game started', {players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, 
+        neck:gameLogic.neck, gameState: gameLogic.gameState})  
 	});
 
 

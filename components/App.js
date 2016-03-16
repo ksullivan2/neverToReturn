@@ -4,6 +4,7 @@ var OpponentsDIV = require('./OpponentsDIV');
 var ActionAREA = require('./ActionAREA');
 var MyCardsDIV = require('./MyCardsDIV');
 var NeckDIV = require('./NeckDIV');
+var $ = require('jquery');
 
 //EVENTS--------------------------------------------------------------------------------------------------------------
 var socket = io();
@@ -44,7 +45,8 @@ var App = React.createClass({
     return{
       players: [],
       neck: [],
-      activePlayer: null
+      activePlayer: null,
+      gameState: 0
     }
   },
 
@@ -55,7 +57,8 @@ var App = React.createClass({
     socket.on("pass initial state", function(data){
       self.setState({players: data.players, 
                       neck: data.neck,
-                      activePlayer: data.activePlayer})
+                      activePlayer: data.activePlayer,
+                      gameState: data.gameState})
       }) 
 
     socket.on('new player added', function(data){
@@ -63,8 +66,9 @@ var App = React.createClass({
       })
 
     socket.on('game started', function(data){
-      self.setState({neck: data.neck, activePlayer: data.activePlayer})
-      //destroyStartGameButton();
+      self.setState({neck: data.neck, 
+                      activePlayer: data.activePlayer,
+                      gameState: data.gameState})
     })
 
     socket.on('next turn', function(data){
@@ -87,5 +91,7 @@ var App = React.createClass({
 module.exports = App;
 
 ReactDOM.render(<App />, document.getElementById('main-container'));
+
+
 
 

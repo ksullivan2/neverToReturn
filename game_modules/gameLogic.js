@@ -2,9 +2,11 @@
 
 var cardTypes = require("./cardTypes.js");
 var Player = require("./player.js");
+var gameStates = require("./gameStates.js");
 
-module.exports = new gameLogic();
+
 var playerColors = {0: "red", 1: "blue", 2: "orange", 3:"green", 4:"purple", 5:"brown"}
+
 
 
 
@@ -18,13 +20,17 @@ function gameLogic(){
 	this.players = [];
 	this.activePlayer = new Player("dummyStartPlayer", 100, "yellow")
 	this.socketList = [];
-	
+	this.gameState = gameStates.gatherPlayers;
 }
+
+
+
 
 //GAMESTATE ACTIONS---------------------------------------------------------------------------------------------------------
 gameLogic.prototype.startGame = function() {
 	this.activePlayer = this.players[0];
 	this.newNeck();
+	this.gameState = gameStates.decisionMaking;
 };
 
 gameLogic.prototype.nextTurn = function() {
@@ -78,3 +84,5 @@ gameLogic.prototype.lookupPlayerIndex= function(name){
 gameLogic.prototype.resetSocket = function(playerIndex, socket){
 	this.socketList[playerIndex] = socket;
 }
+
+module.exports = new gameLogic();
