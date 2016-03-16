@@ -1,6 +1,10 @@
 {
   "name": "neverToReturn",
   "version": "1.0.0",
+  "engines": {
+    "node": "^5.7.0",
+    "npm" : "^3.8.2"
+  },
   "description": "Never To Return",
   "main": "bundle.js",
   "scripts": {
