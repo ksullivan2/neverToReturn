@@ -9,7 +9,7 @@
     "start-dev": "NODE_ENV='DEVELOPMENT' node server.js & webpack-dev-server --hot --colors --progress --output-public-path='http://localhost:8080/build' --config webpack.dev.config.js",
     "lint": "eslint components",
     "task": "webpack",
-    "postinstall": "webpack --config ./webpack-prod.config.js --progress --colors",
+    "postinstall": "webpack --config ./webpack-prod.config.js --progress --colors"
   },
   "author": "",
   "license": "ISC",
