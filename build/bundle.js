@@ -82,20 +82,18 @@
 	  getInitialState: function getInitialState() {
 	    return {
 	      players: [],
-	      neck: []
+	      neck: [],
+	      activePlayer: null
 	    };
 	  },
 
-	  componentWillMount: function componentWillMount() {
-	    self = this;
-	    //socket.emit("initial render");
-	  },
 	  componentDidMount: function componentDidMount() {
-	    self = this;
+	    var self = this;
 
 	    socket.on("pass initial state", function (data) {
 	      self.setState({ players: data.players,
-	        neck: data.neck });
+	        neck: data.neck,
+	        activePlayer: data.activePlayer });
 	    });
 
 	    socket.on('new player added', function (data) {
@@ -103,24 +101,24 @@
 	    });
 
 	    socket.on('game started', function (data) {
-	      self.setState({ neck: data.neck });
-	      //createPlayerPieces(data);
-	      //highlightActivePlayer(data.activePlayerName);
+	      self.setState({ neck: data.neck, activePlayer: data.activePlayer });
 	      //destroyStartGameButton();
 	    });
-	    //DATA IS:{players: gameLogic.players, activePlayerName: gameLogic.activePlayer.name, neck:gameLogic.neck}
+
+	    socket.on('next turn', function (data) {
+	      self.setState({ activePlayer: data.activePlayer });
+	    });
 	  },
 
 
 	  render: function render() {
-	    console.log(this.state.players);
 	    return React.createElement(
 	      'div',
 	      { id: 'App' },
-	      React.createElement(OpponentsDIV, { players: this.state.players }),
+	      React.createElement(OpponentsDIV, { players: this.state.players, activePlayer: this.state.activePlayer }),
 	      React.createElement(ActionAREA, null),
 	      React.createElement(MyCardsDIV, null),
-	      React.createElement(NeckDIV, { players: this.state.players, neck: this.state.neck })
+	      React.createElement(NeckDIV, { players: this.state.players, neck: this.state.neck, activePlayer: this.state.activePlayer })
 	    );
 	  }
 	});
@@ -19745,10 +19743,15 @@
 	  displayName: 'OpponentsDIV',
 
 	  render: function render() {
+	    var self = this;
 
 	    var playerList = this.props.players.map(function (player) {
-	      var key = "player" + player.name;
-	      return React.createElement(PlayerDIV, { player: player, key: key });
+	      var key = "playerDIV" + player.name;
+	      var active = false;
+	      if (self.props.activePlayer === player.name) {
+	        active = true;
+	      }
+	      return React.createElement(PlayerDIV, { player: player, key: key, active: active });
 	    });
 
 	    return React.createElement(
@@ -19767,23 +19770,29 @@
 /* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	var React = __webpack_require__(1);
 
 	var PlayerDIV = React.createClass({
-	  displayName: "PlayerDIV",
+	  displayName: 'PlayerDIV',
 
 	  render: function render() {
+	    var border = '';
+	    if (this.props.active) {
+	      border = "2px solid black";
+	    }
+
 	    var divStyle = {
-	      color: this.props.player.color
+	      color: this.props.player.color,
+	      border: border
 	    };
 
 	    return React.createElement(
-	      "div",
-	      { className: "PlayerDIV", style: divStyle },
+	      'div',
+	      { className: 'PlayerDIV', style: divStyle },
 	      React.createElement(
-	        "h2",
+	        'h2',
 	        null,
 	        this.props.player.name
 	      )
@@ -29734,23 +29743,36 @@
 	var React = __webpack_require__(1);
 	var LocationDIV = __webpack_require__(166);
 	var PlayerPiece = __webpack_require__(167);
-	var cardTypes = __webpack_require__(168);
 	var socket = io();
 
 	var NeckDIV = React.createClass({
 	  displayName: 'NeckDIV',
 
 	  render: function render() {
-	    var count = 0;
-	    var cardsInNeck = this.props.neck.map(function (card) {
-	      key = "card" + count;
-	      count++;
-	      return React.createElement(LocationDIV, { card: card, key: key });
-	    });
+	    var self = this;
 
-	    var playersInGame = this.props.players.map(function (player) {
-	      return React.createElement(PlayerPiece, { player: player });
-	    });
+	    //creating an array to be rendered below
+	    var cardsInNeck = [];
+	    for (var i = 0; i < this.props.neck.length; i++) {
+
+	      //create the list of players that is on that card
+	      var playersOnLocation = [];
+	      for (var j = 0; j < this.props.players.length; j++) {
+
+	        //if the player's location is the current card:
+	        if (this.props.players[j].location == i) {
+	          //it's j+1 for human-readable names, starting with player 1
+	          var playerkey = "player" + (j + 1);
+	          var active = false;
+	          if (self.props.activePlayer === this.props.players[j].name) {
+	            active = true;
+	          }
+	          playersOnLocation.push({ player: this.props.players[j], key: playerkey, active: active });
+	        }
+	      }
+
+	      cardsInNeck.push({ card: this.props.neck[i], cardkey: "card" + i, playersOnLocation: playersOnLocation });
+	    }
 
 	    return React.createElement(
 	      'div',
@@ -29758,8 +29780,12 @@
 	      React.createElement(
 	        'div',
 	        { id: 'allCardsDIV', className: 'layoutDIV' },
-	        playersInGame,
-	        cardsInNeck
+	        cardsInNeck.map(function (eachCard) {
+	          return React.createElement(LocationDIV, { card: eachCard.card,
+	            key: eachCard.cardkey,
+	            name: eachCard.cardkey,
+	            players: eachCard.playersOnLocation });
+	        })
 	      )
 	    );
 	  }
@@ -29771,19 +29797,22 @@
 /* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	var React = __webpack_require__(1);
+	var PlayerPiece = __webpack_require__(167);
 
 	var LocationDIV = React.createClass({
-	  displayName: "LocationDIV",
+	  displayName: 'LocationDIV',
 
 	  render: function render() {
 	    return React.createElement(
-	      "div",
-	      { className: "cardDIV" },
-	      this.props.card.name,
-	      React.createElement("img", { src: this.props.card.imgSRC, className: "card" })
+	      'div',
+	      { className: 'cardDIV' },
+	      this.props.players.map(function (eachPlayer) {
+	        return React.createElement(PlayerPiece, { player: eachPlayer.player, key: eachPlayer.key, active: eachPlayer.active });
+	      }),
+	      React.createElement('img', { src: this.props.card.imgSRC, className: 'card' })
 	    );
 	  }
 	});
@@ -29794,21 +29823,31 @@
 /* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	var React = __webpack_require__(1);
 
 	var PlayerPiece = React.createClass({
-	  displayName: "PlayerPiece",
+	  displayName: 'PlayerPiece',
 
 	  render: function render() {
-	    var pieceStyle = { backgroundColor: this.props.player.color };
+	    var border = '';
+	    var textColor = "black";
+
+	    if (this.props.active) {
+	      border = "2px solid black";
+	      textColor = "white";
+	    }
+
+	    var pieceStyle = { backgroundColor: this.props.player.color,
+	      border: border,
+	      color: textColor };
 
 	    return React.createElement(
-	      "div",
-	      { className: "playerPiece", style: pieceStyle },
+	      'div',
+	      { className: 'playerPiece', style: pieceStyle },
 	      React.createElement(
-	        "p",
+	        'p',
 	        null,
 	        this.props.player.name
 	      )
@@ -29817,53 +29856,6 @@
 	});
 
 	module.exports = PlayerPiece;
-
-/***/ },
-/* 168 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	module.exports = { terrainCard: terrainCard, monsterCard: monsterCard, playerCard: playerCard };
-
-	function terrainCard(name) {
-		this.name = name;
-		this.onEncounter = {
-			check: { type: "pain", exists: true },
-			effect: { type: "pain", value: -2, stop: true }
-		};
-		this.onTurnStart = {
-			check: { type: "pain", exists: true },
-			effect: { type: "pain", value: -2, stop: true }
-		};
-
-		this.imgSRC = "assets/terrainCards/" + name + ".jpg";
-	}
-
-	function monsterCard() {
-		this.name = "";
-		this.imageSRC = "";
-		this.onEncounter = {
-			check: { type: "madness", exists: true },
-			checkReducesHitPoints: true,
-			effect: { type: "madness", value: -2, stop: true }
-		};
-		this.onTurnStart = {
-			check: { type: "madness", exists: true },
-			checkReducesHitPoints: false,
-			effect: { type: "madness", value: -2, stop: true }
-		};
-
-		this.type = "m";
-		this.hitPoints = 2;
-	}
-
-	function playerCard() {
-		this.name = "";
-		this.painPoints = 5;
-		this.madnessPoints = 6;
-		this.specialAbility = "";
-	}
 
 /***/ }
 /******/ ]);
