@@ -59,8 +59,7 @@ var App = React.createClass({
 
     socket.on("pass initial state", function(data){
       self.setState({players: data.players, 
-                      neck: data.neck,
-                      activePlayer: data.activePlayer})
+                      neck: data.neck})
       }) 
 
     socket.on('new player added', function(data){
@@ -68,8 +67,8 @@ var App = React.createClass({
       })
 
     socket.on('game started', function(data){
-      self.setState({neck: data.neck,
-                    activePlayer: data.activePlayer})
+      self.setState({neck: data.neck})
+      //highlightActivePlayer(data.activePlayerName);
       //destroyStartGameButton();
 
     })
@@ -78,10 +77,10 @@ var App = React.createClass({
   render: function () {
     return (
       <div id='App'>
-        <OpponentsDIV players={this.state.players} activePlayer = {this.state.activePlayer}/>
+        <OpponentsDIV players={this.state.players}/>
         <ActionAREA />
         <MyCardsDIV />
-        <NeckDIV players={this.state.players} neck={this.state.neck} activePlayer = {this.state.activePlayer}/>
+        <NeckDIV players={this.state.players} neck={this.state.neck}/>
       </div>
     )
   }
