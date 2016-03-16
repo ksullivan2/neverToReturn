@@ -8,15 +8,10 @@ var socket = io();
 
 var OpponentsDIV = React.createClass({
   render: function () {
-    self = this;
 
   	var playerList = this.props.players.map(function(player){
-  		var key = "playerDIV"+ player.name;
-      var active = false;
-      if (self.props.activePlayer && self.props.activePlayer.name === player.name){
-        active = true;
-      };
-  		return <PlayerDIV player={player} key={key} active={active}/>
+  		var key = "player"+ player.name;
+  		return <PlayerDIV player={player} key={key} />
   	});
 
     return (

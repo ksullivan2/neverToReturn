@@ -4,14 +4,8 @@ var React = require('react');
 
 var PlayerDIV = React.createClass({
   render: function () {
-    var border = ""
-    if (this.props.active){
-      border = "2px solid black"
-    }
-
     var divStyle = {
-      color: this.props.player.color,
-      border: border
+      color: this.props.player.color
     }
 
     return (

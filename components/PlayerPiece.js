@@ -3,14 +3,7 @@ var React = require('react');
 
 var PlayerPiece = React.createClass({
   render: function () {
-  	var border = ""
-  	var textColor = "black"
-    if (this.props.active){
-      border = "2px solid black"
-      textColor = "white"
-    }
-
-  	var pieceStyle = {backgroundColor: this.props.player.color, border: border, color: textColor};
+  	var pieceStyle = {backgroundColor: this.props.player.color};
     
     return (
       <div className="playerPiece" style={pieceStyle}>
