@@ -1,4 +1,5 @@
 var React = require('react');
+var PlayerPiece = require('./PlayerPiece')
 
 
 var LocationDIV = React.createClass({
@@ -6,6 +7,9 @@ var LocationDIV = React.createClass({
     return (
       <div className="cardDIV">
         {this.props.name}
+        {this.props.players.map(function(eachPlayer){
+        	return <PlayerPiece player={eachPlayer.player} key={eachPlayer.playerkey}/>
+        })}
         <img src={this.props.card.imgSRC} className="card"/>
       </div>
     )

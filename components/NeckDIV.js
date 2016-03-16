@@ -8,27 +8,35 @@ var socket = io();
 var NeckDIV = React.createClass({
   render: function () {
 
-    var cardCount = 0;
-    var cardsInNeck = this.props.neck.map(function(card){
-      var key = "card" + cardCount;
-      cardCount++
-      return <LocationDIV card={card} key={key} name={key}/>
-    })
+    //creating an array to be rendered below
+    var cardsInNeck = [];
+    for (var i = 0; i < this.props.neck.length; i++){
 
-    var playerCount = 0;
-    var playersInGame = this.props.players.map(function(player){
-      var key = "player" + (playerCount+1);
-      playerCount++
-      return <PlayerPiece player={player} key={key}/>
-    })
+      //create the list of players that is on that card
+      var playersOnLocation = [];
+      for (var j = 0; j < this.props.players.length; j++){
+          
+        //if the player's location is the current card:
+        if (this.props.players[j].location == i){
+          //it's j+1 for human-readable names, starting with player 1
+          var playerkey = "player" + (j+1);
+          playersOnLocation.push({player:this.props.players[j], key:playerkey})
+        }
+      }
+
+      cardsInNeck.push({card: this.props.neck[i], cardkey:("card"+i), playersOnLocation:playersOnLocation})
+    }
+
 
     return (
       <div  className="layoutDIV" id='NeckDIV'>
-        <div id="playerPiecesDIV">
-          {playersInGame}
-        </div>
         <div id="allCardsDIV" className="layoutDIV">
-          {cardsInNeck}
+          {cardsInNeck.map(function(eachCard){
+            return <LocationDIV card={eachCard.card} 
+                                key={eachCard.cardkey} 
+                                name={eachCard.cardkey} 
+                                players={eachCard.playersOnLocation} />
+          })}
         </div>
       </div>
     )
