@@ -16,7 +16,7 @@ function gameLogic(){
 
 	this.neck = dummyNeck;
 	this.players = [];
-	this.activePlayer = null;
+	this.activePlayer = new Player("dummyStartPlayer", 100, "yellow")
 	this.socketList = [];
 	
 }

@@ -7,6 +7,7 @@ var socket = io();
 
 var NeckDIV = React.createClass({
   render: function () {
+    var self = this;
 
     //creating an array to be rendered below
     var cardsInNeck = [];
@@ -20,7 +21,9 @@ var NeckDIV = React.createClass({
         if (this.props.players[j].location == i){
           //it's j+1 for human-readable names, starting with player 1
           var playerkey = "player" + (j+1);
-          playersOnLocation.push({player:this.props.players[j], key:playerkey})
+          var active = false;
+          if (self.props.activePlayer === this.props.players[j].name){active = true;}
+          playersOnLocation.push({player:this.props.players[j], key:playerkey, active:active})
         }
       }
 

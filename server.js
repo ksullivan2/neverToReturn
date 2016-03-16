@@ -41,7 +41,7 @@ var gameLogic = require("./game_modules/gameLogic.js");
 
 //SOCKET EVENTS------------------------------------------------------------------------------------------------------------------
 io.on('connection', function (socket) {
-  socket.emit("pass initial state", {neck: gameLogic.neck, players: gameLogic.players})
+  socket.emit("pass initial state", {neck: gameLogic.neck, players: gameLogic.players, activePlayer: gameLogic.activePlayer.name})
   
 
 	if (!socket.handshake.session.userdata){
@@ -71,7 +71,7 @@ io.on('connection', function (socket) {
 
 	socket.on('start game button', function(){
     	gameLogic.startGame();
-    	io.sockets.emit('game started', {players: gameLogic.players, activePlayerName: gameLogic.activePlayer.name, neck:gameLogic.neck})  
+    	io.sockets.emit('game started', {players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, neck:gameLogic.neck})  
 	});
 
 
