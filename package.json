@@ -1,14 +1,15 @@
 {
   "name": "neverToReturn",
   "version": "1.0.0",
-  "description": "Your awesome project!",
+  "description": "Never To Return",
   "main": "bundle.js",
   "scripts": {
     "prestart": "npm run task",
     "start": "node server.js",
     "start-dev": "NODE_ENV='DEVELOPMENT' node server.js & webpack-dev-server --hot --colors --progress --output-public-path='http://localhost:8080/build' --config webpack.dev.config.js",
     "lint": "eslint components",
-    "task": "webpack"
+    "task": "webpack",
+    "postinstall": "webpack --config ./webpack-prod.config.js --progress --colors",
   },
   "author": "",
   "license": "ISC",
