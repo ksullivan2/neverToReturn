@@ -5,7 +5,7 @@ var LocationDIV = React.createClass({
   render: function () {
     return (
       <div className="cardDIV">
-        {this.props.card.name}
+        {this.props.name}
         <img src={this.props.card.imgSRC} className="card"/>
       </div>
     )

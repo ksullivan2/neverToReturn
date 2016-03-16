@@ -6,15 +6,20 @@ var Player = require("./player.js");
 module.exports = new gameLogic();
 var playerColors = {0: "red", 1: "blue", 2: "orange", 3:"green", 4:"purple", 5:"brown"}
 
+
+
 function gameLogic(){
+	var dummyNeck = []
+	for (var i = 0; i <= 6; i++){
+	    dummyNeck.push(new cardTypes.terrainCard("start"));
+	  }
+
+	this.neck = dummyNeck;
 	this.players = [];
 	this.activePlayer = null;
 	this.socketList = [];
-	this.neck = [];
+	
 }
-
-
-
 
 //GAMESTATE ACTIONS---------------------------------------------------------------------------------------------------------
 gameLogic.prototype.startGame = function() {

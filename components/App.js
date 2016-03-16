@@ -8,7 +8,10 @@ var NeckDIV = require('./NeckDIV');
 //EVENTS--------------------------------------------------------------------------------------------------------------
 var socket = io();
 
+
+
 socket.on("new player", function(data){
+  console.log("new player event caught")
   getName(data);
 });
 
@@ -34,25 +37,38 @@ function getName(data){
 
 
 
-
-
 //REACT RENDER APP---------------------------------------------------------------------------------------------------------
+
+
 var App = React.createClass({
   getInitialState: function(){
     return{
-      players: []
+      players: [],
+      neck: []
     }
+  },
+
+  componentWillMount(){
+    self = this;
+    //socket.emit("initial render");
+    
+    
   },
 
   componentDidMount(){
     self = this;
+
+    socket.on("pass initial state", function(data){
+      self.setState({players: data.players, 
+                      neck: data.neck})
+      }) 
+
     socket.on('new player added', function(data){
       self.setState({players: data.players});
       })
 
     socket.on('game started', function(data){
-      //dealNeck(data);
-      //createPlayerPieces(data);
+      self.setState({neck: data.neck})
       //highlightActivePlayer(data.activePlayerName);
       //destroyStartGameButton();
 
@@ -66,7 +82,7 @@ var App = React.createClass({
         <OpponentsDIV players={this.state.players}/>
         <ActionAREA />
         <MyCardsDIV />
-        <NeckDIV players={this.state.players}/>
+        <NeckDIV players={this.state.players} neck={this.state.neck}/>
       </div>
     )
   }

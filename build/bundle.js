@@ -75,40 +75,52 @@
 	}
 
 	//REACT RENDER APP---------------------------------------------------------------------------------------------------------
+
 	var App = React.createClass({
 	  displayName: 'App',
 
 	  getInitialState: function getInitialState() {
 	    return {
-	      players: []
+	      players: [],
+	      neck: []
 	    };
 	  },
 
+	  componentWillMount: function componentWillMount() {
+	    self = this;
+	    //socket.emit("initial render");
+	  },
 	  componentDidMount: function componentDidMount() {
 	    self = this;
+
+	    socket.on("pass initial state", function (data) {
+	      self.setState({ players: data.players,
+	        neck: data.neck });
+	    });
+
 	    socket.on('new player added', function (data) {
 	      self.setState({ players: data.players });
 	    });
 
 	    socket.on('game started', function (data) {
-	      //dealNeck(data);
+	      self.setState({ neck: data.neck });
 	      //createPlayerPieces(data);
 	      //highlightActivePlayer(data.activePlayerName);
 	      //destroyStartGameButton();
-
 	    });
 	    //DATA IS:{players: gameLogic.players, activePlayerName: gameLogic.activePlayer.name, neck:gameLogic.neck}
 	  },
 
 
 	  render: function render() {
+	    console.log(this.state.players);
 	    return React.createElement(
 	      'div',
 	      { id: 'App' },
 	      React.createElement(OpponentsDIV, { players: this.state.players }),
 	      React.createElement(ActionAREA, null),
 	      React.createElement(MyCardsDIV, null),
-	      React.createElement(NeckDIV, null)
+	      React.createElement(NeckDIV, { players: this.state.players, neck: this.state.neck })
 	    );
 	  }
 	});
@@ -29721,44 +29733,23 @@
 
 	var React = __webpack_require__(1);
 	var LocationDIV = __webpack_require__(166);
-	var cardTypes = __webpack_require__(167);
+	var PlayerPiece = __webpack_require__(167);
+	var cardTypes = __webpack_require__(168);
 	var socket = io();
-
-	var dummyNeck = [];
-	for (var i = 0; i <= 6; i++) {
-	  dummyNeck.push(new cardTypes.terrainCard("start"));
-	}
 
 	var NeckDIV = React.createClass({
 	  displayName: 'NeckDIV',
 
-	  getInitialState: function getInitialState() {
-	    return { neck: dummyNeck };
-	  },
-
-	  componentDidMount: function componentDidMount() {
-	    self = this;
-	    socket.on("game started", this.__gameStarted);
-	  },
-	  __gameStarted: function __gameStarted(data) {
-	    this.updateNeck(data);
-	    this.createPlayerPieces(data);
-	  },
-	  updateNeck: function updateNeck(data) {
-	    this.setState({ neck: data.neck });
-	  },
-	  createPlayerPieces: function createPlayerPieces(data) {
-	    for (var i = 0; i < data.players.length; i++) {
-	      var pieceStyle = { backgroundColor: data.players[i].color };
-	      this.createElement("<div id='playerPiece" + (i + 1) + "+' class='playerPiece style={pieceStyle}><br>" + data.players[i].name + "</div>");
-	    };
-	  },
-
-
 	  render: function render() {
-	    console.log("render", this.state.neck[2].name);
-	    var cardsInNeck = this.state.neck.map(function (card) {
-	      return React.createElement(LocationDIV, { className: 'cardDIV', card: card });
+	    var count = 0;
+	    var cardsInNeck = this.props.neck.map(function (card) {
+	      key = "card" + count;
+	      count++;
+	      return React.createElement(LocationDIV, { card: card, key: key });
+	    });
+
+	    var playersInGame = this.props.players.map(function (player) {
+	      return React.createElement(PlayerPiece, { player: player });
 	    });
 
 	    return React.createElement(
@@ -29767,6 +29758,7 @@
 	      React.createElement(
 	        'div',
 	        { id: 'allCardsDIV', className: 'layoutDIV' },
+	        playersInGame,
 	        cardsInNeck
 	      )
 	    );
@@ -29800,6 +29792,34 @@
 
 /***/ },
 /* 167 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(1);
+
+	var PlayerPiece = React.createClass({
+	  displayName: "PlayerPiece",
+
+	  render: function render() {
+	    var pieceStyle = { backgroundColor: this.props.player.color };
+
+	    return React.createElement(
+	      "div",
+	      { className: "playerPiece", style: pieceStyle },
+	      React.createElement(
+	        "p",
+	        null,
+	        this.props.player.name
+	      )
+	    );
+	  }
+	});
+
+	module.exports = PlayerPiece;
+
+/***/ },
+/* 168 */
 /***/ function(module, exports) {
 
 	"use strict";
