@@ -48,15 +48,9 @@ var App = React.createClass({
     }
   },
 
-  componentWillMount(){
-    self = this;
-    //socket.emit("initial render");
-    
-    
-  },
 
   componentDidMount(){
-    self = this;
+    var self = this;
 
     socket.on("pass initial state", function(data){
       self.setState({players: data.players, 
