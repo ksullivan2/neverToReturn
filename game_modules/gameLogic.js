@@ -55,13 +55,14 @@ gameLogic.prototype.newNeck = function() {
 };
 
 //PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------
+var testForSocketMatch = function(givenSocket, storedSocket){
 	return (givenSocket === "/#"+ storedSocket);
 }
+
 gameLogic.prototype.movePlayerForward = function(socketID){
-	console.log("movePlayerForward", socketID, this.players[0].socketID)
 	for (var i = 0; i < this.players.length; i++){
+		if (testForSocketMatch(socketID, this.players[i].socketID)){
 			this.players[i].location += 1;
-			console.log(this.players[i].name,"moved to ", this.players[i].location)
 		}
 	}
 }
@@ -70,7 +71,6 @@ gameLogic.prototype.movePlayerForward = function(socketID){
 
 //SESSIONS/PLAYERS------------------------------------------------------------------------------------------------------------
 gameLogic.prototype.addPlayer = function(name, socketID) {
-	console.log("addPlayer", socketID)
 	for (var i = 0; i < this.players.length; i++){
 		if (this.players[i].name === name){
 			return false;
