@@ -8,13 +8,11 @@ var $ = require('jquery');
 
 //EVENTS--------------------------------------------------------------------------------------------------------------
 var socket = io();
-console.log("APP FILE", socket.id)
 
 
 
 socket.on("new player", function(data){
   getName(data);
-  console.log("new player received", socket.id)
 });
 
 socket.on("name taken", function(data){
@@ -29,7 +27,6 @@ socket.on("name taken", function(data){
 //INTERACT WITH HUMAN--------------------------------------------------------------------------------------------------------
 
 function getName(data){
-  console.log("getName", socket.id)
   var name = null;
   do {
     name = prompt("What is your name?","Player "+ data.playerIndex);

@@ -5,7 +5,7 @@ var ActionButton = React.createClass({
   },
 
   handleClick: function(){
-      console.log(this.props.text);
+      console.log(this.props.text," button clicked");
       this.props.socket.emit(this.props.text.toString());
     
   },

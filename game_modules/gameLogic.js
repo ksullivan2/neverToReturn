@@ -55,10 +55,11 @@ gameLogic.prototype.newNeck = function() {
 };
 
 //PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------
+	return (givenSocket === "/#"+ storedSocket);
+}
 gameLogic.prototype.movePlayerForward = function(socketID){
 	console.log("movePlayerForward", socketID, this.players[0].socketID)
 	for (var i = 0; i < this.players.length; i++){
-		if (socketID === "/#"+ this.players[i].socketID){
 			this.players[i].location += 1;
 			console.log(this.players[i].name,"moved to ", this.players[i].location)
 		}
