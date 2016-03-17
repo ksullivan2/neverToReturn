@@ -42,27 +42,28 @@ var gameStates = require("./game_modules/gameStates.js");
 //SOCKET EVENTS------------------------------------------------------------------------------------------------------------------
 
 io.on('connection', function (socket) {
-
-  socket.emit("pass initial state", {neck: gameLogic.neck, 
-    players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, gameState: gameLogic.gameState})
-  
-
-	if (!socket.handshake.session.userdata && gameLogic.gameState === gameStates.gatherPlayers){
+  if (!socket.handshake.session.userdata && gameLogic.gameState === gameStates.gatherPlayers){
     //tell the game we have a new player and if Player 1,2, etc.
     socket.emit("new player", {playerIndex: gameLogic.players.length+1});
   }else if (socket.handshake.session.userdata){
     //overwrite the socket data for that player, using cookie data
     var name = socket.handshake.session.userdata.name;
     gameLogic.resetSocket(name,socket.id);
+    socket.emit("update userName", {userName: name})
   }
 
-  socket.on('create player', function(data){
-      
+//HOW TO GET USERNAME
+  socket.emit("pass initial state", {neck: gameLogic.neck, 
+    players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, 
+    gameState: gameLogic.gameState})
+
+  socket.on('create player', function(data){   
   	var validName = gameLogic.addPlayer(data.name, data.socketID);
     if (!validName){
       socket.emit("name taken", {playerIndex: gameLogic.players.length+1});
     } else{
       socket.handshake.session.userdata = data;
+      socket.emit("update userName", {userName: data.name})
       io.sockets.emit("update players", {players: gameLogic.players})
     }
   });

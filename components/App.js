@@ -47,7 +47,8 @@ var App = React.createClass({
       players: [],
       neck: [],
       activePlayer: null,
-      gameState: 0
+      gameState: 0,
+      userName: null
     }
   },
 
@@ -61,6 +62,11 @@ var App = React.createClass({
                       activePlayer: data.activePlayer,
                       gameState: data.gameState})
       }) 
+
+    socket.on("update userName", function(data){
+      console.log("updating userName", data.userName)
+      self.setState({userName: data.userName})
+    })
 
     socket.on('update players', function(data){
       self.setState({players: data.players});

@@ -86,7 +86,8 @@
 	      players: [],
 	      neck: [],
 	      activePlayer: null,
-	      gameState: 0
+	      gameState: 0,
+	      userName: null
 	    };
 	  },
 
@@ -98,6 +99,11 @@
 	        neck: data.neck,
 	        activePlayer: data.activePlayer,
 	        gameState: data.gameState });
+	    });
+
+	    socket.on("update userName", function (data) {
+	      console.log("updating userName", data.userName);
+	      self.setState({ userName: data.userName });
 	    });
 
 	    socket.on('update players', function (data) {
