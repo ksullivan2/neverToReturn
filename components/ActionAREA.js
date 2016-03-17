@@ -22,8 +22,10 @@ var ActionAREA = React.createClass({
       displayStart = true;
     }
     else if (this.props.gameState === gameStates.decisionMaking){
-      displayMoveOneSpace = true;
-      displayEndTurn = true;
+      if (this.props.activePlayer == this.props.userName){
+        displayMoveOneSpace = true;
+        displayEndTurn = true; 
+      }
     }
     else if (this.props.gameState === gameStates.gatherPlayers){
 

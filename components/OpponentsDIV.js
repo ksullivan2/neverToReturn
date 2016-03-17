@@ -19,7 +19,7 @@ var OpponentsDIV = React.createClass({
 
     return (
       <div  className="layoutDIV" id='OpponentsDIV'>
-        OpponentsDIV
+        You are: {this.props.userName}
         {playerList}
         <ChatDIV />
       </div>

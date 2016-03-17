@@ -85,8 +85,8 @@ var App = React.createClass({
   render: function () {
     return (
       <div id='App'>
-        <OpponentsDIV players={this.state.players} activePlayer={this.state.activePlayer} />
-        <ActionAREA gameState={this.state.gameState} userName={this.state.userName}/>
+        <OpponentsDIV players={this.state.players} userName={this.state.userName} activePlayer={this.state.activePlayer} />
+        <ActionAREA gameState={this.state.gameState} userName={this.state.userName} activePlayer={this.state.activePlayer}/>
         <MyCardsDIV />
         <NeckDIV players={this.state.players} neck={this.state.neck} activePlayer={this.state.activePlayer}/>
       </div>

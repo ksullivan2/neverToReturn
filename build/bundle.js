@@ -125,8 +125,8 @@
 	    return React.createElement(
 	      'div',
 	      { id: 'App' },
-	      React.createElement(OpponentsDIV, { players: this.state.players, activePlayer: this.state.activePlayer }),
-	      React.createElement(ActionAREA, { gameState: this.state.gameState, userName: this.state.userName }),
+	      React.createElement(OpponentsDIV, { players: this.state.players, userName: this.state.userName, activePlayer: this.state.activePlayer }),
+	      React.createElement(ActionAREA, { gameState: this.state.gameState, userName: this.state.userName, activePlayer: this.state.activePlayer }),
 	      React.createElement(MyCardsDIV, null),
 	      React.createElement(NeckDIV, { players: this.state.players, neck: this.state.neck, activePlayer: this.state.activePlayer })
 	    );
@@ -19767,7 +19767,8 @@
 	    return React.createElement(
 	      'div',
 	      { className: 'layoutDIV', id: 'OpponentsDIV' },
-	      'OpponentsDIV',
+	      'You are: ',
+	      this.props.userName,
 	      playerList,
 	      React.createElement(ChatDIV, null)
 	    );
@@ -19864,8 +19865,10 @@
 	    if (this.props.gameState === gameStates.gatherPlayers) {
 	      displayStart = true;
 	    } else if (this.props.gameState === gameStates.decisionMaking) {
-	      displayMoveOneSpace = true;
-	      displayEndTurn = true;
+	      if (this.props.activePlayer == this.props.userName) {
+	        displayMoveOneSpace = true;
+	        displayEndTurn = true;
+	      }
 	    } else if (this.props.gameState === gameStates.gatherPlayers) {}
 
 	    return React.createElement(
