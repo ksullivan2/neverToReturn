@@ -1,7 +1,14 @@
 var React = require('react');
+var ReactMotion = require('react-motion');
+
+var spring = ReactMotion.spring;
+var Motion = ReactMotion.Motion;
+
 
 
 var PlayerPiece = React.createClass({
+  
+
   render: function () {
   	var border = '';
   	var textColor = "black";
@@ -16,9 +23,15 @@ var PlayerPiece = React.createClass({
   						color: textColor};
     
     return (
-      <div className="playerPiece" style={pieceStyle}>
-      	<p>{this.props.player.name}</p>
-      </div>
+      <Motion defaultStyle={{x:0}} style={{x: spring(360)}}>
+        {function(val) {
+          return (
+            <div className="playerPiece" style={pieceStyle}>
+          	 <p>{val.x}</p>
+            </div>
+          )
+        }}
+      </Motion>
     )
   }
 });
