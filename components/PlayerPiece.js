@@ -11,7 +11,7 @@ var PlayerPiece = React.createClass({
     	textColor = "white";
     }
 
-  	var pieceStyle = {backgroundColor: this.props.player.color,
+  	var pieceStyle = {background: "radial-gradient("+this.props.player.color+" 0%, hsla(0, 100%, 20%, 0) 100%) 0 0",
   						border: border,
   						color: textColor};
     
