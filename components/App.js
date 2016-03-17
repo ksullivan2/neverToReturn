@@ -64,7 +64,6 @@ var App = React.createClass({
       }) 
 
     socket.on("update userName", function(data){
-      console.log("updating userName", data.userName)
       self.setState({userName: data.userName})
     })
 
@@ -86,8 +85,8 @@ var App = React.createClass({
   render: function () {
     return (
       <div id='App'>
-        <OpponentsDIV players={this.state.players} activePlayer={this.state.activePlayer}/>
-        <ActionAREA gameState={this.state.gameState} socket={socket}/>
+        <OpponentsDIV players={this.state.players} activePlayer={this.state.activePlayer} />
+        <ActionAREA gameState={this.state.gameState} userName={this.state.userName}/>
         <MyCardsDIV />
         <NeckDIV players={this.state.players} neck={this.state.neck} activePlayer={this.state.activePlayer}/>
       </div>

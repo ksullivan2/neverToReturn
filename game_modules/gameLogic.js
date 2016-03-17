@@ -59,9 +59,9 @@ var testForSocketMatch = function(givenSocket, storedSocket){
 	return (givenSocket === "/#"+ storedSocket);
 }
 
-gameLogic.prototype.movePlayerForward = function(socketID){
+gameLogic.prototype.movePlayerForward = function(userName){
 	for (var i = 0; i < this.players.length; i++){
-		if (testForSocketMatch(socketID, this.players[i].socketID) 
+		if (this.players[i].name === userName 
 			&& this.players[i].location < this.neck.length-1){
 			this.players[i].location += 1;
 		}

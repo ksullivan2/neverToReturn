@@ -33,9 +33,9 @@ var ActionAREA = React.createClass({
     return (
       <div className="layoutDIV" id='ActionAREA'>
         <p>ActionAREA</p>
-        <ActionButton text="Start Game" display={displayStart} socket={this.props.socket}/>
-		    <ActionButton text="End Turn" display={displayEndTurn} socket={this.props.socket}/>
-        <ActionButton text="Move One" display={displayMoveOneSpace} socket={this.props.socket}/>
+        <ActionButton text="Start Game" display={displayStart} userName={this.props.userName}/>
+		    <ActionButton text="End Turn" display={displayEndTurn} userName={this.props.userName}/>
+        <ActionButton text="Move One" display={displayMoveOneSpace} userName={this.props.userName}/>
       </div>
     )
   }

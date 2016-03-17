@@ -102,7 +102,6 @@
 	    });
 
 	    socket.on("update userName", function (data) {
-	      console.log("updating userName", data.userName);
 	      self.setState({ userName: data.userName });
 	    });
 
@@ -127,7 +126,7 @@
 	      'div',
 	      { id: 'App' },
 	      React.createElement(OpponentsDIV, { players: this.state.players, activePlayer: this.state.activePlayer }),
-	      React.createElement(ActionAREA, { gameState: this.state.gameState, socket: socket }),
+	      React.createElement(ActionAREA, { gameState: this.state.gameState, userName: this.state.userName }),
 	      React.createElement(MyCardsDIV, null),
 	      React.createElement(NeckDIV, { players: this.state.players, neck: this.state.neck, activePlayer: this.state.activePlayer })
 	    );
@@ -19877,9 +19876,9 @@
 	        null,
 	        'ActionAREA'
 	      ),
-	      React.createElement(ActionButton, { text: 'Start Game', display: displayStart, socket: this.props.socket }),
-	      React.createElement(ActionButton, { text: 'End Turn', display: displayEndTurn, socket: this.props.socket }),
-	      React.createElement(ActionButton, { text: 'Move One', display: displayMoveOneSpace, socket: this.props.socket })
+	      React.createElement(ActionButton, { text: 'Start Game', display: displayStart, userName: this.props.userName }),
+	      React.createElement(ActionButton, { text: 'End Turn', display: displayEndTurn, userName: this.props.userName }),
+	      React.createElement(ActionButton, { text: 'Move One', display: displayMoveOneSpace, userName: this.props.userName })
 	    );
 	  }
 	});
@@ -29744,6 +29743,8 @@
 	"use strict";
 
 	var React = __webpack_require__(1);
+	var socket = io();
+
 	var ActionButton = React.createClass({
 	  displayName: "ActionButton",
 
@@ -29751,7 +29752,8 @@
 
 	  handleClick: function handleClick() {
 	    console.log(this.props.text, " button clicked");
-	    this.props.socket.emit(this.props.text.toString());
+	    console.log(this.props.userName);
+	    socket.emit(this.props.text.toString(), { userName: this.props.userName });
 	  },
 
 	  render: function render() {

@@ -80,8 +80,9 @@ io.on('connection', function (socket) {
     io.sockets.emit('next turn',{activePlayer: gameLogic.activePlayer.name})
   });
 
-	socket.on("Move One", function(){
-    gameLogic.movePlayerForward(socket.id);
+	socket.on("Move One", function(data){
+    console.log("move one data", data)
+    gameLogic.movePlayerForward(data.userName);
     io.sockets.emit('update players',{players: gameLogic.players})
   });
 
