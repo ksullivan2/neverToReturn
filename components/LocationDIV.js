@@ -6,9 +6,6 @@ var LocationDIV = React.createClass({
   render: function () {
     return (
       <div className="cardDIV">
-        {this.props.players.map(function(eachPlayer){
-        	return <PlayerPiece player={eachPlayer.player} key={eachPlayer.key} active={eachPlayer.active}/>
-        })}
         <img src={this.props.card.imgSRC} className="card"/>
       </div>
     )

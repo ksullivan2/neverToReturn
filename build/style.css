@@ -72,8 +72,9 @@
 /*OBJECTS*/
 
 .playerPiece {
-  width: 60px;
-  height: 60px;
+  /*not fighting with aspect ratio now... will fix later*/
+  width: 7%;
+  height: 20%;
   -moz-border-radius: 50%;
   -webkit-border-radius: 50%;
   border-radius: 50%;
@@ -82,8 +83,8 @@
   display: inline-flex;
   z-index: 1;
 
-  position: relative;
-  top: 0;
+  position: absolute;
+  bottom: 0;
   left: 0;
   
 }
@@ -91,7 +92,7 @@
   width: 100%;
   position: absolute;
   z-index: -1;
-  bottom: 0;
+  bottom: 10%;
   left: 0;
   display: inline-flex;
 

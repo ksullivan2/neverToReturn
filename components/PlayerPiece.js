@@ -16,8 +16,10 @@ var PlayerPiece = React.createClass({
   						color: textColor};
     
     return (
-      <div className="playerPiece" style={pieceStyle}>
-      	<p>{this.props.player.name}</p>
+      <div className="playerPieceBox">
+        <div className="playerPiece" style={pieceStyle}>
+        	<p>{this.props.player.name}</p>
+        </div>
       </div>
     )
   }
