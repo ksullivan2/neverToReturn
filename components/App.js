@@ -80,7 +80,7 @@ var App = React.createClass({
     return (
       <div id='App'>
         <OpponentsDIV players={this.state.players} activePlayer={this.state.activePlayer}/>
-        <ActionAREA />
+        <ActionAREA gameState={this.state.gameState}/>
         <MyCardsDIV />
         <NeckDIV players={this.state.players} neck={this.state.neck} activePlayer={this.state.activePlayer}/>
       </div>

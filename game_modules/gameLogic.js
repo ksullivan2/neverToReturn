@@ -43,6 +43,8 @@ gameLogic.prototype.nextTurn = function() {
 		this.activePlayer = this.players[index+1];
 	};
 
+	this.gameState = gameStates.decisionMaking;
+
 };
 
 //NEW NECK------------------------------------------------------------------------------------------------------------------
