@@ -42,6 +42,8 @@ var gameStates = require("./game_modules/gameStates.js");
 //SOCKET EVENTS------------------------------------------------------------------------------------------------------------------
 
 io.on('connection', function (socket) {
+  console.log("on connection", socket.id)
+
   socket.emit("pass initial state", {neck: gameLogic.neck, 
     players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, gameState: gameLogic.gameState})
   
@@ -56,6 +58,9 @@ io.on('connection', function (socket) {
   }
 
   socket.on('create player', function(data){
+    console.log("create player received", socket.id, data.socketID)
+
+      
   	var validName = gameLogic.addPlayer(data.name, data.socketID);
     if (!validName){
       socket.emit("name taken", {playerIndex: gameLogic.players.length+1});
@@ -78,6 +83,7 @@ io.on('connection', function (socket) {
   });
 
 	socket.on("Move One", function(){
+    console.log(socket.id)
     gameLogic.movePlayerForward(socket.id);
     io.sockets.emit('update players',{players: gameLogic.players})
   });

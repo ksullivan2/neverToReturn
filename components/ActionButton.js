@@ -1,7 +1,4 @@
 var React = require('react');
-var socket = io();
-
-
 var ActionButton = React.createClass({
   componentDidMount: function(){
     
@@ -9,7 +6,7 @@ var ActionButton = React.createClass({
 
   handleClick: function(){
       console.log(this.props.text);
-      socket.emit(this.props.text.toString());
+      this.props.socket.emit(this.props.text.toString());
     
   },
 

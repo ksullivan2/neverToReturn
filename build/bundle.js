@@ -56,10 +56,11 @@
 
 	//EVENTS--------------------------------------------------------------------------------------------------------------
 	var socket = io();
+	console.log("APP FILE", socket.id);
 
 	socket.on("new player", function (data) {
 	  getName(data);
-	  console.log(socket.id);
+	  console.log("new player received", socket.id);
 	});
 
 	socket.on("name taken", function (data) {
@@ -67,7 +68,9 @@
 	});
 
 	//INTERACT WITH HUMAN--------------------------------------------------------------------------------------------------------
+
 	function getName(data) {
+	  console.log("getName", socket.id);
 	  var name = null;
 	  do {
 	    name = prompt("What is your name?", "Player " + data.playerIndex);
@@ -121,7 +124,7 @@
 	      'div',
 	      { id: 'App' },
 	      React.createElement(OpponentsDIV, { players: this.state.players, activePlayer: this.state.activePlayer }),
-	      React.createElement(ActionAREA, { gameState: this.state.gameState }),
+	      React.createElement(ActionAREA, { gameState: this.state.gameState, socket: socket }),
 	      React.createElement(MyCardsDIV, null),
 	      React.createElement(NeckDIV, { players: this.state.players, neck: this.state.neck, activePlayer: this.state.activePlayer })
 	    );
@@ -19837,7 +19840,6 @@
 
 	var React = __webpack_require__(1);
 	var $ = __webpack_require__(163);
-	var socket = io();
 	var gameStates = __webpack_require__(164);
 	var ActionButton = __webpack_require__(165);
 
@@ -19872,9 +19874,9 @@
 	        null,
 	        'ActionAREA'
 	      ),
-	      React.createElement(ActionButton, { text: 'Start Game', display: displayStart }),
-	      React.createElement(ActionButton, { text: 'End Turn', display: displayEndTurn }),
-	      React.createElement(ActionButton, { text: 'Move One', display: displayMoveOneSpace })
+	      React.createElement(ActionButton, { text: 'Start Game', display: displayStart, socket: this.props.socket }),
+	      React.createElement(ActionButton, { text: 'End Turn', display: displayEndTurn, socket: this.props.socket }),
+	      React.createElement(ActionButton, { text: 'Move One', display: displayMoveOneSpace, socket: this.props.socket })
 	    );
 	  }
 	});
@@ -29739,8 +29741,6 @@
 	"use strict";
 
 	var React = __webpack_require__(1);
-	var socket = io();
-
 	var ActionButton = React.createClass({
 	  displayName: "ActionButton",
 
@@ -29748,7 +29748,7 @@
 
 	  handleClick: function handleClick() {
 	    console.log(this.props.text);
-	    socket.emit(this.props.text.toString());
+	    this.props.socket.emit(this.props.text.toString());
 	  },
 
 	  render: function render() {

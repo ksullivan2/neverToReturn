@@ -1,6 +1,5 @@
 var React = require('react');
 var $ = require('jquery');
-var socket = io();
 var gameStates = require('../game_modules/gameStates.js');
 var ActionButton = require('./ActionButton.js')
 
@@ -34,9 +33,9 @@ var ActionAREA = React.createClass({
     return (
       <div className="layoutDIV" id='ActionAREA'>
         <p>ActionAREA</p>
-        <ActionButton text="Start Game" display={displayStart}/>
-		    <ActionButton text="End Turn" display={displayEndTurn}/>
-        <ActionButton text="Move One" display={displayMoveOneSpace} />
+        <ActionButton text="Start Game" display={displayStart} socket={this.props.socket}/>
+		    <ActionButton text="End Turn" display={displayEndTurn} socket={this.props.socket}/>
+        <ActionButton text="Move One" display={displayMoveOneSpace} socket={this.props.socket}/>
       </div>
     )
   }
