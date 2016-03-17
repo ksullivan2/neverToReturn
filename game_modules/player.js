@@ -1,7 +1,9 @@
 module.exports = Player;
 
 
-function Player(name, number, color){
+function Player(name, number, color, socketID){
+	this.socketID = socketID;
+
 	this.name = name;
 	this.color = color;
 

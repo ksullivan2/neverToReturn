@@ -40,6 +40,7 @@ var gameStates = require("./game_modules/gameStates.js");
 
 
 //SOCKET EVENTS------------------------------------------------------------------------------------------------------------------
+
 io.on('connection', function (socket) {
   socket.emit("pass initial state", {neck: gameLogic.neck, 
     players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, gameState: gameLogic.gameState})
@@ -51,30 +52,35 @@ io.on('connection', function (socket) {
   }else if (socket.handshake.session.userdata){
     //overwrite the socket data for that player, using cookie data
     var name = socket.handshake.session.userdata.name;
-    gameLogic.resetSocket(gameLogic.lookupPlayerIndex(name),socket);
+    gameLogic.resetSocket(name,socket.id);
   }
 
   socket.on('create player', function(data){
-  	var validName = gameLogic.addPlayer(data.name, socket);
+  	var validName = gameLogic.addPlayer(data.name, data.socketID);
     if (!validName){
       socket.emit("name taken", {playerIndex: gameLogic.players.length+1});
     } else{
       socket.handshake.session.userdata = data;
-      io.sockets.emit("new player added", {players: gameLogic.players})
+      io.sockets.emit("update players", {players: gameLogic.players})
     }
   });
 
+//buttons in action area----------------------------------------------------------------------
+  socket.on('Start Game', function(){
+      gameLogic.startGame();
+      io.sockets.emit('game started', {players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, 
+        neck:gameLogic.neck, gameState: gameLogic.gameState})  
+  });
 
   socket.on('End Turn', function(){
     gameLogic.nextTurn()
     io.sockets.emit('next turn',{activePlayer: gameLogic.activePlayer.name})
   });
 
-	socket.on('Start Game', function(){
-    	gameLogic.startGame();
-    	io.sockets.emit('game started', {players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, 
-        neck:gameLogic.neck, gameState: gameLogic.gameState})  
-	});
+	socket.on("Move One", function(){
+    gameLogic.movePlayerForward(socket.id);
+    io.sockets.emit('update players',{players: gameLogic.players})
+  });
 
 
 

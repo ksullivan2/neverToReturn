@@ -13,6 +13,7 @@ var socket = io();
 
 socket.on("new player", function(data){
   getName(data);
+  console.log(socket.id)
 });
 
 socket.on("name taken", function(data){
@@ -25,13 +26,14 @@ socket.on("name taken", function(data){
 
 
 //INTERACT WITH HUMAN--------------------------------------------------------------------------------------------------------
+
 function getName(data){
   var name = null;
   do {
-    name = prompt("What is your name?","Player "+data.playerIndex);
+    name = prompt("What is your name?","Player "+ data.playerIndex);
   }while (!name);
   
-  socket.emit("create player",{name: name});
+  socket.emit("create player",{name: name, socketID:socket.id});
 }
 
 
@@ -61,7 +63,7 @@ var App = React.createClass({
                       gameState: data.gameState})
       }) 
 
-    socket.on('new player added', function(data){
+    socket.on('update players', function(data){
       self.setState({players: data.players});
       })
 

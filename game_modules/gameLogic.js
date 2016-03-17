@@ -18,9 +18,8 @@ function gameLogic(){
 
 	this.neck = dummyNeck;
 	this.players = [];
-	this.activePlayer = new Player("dummyStartPlayer", 100, "yellow")
-	this.socketList = [];
-	this.gameState = gameStates.gatherPlayers;
+	this.activePlayer = new Player("dummyStartPlayer", 100, "yellow");
+	this.gameState = gameStates.gatherPlayers;;
 }
 
 
@@ -44,10 +43,8 @@ gameLogic.prototype.nextTurn = function() {
 	};
 
 	this.gameState = gameStates.decisionMaking;
-
 };
 
-//NEW NECK------------------------------------------------------------------------------------------------------------------
 gameLogic.prototype.newNeck = function() {
 	this.neck = [];
 	this.neck.push(new cardTypes.terrainCard("start"));
@@ -57,34 +54,37 @@ gameLogic.prototype.newNeck = function() {
 	this.neck.push(new cardTypes.terrainCard("goal"));
 };
 
+//PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------
+gameLogic.prototype.movePlayerForward = function(socketID){
+	console.log(socketID)
+	for (var i = 0; i < this.players.length; i++){
+		console.log(this.players[i].socketID)
+		if (this.players[i].socketID === socketID){
+			this.players[i].location += 1;
+		}
+	}
+}
+
+
 
 //SESSIONS/PLAYERS------------------------------------------------------------------------------------------------------------
-gameLogic.prototype.addPlayer = function(name, socket) {
-	//passing sockets back and forth breaks things. 
-	//we will figure out the socket/player relationship by the index.
+gameLogic.prototype.addPlayer = function(name, socketID) {
 	for (var i = 0; i < this.players.length; i++){
 		if (this.players[i].name === name){
 			return false;
 		}
 	}
-
-	this.players.push(new Player(name, this.players.length+1, playerColors[this.players.length]));
-	this.socketList.push(socket);
+	this.players.push(new Player(name, this.players.length+1, playerColors[this.players.length], socketID));
 	return true;
 };
 
 
-gameLogic.prototype.lookupPlayerIndex= function(name){
+gameLogic.prototype.resetSocket = function(name, socketID){
 	for (var i = 0; i < this.players.length; i++){
 		if (this.players[i].name === name){
-			return i;
-		}
+			this.players[i].socketID = socketID
+		}		
 	}
-	return false;
-}
-
-gameLogic.prototype.resetSocket = function(playerIndex, socket){
-	this.socketList[playerIndex] = socket;
 }
 
 module.exports = new gameLogic();

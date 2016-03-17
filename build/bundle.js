@@ -50,14 +50,16 @@
 	var ReactDOM = __webpack_require__(158);
 	var OpponentsDIV = __webpack_require__(159);
 	var ActionAREA = __webpack_require__(162);
-	var MyCardsDIV = __webpack_require__(164);
-	var NeckDIV = __webpack_require__(165);
+	var MyCardsDIV = __webpack_require__(166);
+	var NeckDIV = __webpack_require__(167);
+	var $ = __webpack_require__(163);
 
 	//EVENTS--------------------------------------------------------------------------------------------------------------
 	var socket = io();
 
 	socket.on("new player", function (data) {
 	  getName(data);
+	  console.log(socket.id);
 	});
 
 	socket.on("name taken", function (data) {
@@ -71,7 +73,7 @@
 	    name = prompt("What is your name?", "Player " + data.playerIndex);
 	  } while (!name);
 
-	  socket.emit("create player", { name: name });
+	  socket.emit("create player", { name: name, socketID: socket.id });
 	}
 
 	//REACT RENDER APP---------------------------------------------------------------------------------------------------------
@@ -83,7 +85,8 @@
 	    return {
 	      players: [],
 	      neck: [],
-	      activePlayer: null
+	      activePlayer: null,
+	      gameState: 0
 	    };
 	  },
 
@@ -93,16 +96,18 @@
 	    socket.on("pass initial state", function (data) {
 	      self.setState({ players: data.players,
 	        neck: data.neck,
-	        activePlayer: data.activePlayer });
+	        activePlayer: data.activePlayer,
+	        gameState: data.gameState });
 	    });
 
-	    socket.on('new player added', function (data) {
+	    socket.on('update players', function (data) {
 	      self.setState({ players: data.players });
 	    });
 
 	    socket.on('game started', function (data) {
-	      self.setState({ neck: data.neck, activePlayer: data.activePlayer });
-	      //destroyStartGameButton();
+	      self.setState({ neck: data.neck,
+	        activePlayer: data.activePlayer,
+	        gameState: data.gameState });
 	    });
 
 	    socket.on('next turn', function (data) {
@@ -116,7 +121,7 @@
 	      'div',
 	      { id: 'App' },
 	      React.createElement(OpponentsDIV, { players: this.state.players, activePlayer: this.state.activePlayer }),
-	      React.createElement(ActionAREA, null),
+	      React.createElement(ActionAREA, { gameState: this.state.gameState }),
 	      React.createElement(MyCardsDIV, null),
 	      React.createElement(NeckDIV, { players: this.state.players, neck: this.state.neck, activePlayer: this.state.activePlayer })
 	    );
@@ -19833,44 +19838,45 @@
 	var React = __webpack_require__(1);
 	var $ = __webpack_require__(163);
 	var socket = io();
-
-	//bind buttons----------------------------------------------------------------------------------------------------------
+	var gameStates = __webpack_require__(164);
+	var ActionButton = __webpack_require__(165);
 
 	//REACT CLASS
 
+	// gameStates:
+	//   gatherPlayers: 0,
+	//   decisionMaking: 1,
+	//   actionsPlayingOut: 2
+
 	var ActionAREA = React.createClass({
-			displayName: 'ActionAREA',
+	  displayName: 'ActionAREA',
 
-			componentDidMount: function componentDidMount() {
-					$("#endTurnButton").click(function () {
-							console.log("end turn click");
-							socket.emit("end turn");
-					});
 
-					$("#startGameButton").click(function () {
-							console.log("start game click");
-							socket.emit("start game button");
-					});
-			},
+	  render: function render() {
+	    var displayStart = false;
+	    var displayEndTurn = false;
+	    var displayMoveOneSpace = false;
 
-			render: function render() {
-					var buttonStyle = { margin: 'auto', width: '100px', height: '50px' };
-					return React.createElement(
-							'div',
-							{ className: 'layoutDIV', id: 'ActionAREA' },
-							'ActionAREA',
-							React.createElement(
-									'button',
-									{ id: 'startGameButton', style: buttonStyle },
-									'Start Game'
-							),
-							React.createElement(
-									'button',
-									{ id: 'endTurnButton', style: buttonStyle },
-									'END TURN'
-							)
-					);
-			}
+	    if (this.props.gameState === gameStates.gatherPlayers) {
+	      displayStart = true;
+	    } else if (this.props.gameState === gameStates.decisionMaking) {
+	      displayMoveOneSpace = true;
+	      displayEndTurn = true;
+	    } else if (this.props.gameState === gameStates.gatherPlayers) {}
+
+	    return React.createElement(
+	      'div',
+	      { className: 'layoutDIV', id: 'ActionAREA' },
+	      React.createElement(
+	        'p',
+	        null,
+	        'ActionAREA'
+	      ),
+	      React.createElement(ActionButton, { text: 'Start Game', display: displayStart }),
+	      React.createElement(ActionButton, { text: 'End Turn', display: displayEndTurn }),
+	      React.createElement(ActionButton, { text: 'Move One', display: displayMoveOneSpace })
+	    );
+	  }
 	});
 
 	module.exports = ActionAREA;
@@ -29714,6 +29720,61 @@
 
 /***/ },
 /* 164 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	var gameStates = {
+		gatherPlayers: 0,
+		decisionMaking: 1,
+		actionsPlayingOut: 2
+	};
+
+	module.exports = gameStates;
+
+/***/ },
+/* 165 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(1);
+	var socket = io();
+
+	var ActionButton = React.createClass({
+	  displayName: "ActionButton",
+
+	  componentDidMount: function componentDidMount() {},
+
+	  handleClick: function handleClick() {
+	    console.log(this.props.text);
+	    socket.emit(this.props.text.toString());
+	  },
+
+	  render: function render() {
+	    var display = "none";
+
+	    if (this.props.display) {
+	      display = "inline-block";
+	    }
+
+	    var buttonStyle = { margin: 'auto',
+	      width: '100px',
+	      height: '50px',
+	      display: display };
+
+	    return React.createElement(
+	      "button",
+	      { onClick: this.handleClick, className: "actionButton", style: buttonStyle },
+	      this.props.text
+	    );
+	  }
+	});
+
+	module.exports = ActionButton;
+
+/***/ },
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29735,14 +29796,14 @@
 	module.exports = MyCardsDIV;
 
 /***/ },
-/* 165 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var LocationDIV = __webpack_require__(166);
-	var PlayerPiece = __webpack_require__(167);
+	var LocationDIV = __webpack_require__(168);
+	var PlayerPiece = __webpack_require__(169);
 	var socket = io();
 
 	var NeckDIV = React.createClass({
@@ -29794,13 +29855,13 @@
 	module.exports = NeckDIV;
 
 /***/ },
-/* 166 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var PlayerPiece = __webpack_require__(167);
+	var PlayerPiece = __webpack_require__(169);
 
 	var LocationDIV = React.createClass({
 	  displayName: 'LocationDIV',
@@ -29820,7 +29881,7 @@
 	module.exports = LocationDIV;
 
 /***/ },
-/* 167 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
