@@ -2,7 +2,7 @@ var React = require('react');
 var PlayerPiece = require('./PlayerPiece')
 
 
-var playerList = [];
+
 
 var NeckCanvas = React.createClass({
   getInitialState: function(){
@@ -29,22 +29,32 @@ var NeckCanvas = React.createClass({
     })
   },
     
+  calculatePlayerCoordinates: function(player){
+    var cardWidth = this.state.canvas_width/7;
+    var left = player.location * cardWidth;
+    var bottom = 0;
+
+    return {left: left, bottom:bottom}
+
+  },
 
   createPlayerPiecesList: function(players){
+    var playerList = [];
+
     for (var i = 0; i < players.length; i++) {
       var active = false;
       if (players[i].name == this.props.activePlayer){
         active = true;
       }
-      playerList.push({player:players[i], active:active})
+      playerList.push({player:players[i], active:active, coords: this.calculatePlayerCoordinates(players[i])})
     }
-
+    return playerList;
   },
 
 
 
   render: function () {
-    this.createPlayerPiecesList(this.props.players)
+    var playerList = this.createPlayerPiecesList(this.props.players)
 
     var canvasStyle = {margin: 'auto', 
                     width: '100%', 
@@ -57,7 +67,8 @@ var NeckCanvas = React.createClass({
       	{playerList.map(function(each){
             return <PlayerPiece player={each.player} 
                                 key={each.player.name + "s piece"} 
-                                active={each.active}/>
+                                active={each.active}
+                                coords={each.coords}/>
           })}
       </div>
     )

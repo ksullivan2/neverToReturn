@@ -13,7 +13,9 @@ var PlayerPiece = React.createClass({
 
   	var pieceStyle = {background: "radial-gradient("+this.props.player.color+" 0%, hsla(0, 100%, 20%, 0) 100%) 0 0",
   						border: border,
-  						color: textColor};
+  						color: textColor,
+              left: this.props.coords.left,
+              bottom: this.props.coords.bottom};
     
     return (
       <div className="playerPieceBox">
