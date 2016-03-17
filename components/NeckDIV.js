@@ -8,6 +8,8 @@ var socket = io();
 
 var NeckDIV = React.createClass({
   render: function () {
+    
+
     var self = this;
 
     //creating an array to be rendered below
@@ -19,7 +21,7 @@ var NeckDIV = React.createClass({
 
     return (
       <div  className="layoutDIV" id='NeckDIV'>
-        <NeckCanvas players={this.props.players}/>
+        <NeckCanvas players={this.props.players} activePlayer={this.props.activePlayer}/>
         
 
         <div id="allCardsDIV" className="layoutDIV">
