@@ -61,7 +61,8 @@ var testForSocketMatch = function(givenSocket, storedSocket){
 
 gameLogic.prototype.movePlayerForward = function(socketID){
 	for (var i = 0; i < this.players.length; i++){
-		if (testForSocketMatch(socketID, this.players[i].socketID)){
+		if (testForSocketMatch(socketID, this.players[i].socketID) 
+			&& this.players[i].location < this.neck.length-1){
 			this.players[i].location += 1;
 		}
 	}
