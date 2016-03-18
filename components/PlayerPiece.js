@@ -11,10 +11,12 @@ var PlayerPiece = React.createClass({
 
   	var border = '';
   	var textColor = "black";
+    var zIndex = "99";
 
     if (this.props.active){
     	border = "2px solid black";
     	textColor = "white";
+      zIndex = "100";
     }
 
     return (
@@ -30,7 +32,8 @@ var PlayerPiece = React.createClass({
                             left: interpolatingStyle.left,
                             bottom: interpolatingStyle.bottom,
                             width: self.props.diameter,
-                            height: self.props.diameter}}>
+                            height: self.props.diameter,
+                            zIndex: zIndex}}>
               	<p>{self.props.player.name}</p>
               </div>
             </div>

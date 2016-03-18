@@ -82,8 +82,6 @@ body {
   text-align: center;
 
   display: inline-flex;
-  z-index: 1;
-
   position: absolute;
 }
 

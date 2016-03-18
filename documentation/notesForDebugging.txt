@@ -1,5 +1,9 @@
 NOTES FOR DEBUGGING:
 
-React-Motion animation is kinda "magically" working: the Motion object is always passed 0 as an initial value and interpolates the new props.location value, but never updates the initial value. This might break in the future, given the following error message:
+1) Motion using deprecated function?
+	React-Motion animation is kinda "magically" working: the Motion object is always passed 0 as an initial value and interpolates the new props.location value, but never updates the initial value. This might break in the future, given the following error message:
 
-warning.js:45 Warning: `div` was passed a style object that has previously been mutated. Mutating `style` is deprecated. Consider cloning it beforehand. Check the `render` of `Motion`. Previous style: {background: "radial-gradient(red 0%, hsla(0, 100%, 20%, 0) 100%) 0 0", border: "", color: "black", left: 0, bottom: 0, width: NaN, height: NaN}. Mutated style: {background: "radial-gradient(red 0%, hsla(0, 100%, 20%, 0) 100%) 0 0", border: "", color: "black", left: 0, bottom: 0, width: NaN, height: NaN}.
+	warning.js:45 Warning: `div` was passed a style object that has previously been mutated. Mutating `style` is deprecated. Consider cloning it beforehand. Check the `render` of `Motion`. Previous style: {background: "radial-gradient(red 0%, hsla(0, 100%, 20%, 0) 100%) 0 0", border: "", color: "black", left: 0, bottom: 0, width: NaN, height: NaN}. Mutated style: {background: "radial-gradient(red 0%, hsla(0, 100%, 20%, 0) 100%) 0 0", border: "", color: "black", left: 0, bottom: 0, width: NaN, height: NaN}.
+
+2) z-indices of various objects:
+	playerPieces: 100 if active, 99 if not
