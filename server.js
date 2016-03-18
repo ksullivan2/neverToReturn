@@ -81,7 +81,6 @@ io.on('connection', function (socket) {
   });
 
 	socket.on("Move One", function(data){
-    console.log("move one data", data)
     gameLogic.movePlayerForward(data.userName);
     io.sockets.emit('update players',{players: gameLogic.players})
   });

@@ -18,7 +18,6 @@ function gameLogic(){
 		var tempLocation = new neckLocation();
 		tempLocation.addCard(new cardTypes.terrainCard("start"));
 		this.neck.push(tempLocation);
-
 	}
 
 	this.players = [];
@@ -62,29 +61,47 @@ gameLogic.prototype.newNeck = function() {
 };
 
 //PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------
-var testForSocketMatch = function(givenSocket, storedSocket){
-	return (givenSocket === "/#"+ storedSocket);
-}
 
 gameLogic.prototype.movePlayerForward = function(userName){
 	for (var i = 0; i < this.players.length; i++){
 		if (this.players[i].name === userName 
 			&& this.players[i].location < this.neck.length-1){
+			
+			//update the neckLocations' lists of players
+			this.removePlayerFromLocation(this.players[i].location, this.players[i].name);
+			this.addPlayerToLocation(this.players[i].location+1, this.players[i].name);
+
+			//update the location of the player object
 			this.players[i].location += 1;
 		}
 	}
 }
 
+gameLogic.prototype.removePlayerFromLocation = function(locationIndex, name){
+	var index = this.neck[locationIndex].playersOnLocation.indexOf(name);
+	this.neck[locationIndex].playersOnLocation.splice(index, 1);
+}
+
+gameLogic.prototype.addPlayerToLocation = function(locationIndex, name){
+	this.neck[locationIndex].playersOnLocation.push(name);
+}
+
 
 
 //SESSIONS/PLAYERS------------------------------------------------------------------------------------------------------------
+var testForSocketMatch = function(givenSocket, storedSocket){
+	return (givenSocket === "/#"+ storedSocket);
+}
+
 gameLogic.prototype.addPlayer = function(name, socketID) {
 	for (var i = 0; i < this.players.length; i++){
 		if (this.players[i].name === name){
 			return false;
 		}
 	}
-	this.players.push(new Player(name, this.players.length+1, playerColors[this.players.length], socketID));
+	var tempPlayer = new Player(name, this.players.length+1, playerColors[this.players.length], socketID);
+	this.players.push(tempPlayer);
+	this.addPlayerToLocation(0,tempPlayer.name);
 	return true;
 };
 

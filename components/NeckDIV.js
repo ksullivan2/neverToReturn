@@ -23,7 +23,7 @@ var NeckDIV = React.createClass({
 
     return (
       <div  className="layoutDIV" id='NeckDIV'>
-        <NeckCanvas players={this.props.players} activePlayer={this.props.activePlayer}/>
+        <NeckCanvas players={this.props.players} activePlayer={this.props.activePlayer} neck={this.props.neck}/>
         
 
         <div id="allCardsDIV" className="layoutDIV">
