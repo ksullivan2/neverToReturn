@@ -16,6 +16,7 @@ var NeckCanvas = React.createClass({
 
   componentDidMount: function(){
     this.calculateCanvas();
+    window.addEventListener("resize", this.calculateCanvas);
   },
 
   calculateCanvas: function(){

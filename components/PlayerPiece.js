@@ -2,6 +2,9 @@ var React = require('react');
 
 
 var PlayerPiece = React.createClass({
+ 
+
+
   render: function () {
   	var border = '';
   	var textColor = "black";

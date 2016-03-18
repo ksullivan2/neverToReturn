@@ -7,6 +7,8 @@ var socket = io();
 
 
 var NeckDIV = React.createClass({
+  
+
   render: function () {
     
 
