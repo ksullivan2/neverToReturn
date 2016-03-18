@@ -1,8 +1,14 @@
 var React = require('react');
+var ReactMotion = require('react-motion');
+var Motion = ReactMotion.Motion;
+var spring = ReactMotion.spring;
 
 
 var PlayerPiece = React.createClass({
- 
+  
+    //<Motion defaultStyle={{x: 0}} style={{x: spring(10)}}>
+    //{interpolatingStyle => <div style={interpolatingStyle} />}
+    //</Motion>
 
 
   render: function () {
@@ -23,11 +29,17 @@ var PlayerPiece = React.createClass({
               height: this.props.diameter};
     
     return (
-      <div className="playerPieceBox">
-        <div className="playerPiece" style={pieceStyle}>
-        	<p>{this.props.player.name}</p>
-        </div>
-      </div>
+      <Motion defaultStyle={{x: 0}} style={{x: spring(10)}}>
+        {function(value){
+          return(
+            <div className="playerPieceBox">
+              <div className="playerPiece" style={pieceStyle}>
+              	<p>{value}</p>
+              </div>
+            </div>
+          )
+        }} 
+      </Motion>
     )
   }
 });

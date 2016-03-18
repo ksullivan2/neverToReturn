@@ -68,6 +68,8 @@ var NeckCanvas = React.createClass({
                     border: "2px solid red",
                     position: "absolute"};
     
+
+
     return (
       <div style={canvasStyle}>
       	{playerList.map(function(each){
