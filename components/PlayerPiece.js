@@ -29,10 +29,12 @@ var PlayerPiece = React.createClass({
                         width: self.props.diameter,
                         height: self.props.diameter,
                         zIndex: zIndex}}>
-              <div className="playerThumbnail" style={{backgroundImage: "url('/assets/playerThumbnails/homelyVillager.jpg')"}} >
+              <div className="playerThumbnail" style={{background: "url('/assets/playerThumbnails/homelyVillager.jpg')",
+                                                      backgroundSize: "contain"}} >
                 <div className="playerPieceColor" 
-                    /* style={{background: "radial-gradient("+self.props.player.color+" 0%, hsla(0, 100%, 20%, 0) 100%) 0 0"}}*/
-                    style= {{background: "rgba(10,100,20,.7)"}} >
+
+                    style= {{background: self.props.player.color,
+                            opacity: ".35"}} >
                 </div>
               </div>
             </div>
