@@ -13,7 +13,7 @@ var OpponentsDIV = React.createClass({
   	var playerList = this.props.players.map(function(player){
   		var key = "playerDIV"+ player.name;
       var active = false;
-      if (self.props.activePlayer === player.name){active = true;}
+      if (self.props.activePlayer.name === player.name){active = true;}
   		return <PlayerDIV player={player} key={key} active={active}/>
   	});
 

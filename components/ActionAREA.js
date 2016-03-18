@@ -16,15 +16,22 @@ var ActionAREA = React.createClass({
   render: function () {
     var displayStart = false;
     var displayEndTurn = false;
-    var displayMoveOneSpace = false;
+    var displayMoveForward = false;
+    var displayMoveBackward = false;
 
   	if (this.props.gameState === gameStates.gatherPlayers){
       displayStart = true;
     }
     else if (this.props.gameState === gameStates.decisionMaking){
-      if (this.props.activePlayer == this.props.userName){
-        displayMoveOneSpace = true;
-        displayEndTurn = true; 
+      if (this.props.activePlayer.name == this.props.userName){
+        displayEndTurn = true;
+
+        if (this.props.activePlayer.location != 6){
+          displayMoveForward = true;
+        }
+        if (this.props.activePlayer.location != 0){
+          displayMoveBackward = true;
+        }
       }
     }
     else if (this.props.gameState === gameStates.gatherPlayers){
@@ -37,7 +44,9 @@ var ActionAREA = React.createClass({
         <p>ActionAREA</p>
         <ActionButton text="Start Game" display={displayStart} userName={this.props.userName}/>
 		    <ActionButton text="End Turn" display={displayEndTurn} userName={this.props.userName}/>
-        <ActionButton text="Move One" display={displayMoveOneSpace} userName={this.props.userName}/>
+        <ActionButton text="Move Forward" display={displayMoveForward} userName={this.props.userName}/>
+        <ActionButton text="Move Backward" display={displayMoveBackward} userName={this.props.userName}/>
+
       </div>
     )
   }

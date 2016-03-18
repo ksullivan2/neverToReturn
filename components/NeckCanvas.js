@@ -50,7 +50,7 @@ var NeckCanvas = React.createClass({
 
     for (var i = 0; i < players.length; i++) {
       var active = false;
-      if (players[i].name == this.props.activePlayer){
+      if (players[i].name == this.props.activePlayer.name){
         active = true;
       }
       var playerAttributes = this.calculatePlayerAttributes(players[i]);

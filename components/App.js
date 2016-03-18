@@ -68,7 +68,7 @@ var App = React.createClass({
     })
 
     socket.on('update players', function(data){
-      self.setState({players: data.players});
+      self.setState({players: data.players, activePlayer: data.activePlayer});
       })
 
     socket.on('update neck', function(data){

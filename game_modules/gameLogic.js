@@ -62,17 +62,19 @@ gameLogic.prototype.newNeck = function() {
 
 //PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------
 
-gameLogic.prototype.movePlayerForward = function(userName){
+gameLogic.prototype.movePlayer = function(userName, direction){
+	//direction: true is forward, false is backward
+	//don't want to ever move more than 1 because need to resolve effects
+
 	for (var i = 0; i < this.players.length; i++){
-		if (this.players[i].name === userName 
-			&& this.players[i].location < this.neck.length-1){
+		if (this.players[i].name === userName){
 			
 			//update the neckLocations' lists of players
 			this.removePlayerFromLocation(this.players[i].location, this.players[i].name);
-			this.addPlayerToLocation(this.players[i].location+1, this.players[i].name);
+			this.addPlayerToLocation(this.players[i].location+(1*direction), this.players[i].name);
 
 			//update the location of the player object
-			this.players[i].location += 1;
+			this.players[i].location += (1*direction);
 		}
 	}
 }

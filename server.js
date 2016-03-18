@@ -54,7 +54,7 @@ io.on('connection', function (socket) {
 
 //HOW TO GET USERNAME
   socket.emit("pass initial state", {neck: gameLogic.neck, 
-    players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, 
+    players: gameLogic.players, activePlayer: gameLogic.activePlayer, 
     gameState: gameLogic.gameState})
 
   socket.on('create player', function(data){   
@@ -64,7 +64,7 @@ io.on('connection', function (socket) {
     } else{
       socket.handshake.session.userdata = data;
       socket.emit("update userName", {userName: data.name})
-      io.sockets.emit("update players", {players: gameLogic.players})
+      io.sockets.emit("update players", {players: gameLogic.players, activePlayer: gameLogic.activePlayer})
       io.sockets.emit("update neck", {neck: gameLogic.neck})
     }
   });
@@ -72,18 +72,24 @@ io.on('connection', function (socket) {
 //buttons in action area----------------------------------------------------------------------
   socket.on('Start Game', function(){
       gameLogic.startGame();
-      io.sockets.emit('game started', {players: gameLogic.players, activePlayer: gameLogic.activePlayer.name, 
+      io.sockets.emit('game started', {players: gameLogic.players, activePlayer: gameLogic.activePlayer, 
         neck:gameLogic.neck, gameState: gameLogic.gameState})  
   });
 
   socket.on('End Turn', function(){
     gameLogic.nextTurn()
-    io.sockets.emit('next turn',{activePlayer: gameLogic.activePlayer.name})
+    io.sockets.emit('next turn',{activePlayer: gameLogic.activePlayer})
   });
 
-	socket.on("Move One", function(data){
-    gameLogic.movePlayerForward(data.userName);
-    io.sockets.emit('update players',{players: gameLogic.players})
+	socket.on("Move Forward", function(data){
+    gameLogic.movePlayer(data.userName, 1);
+    io.sockets.emit('update players',{players: gameLogic.players, activePlayer: gameLogic.activePlayer})
+    io.sockets.emit('update neck',{neck: gameLogic.neck})
+  });
+
+  socket.on("Move Backward", function(data){
+    gameLogic.movePlayer(data.userName, -1);
+    io.sockets.emit('update players',{players: gameLogic.players, activePlayer: gameLogic.activePlayer})
     io.sockets.emit('update neck',{neck: gameLogic.neck})
   });
 
