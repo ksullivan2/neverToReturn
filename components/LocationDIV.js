@@ -1,12 +1,23 @@
 var React = require('react');
-var PlayerPiece = require('./PlayerPiece')
+var LocationCard = require('./LocationCard');
+
 
 
 var LocationDIV = React.createClass({
   render: function () {
+    var cardsInLocation = [];
+    for (var i = 0; i < this.props.location.cards.length; i++){
+      cardsInLocation.push({card: this.props.location.cards[i], key:(this.props.name+"card"+i)})
+    }
+
     return (
-      <div className="cardDIV">
-        <img src={this.props.card.imgSRC} className="card"/>
+      <div className="locationDIV">
+        {cardsInLocation.map(function(eachCard){
+          return(
+            <LocationCard card={eachCard.card} key={eachCard.key} />
+          )
+        })
+        }
       </div>
     )
   }

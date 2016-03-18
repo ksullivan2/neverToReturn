@@ -3,20 +3,24 @@
 var cardTypes = require("./cardTypes.js");
 var Player = require("./player.js");
 var gameStates = require("./gameStates.js");
+var neckLocation = require("./neckLocation.js");
 
 
-var playerColors = {0: "red", 1: "blue", 2: "orange", 3:"green", 4:"purple", 5:"brown"}
+var playerColors = require("../CONFIG FILES/visualConfig.js").playerColors;
 
 
 
 
 function gameLogic(){
-	var dummyNeck = []
+	//create neck full of NeckLocations, plus dummy cards
+	this.neck = [];
 	for (var i = 0; i <= 6; i++){
-	    dummyNeck.push(new cardTypes.terrainCard("start"));
-	  }
+		var tempLocation = new neckLocation();
+		tempLocation.addCard(new cardTypes.terrainCard("start"));
+		this.neck.push(tempLocation);
 
-	this.neck = dummyNeck;
+	}
+
 	this.players = [];
 	this.activePlayer = new Player("dummyStartPlayer", 100, "yellow");
 	this.gameState = gameStates.gatherPlayers;;
@@ -46,12 +50,15 @@ gameLogic.prototype.nextTurn = function() {
 };
 
 gameLogic.prototype.newNeck = function() {
-	this.neck = [];
-	this.neck.push(new cardTypes.terrainCard("start"));
-	for (var i = 1; i <= 5; i++){
-		this.neck.push(new cardTypes.terrainCard("fogRiddenSwamp"));
+	//temporary method for dealing a dummy neck
+	for (var i = 0; i <= 6; i++){
+		var cardName = "fogRiddenSwamp";
+		if (i===0){cardName = "start"};
+		if (i===6){cardName = "goal"};
+
+		this.neck[i].cards = [];
+		this.neck[i].addCard(new cardTypes.terrainCard(cardName))
 	}
-	this.neck.push(new cardTypes.terrainCard("goal"));
 };
 
 //PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------

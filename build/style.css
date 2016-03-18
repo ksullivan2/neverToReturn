@@ -62,7 +62,7 @@ body {
   position: relative;
 }
 
-.cardDIV{
+.locationDIV{
   border: 1px dashed green;
   display: inline;
   vertical-align: top;

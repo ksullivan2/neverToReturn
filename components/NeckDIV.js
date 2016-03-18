@@ -15,9 +15,9 @@ var NeckDIV = React.createClass({
     var self = this;
 
     //creating an array to be rendered below
-    var cardsInNeck = [];
+    var locationsInNeck = [];
     for (var i = 0; i < this.props.neck.length; i++){
-      cardsInNeck.push({card: this.props.neck[i], cardkey:("card"+i)})
+      locationsInNeck.push({location: this.props.neck[i], key:("location"+i)})
     }
 
 
@@ -27,11 +27,10 @@ var NeckDIV = React.createClass({
         
 
         <div id="allCardsDIV" className="layoutDIV">
-          {cardsInNeck.map(function(eachCard){
-            return <LocationDIV card={eachCard.card} 
-                                key={eachCard.cardkey} 
-                                name={eachCard.cardkey} 
-                                players={eachCard.playersOnLocation} />
+          {locationsInNeck.map(function(eachLocation){
+            return <LocationDIV location={eachLocation.location} 
+                                key={eachLocation.key} 
+                                name={eachLocation.key} />
           })}
           
         </div>
