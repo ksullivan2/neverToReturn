@@ -31,15 +31,17 @@ var NeckCanvas = React.createClass({
   },
     
   calculatePlayerAttributes: function(player){
-    var diameter = cardWidth/2;
-
-    var cardWidth = this.state.canvas_width/this.props.neck.length;
+    var cardWidth = this.state.canvas_width/7;
     var left = player.location * cardWidth;
     var bottom = 0;
 
-    
+    var diameter = cardWidth/2;
 
-    return {coords: {left: left, bottom:bottom}, diameter: diameter}
+    //offset the player's coords by their position in the playersOnLocation index
+    var offset = this.props.neck[player.location].playersOnLocation.indexOf(player.name) * diameter/2;
+   
+
+    return {coords: {left: left+offset, bottom:bottom}, diameter: diameter}
 
   },
 

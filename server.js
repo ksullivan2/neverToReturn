@@ -65,6 +65,7 @@ io.on('connection', function (socket) {
       socket.handshake.session.userdata = data;
       socket.emit("update userName", {userName: data.name})
       io.sockets.emit("update players", {players: gameLogic.players})
+      io.sockets.emit("update neck", {neck: gameLogic.neck})
     }
   });
 
@@ -83,6 +84,7 @@ io.on('connection', function (socket) {
 	socket.on("Move One", function(data){
     gameLogic.movePlayerForward(data.userName);
     io.sockets.emit('update players',{players: gameLogic.players})
+    io.sockets.emit('update neck',{neck: gameLogic.neck})
   });
 
 
