@@ -5,14 +5,6 @@ var spring = ReactMotion.spring;
 
 
 var PlayerPiece = React.createClass({
-  
-    //<Motion defaultStyle={{x: 0}} style={{x: spring(10)}}>
-    //{interpolatingStyle => <div style={interpolatingStyle} />}
-    //</Motion>
-
-    
-
-
 
   render: function () {
     var self = this;
@@ -25,12 +17,9 @@ var PlayerPiece = React.createClass({
     	textColor = "white";
     }
 
-  	
-
-    
     return (
-
-      <Motion defaultStyle={{left: 0}} style={{left: spring(100)}}>
+      <Motion defaultStyle={{left: 0, bottom: 0}} 
+              style={{left: spring(this.props.coords.left), bottom: spring(this.props.coords.bottom)}}>
         {function(interpolatingStyle){
           return(
             <div className="playerPieceBox">
@@ -39,7 +28,7 @@ var PlayerPiece = React.createClass({
                             border: border,
                             color: textColor,
                             left: interpolatingStyle.left,
-                            bottom: self.props.coords.bottom,
+                            bottom: interpolatingStyle.bottom,
                             width: self.props.diameter,
                             height: self.props.diameter}}>
               	<p>{self.props.player.name}</p>
