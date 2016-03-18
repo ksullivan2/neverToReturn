@@ -29,12 +29,14 @@ var NeckCanvas = React.createClass({
     })
   },
     
-  calculatePlayerCoordinates: function(player){
+  calculatePlayerAttributes: function(player){
     var cardWidth = this.state.canvas_width/7;
     var left = player.location * cardWidth;
     var bottom = 0;
 
-    return {left: left, bottom:bottom}
+    var diameter = cardWidth/2;
+
+    return {coords: {left: left, bottom:bottom}, diameter: diameter}
 
   },
 
@@ -46,7 +48,9 @@ var NeckCanvas = React.createClass({
       if (players[i].name == this.props.activePlayer){
         active = true;
       }
-      playerList.push({player:players[i], active:active, coords: this.calculatePlayerCoordinates(players[i])})
+      var playerAttributes = this.calculatePlayerAttributes(players[i]);
+      playerList.push({player:players[i], active:active, 
+        coords: playerAttributes.coords, diameter: playerAttributes.diameter})
     }
     return playerList;
   },
@@ -55,6 +59,7 @@ var NeckCanvas = React.createClass({
 
   render: function () {
     var playerList = this.createPlayerPiecesList(this.props.players)
+
 
     var canvasStyle = {margin: 'auto', 
                     width: '100%', 
@@ -68,7 +73,8 @@ var NeckCanvas = React.createClass({
             return <PlayerPiece player={each.player} 
                                 key={each.player.name + "s piece"} 
                                 active={each.active}
-                                coords={each.coords}/>
+                                coords={each.coords}
+                                diameter={each.diameter}/>
           })}
       </div>
     )

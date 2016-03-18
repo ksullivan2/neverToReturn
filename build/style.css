@@ -76,9 +76,6 @@ body {
 /*OBJECTS*/
 
 .playerPiece {
-  /*not fighting with aspect ratio now... will fix later*/
-  width: 7%;
-  height: 20%;
   -moz-border-radius: 50%;
   -webkit-border-radius: 50%;
   border-radius: 50%;

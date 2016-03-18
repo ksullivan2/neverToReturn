@@ -15,7 +15,9 @@ var PlayerPiece = React.createClass({
   						border: border,
   						color: textColor,
               left: this.props.coords.left,
-              bottom: this.props.coords.bottom};
+              bottom: this.props.coords.bottom,
+              width: this.props.diameter,
+              height: this.props.diameter};
     
     return (
       <div className="playerPieceBox">
