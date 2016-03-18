@@ -10,17 +10,23 @@ var OpponentsDIV = React.createClass({
   render: function () {
     var self = this;
 
-  	var playerList = this.props.players.map(function(player){
+  	var playerList = []
+
+    for (player in this.props.players){
   		var key = "playerDIV"+ player.name;
       var active = false;
-      if (self.props.activePlayer.name === player.name){active = true;}
-  		return <PlayerDIV player={player} key={key} active={active}/>
-  	});
+        if (self.props.activePlayer.name === player.name){active = true;}
+  		playerList.push({player:player, active:active, key: key})
+  	};
 
     return (
       <div  className="layoutDIV" id='OpponentsDIV'>
         You are: {this.props.userName}
-        {playerList}
+        {playerList.map(function(eachPlayer){
+          return(
+            <PlayerDIV player={eachPlayer.player} key={eachPlayer.key} active={eachPlayer.active}/>
+          )
+        })}
         <ChatDIV />
       </div>
     )

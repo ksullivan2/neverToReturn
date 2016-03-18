@@ -48,13 +48,13 @@ var NeckCanvas = React.createClass({
   createPlayerPiecesList: function(players){
     var playerList = [];
 
-    for (var i = 0; i < players.length; i++) {
+    for (player in players) {
       var active = false;
-      if (players[i].name == this.props.activePlayer.name){
+      if (player.name == this.props.activePlayer.name){
         active = true;
       }
-      var playerAttributes = this.calculatePlayerAttributes(players[i]);
-      playerList.push({player:players[i], active:active, 
+      var playerAttributes = this.calculatePlayerAttributes(player);
+      playerList.push({player:player, active:active, 
         coords: playerAttributes.coords, diameter: playerAttributes.diameter})
     }
     return playerList;

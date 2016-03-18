@@ -28,14 +28,14 @@ body {
   left:0;
 }
 
-#ActionAREA {
+#MyCardsDIV {
   bottom: 0;
   left: 15%;
   height:45%; 
   width:40%;
 }
 
-#MyCardsDIV{
+#ActionAREA{
   bottom: 0;
   right: 0;
   height:45%; 

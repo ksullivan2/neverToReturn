@@ -20,7 +20,7 @@ function gameLogic(){
 		this.neck.push(tempLocation);
 	}
 
-	this.players = [];
+	this.players = {};
 	this.activePlayer = new Player("dummyStartPlayer", 100, "yellow");
 	this.gameState = gameStates.gatherPlayers;;
 }
@@ -30,19 +30,21 @@ function gameLogic(){
 
 //GAMESTATE ACTIONS---------------------------------------------------------------------------------------------------------
 gameLogic.prototype.startGame = function() {
-	this.activePlayer = this.players[0];
+	var firstPlayer = this.findPlayerByOrder(0);
+
+	this.activePlayer = firstPlayer;
 	this.newNeck();
 	this.gameState = gameStates.decisionMaking;
 };
 
 gameLogic.prototype.nextTurn = function() {
-	var index = this.players.indexOf(this.activePlayer);
+	var index = this.activePlayer.order;
 
 	//if we're at the end of the list, return the first player
-	if (index+1 === this.players.length){
-		this.activePlayer = this.players[0];
+	if (index+1 === Object.keys(this.players).length){
+		this.activePlayer = findPlayerByOrder(0);
 	} else{
-		this.activePlayer = this.players[index+1];
+		this.activePlayer = findPlayerByOrder(index+1);
 	};
 
 	this.gameState = gameStates.decisionMaking;
@@ -62,21 +64,18 @@ gameLogic.prototype.newNeck = function() {
 
 //PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------
 
-gameLogic.prototype.movePlayer = function(userName, direction){
-	//direction: true is forward, false is backward
-	//don't want to ever move more than 1 because need to resolve effects
+gameLogic.prototype.movePlayer = function(userName, movement){
+	//move: pos is forward, neg is backward
 
-	for (var i = 0; i < this.players.length; i++){
-		if (this.players[i].name === userName){
-			
-			//update the neckLocations' lists of players
-			this.removePlayerFromLocation(this.players[i].location, this.players[i].name);
-			this.addPlayerToLocation(this.players[i].location+(1*direction), this.players[i].name);
+	var player = findPlayerByUserName(userName)
+	
+	//update the neckLocations' lists of players
+	this.removePlayerFromLocation(player.location, player.name);
+	this.addPlayerToLocation(player.location+(1*movement), player.name);
 
-			//update the location of the player object
-			this.players[i].location += (1*direction);
-		}
-	}
+	//update the location of the player object
+	player.location += (1*movement);
+	
 }
 
 gameLogic.prototype.removePlayerFromLocation = function(locationIndex, name){
@@ -95,13 +94,28 @@ var testForSocketMatch = function(givenSocket, storedSocket){
 	return (givenSocket === "/#"+ storedSocket);
 }
 
+gameLogic.prototype.findPlayerByOrder = function(order){
+	for (player in this.players){
+		if (player.order === order){
+			return player;
+		}
+	}
+	return false;
+}
+
+gameLogic.prototype.findPlayerByUserName = function(userName){
+	return this.players[userName]
+}
+
 gameLogic.prototype.addPlayer = function(name, socketID) {
+	var numPlayers = Object.keys(this.players).length;
+
 	for (var i = 0; i < this.players.length; i++){
-		if (this.players[i].name === name){
+		if (this.players.hasOwnProperty(name)){
 			return false;
 		}
 	}
-	var tempPlayer = new Player(name, this.players.length+1, playerColors[this.players.length], socketID);
+	var tempPlayer = new Player(name, numPlayers+1, playerColors[numPlayers], socketID);
 	this.players.push(tempPlayer);
 	this.addPlayerToLocation(0,tempPlayer.name);
 	return true;
@@ -109,9 +123,9 @@ gameLogic.prototype.addPlayer = function(name, socketID) {
 
 
 gameLogic.prototype.resetSocket = function(name, socketID){
-	for (var i = 0; i < this.players.length; i++){
-		if (this.players[i].name === name){
-			this.players[i].socketID = socketID
+	for (var i = 0; i < Object.keys(this.players).length; i++){
+		if (this.players[name].name === name){
+			this.players[name].socketID = socketID
 		}		
 	}
 }

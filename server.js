@@ -44,7 +44,7 @@ var gameStates = require("./game_modules/gameStates.js");
 io.on('connection', function (socket) {
   if (!socket.handshake.session.userdata && gameLogic.gameState === gameStates.gatherPlayers){
     //tell the game we have a new player and if Player 1,2, etc.
-    socket.emit("new player", {playerIndex: gameLogic.players.length+1});
+    socket.emit("new player", {playerIndex: Object.keys(gameLogic.players).length+1});
   }else if (socket.handshake.session.userdata){
     //overwrite the socket data for that player, using cookie data
     var name = socket.handshake.session.userdata.name;
@@ -60,7 +60,7 @@ io.on('connection', function (socket) {
   socket.on('create player', function(data){   
   	var validName = gameLogic.addPlayer(data.name, data.socketID);
     if (!validName){
-      socket.emit("name taken", {playerIndex: gameLogic.players.length+1});
+      socket.emit("name taken", {playerIndex: Object.keys(gameLogic.players).length+1});
     } else{
       socket.handshake.session.userdata = data;
       socket.emit("update userName", {userName: data.name})
