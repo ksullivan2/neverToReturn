@@ -3,20 +3,17 @@ var PlayerDIV = require('./PlayerDIV');
 var ChatDIV = require('./ChatDIV');
 var socket = io();
 
-
-
-
 var OpponentsDIV = React.createClass({
   render: function () {
     var self = this;
 
   	var playerList = []
 
-    for (player in this.props.players){
-  		var key = "playerDIV"+ player.name;
+    for (var i in this.props.players){
+  		var key = "playerDIV"+ this.props.players[i].name;
       var active = false;
-        if (self.props.activePlayer.name === player.name){active = true;}
-  		playerList.push({player:player, active:active, key: key})
+        if (self.props.activePlayer.name === this.props.players[i].name){active = true;}
+  		playerList.push({player:this.props.players[i], active:active, key: key})
   	};
 
     return (

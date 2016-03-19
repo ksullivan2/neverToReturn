@@ -59,6 +59,7 @@ io.on('connection', function (socket) {
 
   socket.on('create player', function(data){   
   	var validName = gameLogic.addPlayer(data.name, data.socketID);
+    console.log("all players", gameLogic.players)
     if (!validName){
       socket.emit("name taken", {playerIndex: Object.keys(gameLogic.players).length+1});
     } else{

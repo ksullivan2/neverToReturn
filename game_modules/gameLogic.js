@@ -21,7 +21,7 @@ function gameLogic(){
 	}
 
 	this.players = {};
-	this.activePlayer = new Player("dummyStartPlayer", 100, "yellow");
+	this.activePlayer = new Player("dummyStartPlayer");
 	this.gameState = gameStates.gatherPlayers;;
 }
 
@@ -116,7 +116,7 @@ gameLogic.prototype.addPlayer = function(name, socketID) {
 		}
 	}
 	var tempPlayer = new Player(name, numPlayers+1, playerColors[numPlayers], socketID);
-	this.players.push(tempPlayer);
+	this.players[tempPlayer.name] = tempPlayer;
 	this.addPlayerToLocation(0,tempPlayer.name);
 	return true;
 };
