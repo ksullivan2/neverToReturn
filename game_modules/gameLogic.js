@@ -99,9 +99,17 @@ gameLogic.prototype.addPlayerToLocation = function(locationIndex, name){
 }
 
 gameLogic.prototype.replenishHand = function(player){
-	while (player.hand.length < 5){
-		this.dealCard(player)
-	}
+	//DUMMY METHOD FOR LIMITED ASSETS
+	player.hand = [new cardTypes.actionCard("cannibalism"),
+	new cardTypes.actionCard("endlessMeander"),
+	new cardTypes.actionCard("filthyWateringHole"),
+	new cardTypes.actionCard("questionableFlensing"),
+	new cardTypes.actionCard("recklessSprint")]
+
+	//ACTUAL METHOD:
+	// while (player.hand.length < 5){
+	// 	this.dealCard(player)
+	// }
 }
 
 gameLogic.prototype.dealCard = function(player){

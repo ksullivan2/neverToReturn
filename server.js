@@ -58,9 +58,7 @@ io.on('connection', function (socket) {
   }
 
 
-  socket.emit("pass initial state", {neck: gameLogic.neck, 
-    players: gameLogic.players, activePlayer: gameLogic.activePlayer, 
-    gameState: gameLogic.gameState})
+  socket.emit("update gameLogic in view", {gameLogic: gameLogic})
 
   socket.on('create player', function(data){   
   	var validName = gameLogic.addPlayer(data.name, data.socketID);
@@ -70,33 +68,29 @@ io.on('connection', function (socket) {
 
       socket.handshake.session.userdata = data;
       socket.emit("update userName", {userName: data.name})
-      io.sockets.emit("update players", {players: gameLogic.players, activePlayer: gameLogic.activePlayer})
-      io.sockets.emit("update neck", {neck: gameLogic.neck})
+      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
     }
   });
 
 //buttons in action area----------------------------------------------------------------------
   socket.on('Start Game', function(){
-      gameLogic.startGame();
-      io.sockets.emit('game started', {players: gameLogic.players, activePlayer: gameLogic.activePlayer, 
-        neck:gameLogic.neck, gameState: gameLogic.gameState})
+    gameLogic.startGame();
+    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
   });
 
   socket.on('End Turn', function(){
     gameLogic.nextTurn()
-    io.sockets.emit('next turn',{activePlayer: gameLogic.activePlayer})
+    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
   });
 
 	socket.on("Move Forward", function(data){
     gameLogic.movePlayer(data.userName, 1);
-    io.sockets.emit('update players',{players: gameLogic.players, activePlayer: gameLogic.activePlayer})
-    io.sockets.emit('update neck',{neck: gameLogic.neck})
+    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
   });
 
   socket.on("Move Backward", function(data){
     gameLogic.movePlayer(data.userName, -1);
-    io.sockets.emit('update players',{players: gameLogic.players, activePlayer: gameLogic.activePlayer})
-    io.sockets.emit('update neck',{neck: gameLogic.neck})
+    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
   });
 
 

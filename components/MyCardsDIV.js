@@ -12,20 +12,33 @@ var gameStates = require('../game_modules/gameStates.js');
 var MyCardsDIV = React.createClass({
   render: function () {
   	if (this.props.userName){
-	  	var userPlayer = this.props.players[this.props.userName]
 		  	
 
 	  	if (this.props.gameState != gameStates.gatherPlayers){
-		    return (
-		      <div  className="layoutDIV" id='MyCardsDIV'>
-		        {userPlayer.hand.map(function(card){
-		        	return(
-							<ActionCard card={card} key={card.name}/>
-		        		)
-		        	})  	
-		       	}
-		      </div>
-		    )
+
+		  	var userHand = this.props.players[this.props.userName].hand;
+
+
+		  	var cardsInHand = [];
+		    
+		    for (var i = 0; i < userHand.length; i++){
+		      cardsInHand.push({card: userHand[i], key:(this.props.userName+"card"+i), offset:(i*10)})
+		    }
+		    console.log(userHand)
+		    
+		    if (cardsInHand.length > 0){
+			    return (
+			      <div  className="layoutDIV" id='MyCardsDIV'>
+			        {cardsInHand.map(function(eachCard){
+			        	return(
+								<ActionCard card={eachCard.card} key={eachCard.key} offset={eachCard.offset}/>
+			        		)
+			        	})  	
+			       	}
+			      </div>
+			    )
+		    	
+		    }
   		}
   		
   	} 

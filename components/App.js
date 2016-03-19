@@ -6,10 +6,10 @@ var MyCardsDIV = require('./MyCardsDIV');
 var NeckDIV = require('./NeckDIV');
 var $ = require('jquery');
 
-//EVENTS--------------------------------------------------------------------------------------------------------------
 var socket = io();
 
 
+//INTERACT WITH HUMAN--------------------------------------------------------------------------------------------------------
 
 socket.on("new player", function(data){
   getName(data);
@@ -19,12 +19,6 @@ socket.on("name taken", function(data){
   getName(data);
 });
 
-
-
-
-
-
-//INTERACT WITH HUMAN--------------------------------------------------------------------------------------------------------
 
 function getName(data){
   var name = null;
@@ -39,7 +33,6 @@ function getName(data){
 
 
 //REACT RENDER APP---------------------------------------------------------------------------------------------------------
-
 
 var App = React.createClass({
   getInitialState: function(){
@@ -56,34 +49,19 @@ var App = React.createClass({
   componentDidMount(){
     var self = this;
 
-    socket.on("pass initial state", function(data){
-      self.setState({players: data.players, 
-                      neck: data.neck,
-                      activePlayer: data.activePlayer,
-                      gameState: data.gameState})
+//EVENTS--------------------------------------------------------------------------------------------------------------
+    socket.on("update gameLogic in view", function(data){
+      self.setState({players: data.gameLogic.players, 
+                      neck: data.gameLogic.neck,
+                      activePlayer: data.gameLogic.activePlayer,
+                      gameState: data.gameLogic.gameState})
       }) 
 
     socket.on("update userName", function(data){
       self.setState({userName: data.userName})
     })
 
-    socket.on('update players', function(data){
-      self.setState({players: data.players, activePlayer: data.activePlayer});
-      })
 
-    socket.on('update neck', function(data){
-      self.setState({neck: data.neck})
-    })
-
-    socket.on('game started', function(data){
-      self.setState({neck: data.neck, 
-                      activePlayer: data.activePlayer,
-                      gameState: data.gameState})
-    })
-
-    socket.on('next turn', function(data){
-      self.setState({activePlayer: data.activePlayer})
-    })
   },
 
   render: function () {
