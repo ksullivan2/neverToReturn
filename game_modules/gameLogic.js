@@ -22,7 +22,8 @@ function gameLogic(){
 
 	this.players = {};
 	this.activePlayer = new Player("dummyStartPlayer");
-	this.gameState = gameStates.gatherPlayers;;
+	this.gameState = gameStates.gatherPlayers;
+
 }
 
 
@@ -30,10 +31,19 @@ function gameLogic(){
 
 //GAMESTATE ACTIONS---------------------------------------------------------------------------------------------------------
 gameLogic.prototype.startGame = function() {
+	//set the first player (eventually, ask for who goes first)
 	var firstPlayer = this.findPlayerByOrder(0);
-
 	this.activePlayer = firstPlayer;
+
+	//eventually, people will choose the neck cards
 	this.newNeck();
+
+	//deal action cards to each player
+	for (var i in this.players){
+		this.replenishHand(this.players[i])
+	}
+
+	//set the gamestate
 	this.gameState = gameStates.decisionMaking;
 };
 
@@ -42,9 +52,9 @@ gameLogic.prototype.nextTurn = function() {
 
 	//if we're at the end of the list, return the first player
 	if (index+1 === Object.keys(this.players).length){
-		this.activePlayer = findPlayerByOrder(0);
+		this.activePlayer = this.findPlayerByOrder(0);
 	} else{
-		this.activePlayer = findPlayerByOrder(index+1);
+		this.activePlayer = this.findPlayerByOrder(index+1);
 	};
 
 	this.gameState = gameStates.decisionMaking;
@@ -67,7 +77,7 @@ gameLogic.prototype.newNeck = function() {
 gameLogic.prototype.movePlayer = function(userName, movement){
 	//move: pos is forward, neg is backward
 
-	var player = findPlayerByUserName(userName)
+	var player = this.findPlayerByUserName(userName)
 	
 	//update the neckLocations' lists of players
 	this.removePlayerFromLocation(player.location, player.name);
@@ -75,7 +85,8 @@ gameLogic.prototype.movePlayer = function(userName, movement){
 
 	//update the location of the player object
 	player.location += (1*movement);
-	
+
+
 }
 
 gameLogic.prototype.removePlayerFromLocation = function(locationIndex, name){
@@ -87,6 +98,16 @@ gameLogic.prototype.addPlayerToLocation = function(locationIndex, name){
 	this.neck[locationIndex].playersOnLocation.push(name);
 }
 
+gameLogic.prototype.replenishHand = function(player){
+	while (player.hand.length < 5){
+		this.dealCard(player)
+	}
+}
+
+gameLogic.prototype.dealCard = function(player){
+	player.hand.push(new cardTypes.actionCard("cannibalism"))
+	//remove card from deck when I create the deck...
+}
 
 
 //SESSIONS/PLAYERS------------------------------------------------------------------------------------------------------------
@@ -95,9 +116,9 @@ var testForSocketMatch = function(givenSocket, storedSocket){
 }
 
 gameLogic.prototype.findPlayerByOrder = function(order){
-	for (player in this.players){
-		if (player.order === order){
-			return player;
+	for (var i in this.players){
+		if (this.players[i].order === order){
+			return this.players[i];
 		}
 	}
 	return false;
@@ -115,9 +136,10 @@ gameLogic.prototype.addPlayer = function(name, socketID) {
 			return false;
 		}
 	}
-	var tempPlayer = new Player(name, numPlayers+1, playerColors[numPlayers], socketID);
+	var tempPlayer = new Player(name, numPlayers, playerColors[numPlayers], socketID);
 	this.players[tempPlayer.name] = tempPlayer;
 	this.addPlayerToLocation(0,tempPlayer.name);
+
 	return true;
 };
 

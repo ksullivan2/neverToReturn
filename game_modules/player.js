@@ -6,6 +6,7 @@ function Player(name, order, color, socketID){
 
 	this.name = name;
 	this.color = color;
+	this.hand = [];
 
 	//location is 0-7; it is the current space the player is on
 	this.location = 0;

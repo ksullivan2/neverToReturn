@@ -1,4 +1,4 @@
-module.exports = {terrainCard, monsterCard, playerCard}
+module.exports = {terrainCard, monsterCard, playerCard, actionCard}
 
 function terrainCard(name){
 	this.name = name;
@@ -16,7 +16,8 @@ function terrainCard(name){
 
 function monsterCard(){
 	this.name = "";
-	this.imageSRC = "";
+	this.imgSRC = "";
+	
 	this.onEncounter = {
 		check: {type: "madness", exists: true},
 		checkReducesHitPoints: true,
@@ -37,4 +38,9 @@ function playerCard(){
 	this.painPoints = 5;
 	this.madnessPoints = 6;
 	this.specialAbility = ""
+}
+
+function actionCard(name){
+	this.name = name;
+	this.imgSRC = "assets/actionCards/"+name+".jpg";
 }

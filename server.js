@@ -59,7 +59,6 @@ io.on('connection', function (socket) {
 
   socket.on('create player', function(data){   
   	var validName = gameLogic.addPlayer(data.name, data.socketID);
-    console.log("all players", gameLogic.players)
     if (!validName){
       socket.emit("name taken", {playerIndex: Object.keys(gameLogic.players).length+1});
     } else{
@@ -74,7 +73,8 @@ io.on('connection', function (socket) {
   socket.on('Start Game', function(){
       gameLogic.startGame();
       io.sockets.emit('game started', {players: gameLogic.players, activePlayer: gameLogic.activePlayer, 
-        neck:gameLogic.neck, gameState: gameLogic.gameState})  
+        neck:gameLogic.neck, gameState: gameLogic.gameState})
+        console.log("start game emits activePlayer", gameLogic.activePlayer)  
   });
 
   socket.on('End Turn', function(){
