@@ -42,17 +42,22 @@ var gameStates = require("./game_modules/gameStates.js");
 //SOCKET EVENTS------------------------------------------------------------------------------------------------------------------
 
 io.on('connection', function (socket) {
+  //if we don't have previous cookie data...
   if (!socket.handshake.session.userdata && gameLogic.gameState === gameStates.gatherPlayers){
     //tell the game we have a new player and if Player 1,2, etc.
     socket.emit("new player", {playerIndex: Object.keys(gameLogic.players).length+1});
   }else if (socket.handshake.session.userdata){
+    console.log("SESSION RESTORED ", socket.handshake.session.userdata.name)
     //overwrite the socket data for that player, using cookie data
     var name = socket.handshake.session.userdata.name;
     gameLogic.resetSocket(name,socket.id);
+    //send the user their previous name
     socket.emit("update userName", {userName: name})
+  }else{
+    console.log("NEW PLAYER OUTSIDE OF APPROPRIATE WINDOW", socket.handshake.session.userdata)
   }
 
-//HOW TO GET USERNAME
+
   socket.emit("pass initial state", {neck: gameLogic.neck, 
     players: gameLogic.players, activePlayer: gameLogic.activePlayer, 
     gameState: gameLogic.gameState})
@@ -62,6 +67,7 @@ io.on('connection', function (socket) {
     if (!validName){
       socket.emit("name taken", {playerIndex: Object.keys(gameLogic.players).length+1});
     } else{
+
       socket.handshake.session.userdata = data;
       socket.emit("update userName", {userName: data.name})
       io.sockets.emit("update players", {players: gameLogic.players, activePlayer: gameLogic.activePlayer})
@@ -74,7 +80,6 @@ io.on('connection', function (socket) {
       gameLogic.startGame();
       io.sockets.emit('game started', {players: gameLogic.players, activePlayer: gameLogic.activePlayer, 
         neck:gameLogic.neck, gameState: gameLogic.gameState})
-        console.log("start game emits activePlayer", gameLogic.activePlayer)  
   });
 
   socket.on('End Turn', function(){
