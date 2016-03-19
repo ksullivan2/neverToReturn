@@ -9,8 +9,8 @@ var React = require('react');
 var ActionCard = React.createClass({
   render: function () {
     return (
-      <div  className="ActionCard">
-        ActionCard
+      <div  className="actionCard">
+        <img src={this.props.card.imgSRC} className="cardImage"/>
       </div>
     )
   }
