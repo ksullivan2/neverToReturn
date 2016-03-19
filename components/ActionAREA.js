@@ -18,6 +18,7 @@ var ActionButton = require('./ActionButton.js')
 var ActionAREA = React.createClass({
 	
   render: function () {
+    var displayNotYourTurn = "block";
     var displayStart = false;
     var displayEndTurn = false;
     var displayMoveForward = false;
@@ -28,6 +29,7 @@ var ActionAREA = React.createClass({
     }
     else if (this.props.gameState === gameStates.decisionMaking){
       if (this.props.activePlayer.name == this.props.userName){
+        displayNotYourTurn = "none";
         displayEndTurn = true;
 
         if (this.props.activePlayer.location != 6){
@@ -45,7 +47,7 @@ var ActionAREA = React.createClass({
 
     return (
       <div className="layoutDIV" id='ActionAREA'>
-        <p>ActionAREA</p>
+        <h2 style={{display:displayNotYourTurn}}> It is not currently your turn</h2>
         <ActionButton text="Start Game" display={displayStart} userName={this.props.userName}/>
 		    <ActionButton text="End Turn" display={displayEndTurn} userName={this.props.userName}/>
         <ActionButton text="Move Forward" display={displayMoveForward} userName={this.props.userName}/>

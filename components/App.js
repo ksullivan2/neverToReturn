@@ -31,6 +31,11 @@ function getName(data){
 
 
 
+function restartGame(){
+  if (confirm("Do you REALLY want to re-start the whole game and scrap everything to this point?")){
+    socket.emit("restart game")
+  }
+}
 
 //REACT RENDER APP---------------------------------------------------------------------------------------------------------
 
@@ -44,6 +49,7 @@ var App = React.createClass({
       userName: null
     }
   },
+
 
 
   componentDidMount(){
@@ -71,6 +77,7 @@ var App = React.createClass({
         <ActionAREA gameState={this.state.gameState} userName={this.state.userName} activePlayer={this.state.activePlayer}/>
         <MyCardsDIV gameState={this.state.gameState} players={this.state.players} userName={this.state.userName} activePlayer={this.state.activePlayer}/>
         <NeckDIV players={this.state.players} neck={this.state.neck} activePlayer={this.state.activePlayer}/>
+        <button onClick={restartGame} id="restartGameButton">!!!RESTART!!!</button>
       </div>
     )
   }

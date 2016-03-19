@@ -160,4 +160,4 @@ gameLogic.prototype.resetSocket = function(name, socketID){
 	}
 }
 
-module.exports = new gameLogic();
+module.exports = gameLogic;

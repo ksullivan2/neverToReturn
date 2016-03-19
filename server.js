@@ -35,9 +35,10 @@ server.listen(process.env.PORT || 3000, function(){
 });
 
 //game-specific libraries------------------------------------------------------------------------------------------------------------------
-var gameLogic = require("./game_modules/gameLogic.js");
+var Game = require("./game_modules/gameLogic.js");
 var gameStates = require("./game_modules/gameStates.js");
 
+var gameLogic = new Game();
 
 //SOCKET EVENTS------------------------------------------------------------------------------------------------------------------
 
@@ -57,8 +58,13 @@ io.on('connection', function (socket) {
     console.log("NEW PLAYER OUTSIDE OF APPROPRIATE WINDOW", socket.handshake.session.userdata)
   }
 
-
+  //socket will ALWAYS emit updated logic upon connection
   socket.emit("update gameLogic in view", {gameLogic: gameLogic})
+
+  socket.on('restart game', function(){
+    gameLogic = new Game()
+    io.sockets.emit("new player", {playerIndex: Object.keys(gameLogic.players).length+1})
+  });
 
   socket.on('create player', function(data){   
   	var validName = gameLogic.addPlayer(data.name, data.socketID);

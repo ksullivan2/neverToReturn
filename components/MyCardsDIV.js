@@ -43,7 +43,7 @@ var MyCardsDIV = React.createClass({
   		
   	} 
 
-  	return ( <div  className="layoutDIV" id='MyCardsDIV'> </div>) 
+  	return ( <div  className="layoutDIV" id='MyCardsDIV'>There are no cards in your hand. </div>) 
   }
 
   
