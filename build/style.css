@@ -72,11 +72,15 @@ body {
   position: relative;
 }
 
-#restartGameButton{
+#debugDIV{
   position: absolute;
   right: 0;
   bottom: 0;
+  display: inline-flex;
+  flex-direction: column;
 }
+
+
 
 
 /*OBJECTS*/

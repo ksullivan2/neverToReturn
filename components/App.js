@@ -30,12 +30,21 @@ function getName(data){
 }
 
 
-
+//DEBUG FUNCTIONS
 function restartGame(){
   if (confirm("Do you REALLY want to re-start the whole game and scrap everything to this point?")){
     socket.emit("restart game")
   }
 }
+
+function reConnectPlayer(){
+  var name = prompt("Input your name EXACTLY as you typed it before")
+  socket.emit('reconnect player', {name: name})
+}
+
+socket.on("reconnect failed", function(){
+  alert("Reconnect failed. Match the name EXACTLY.")
+})
 
 //REACT RENDER APP---------------------------------------------------------------------------------------------------------
 
@@ -77,7 +86,10 @@ var App = React.createClass({
         <ActionAREA gameState={this.state.gameState} userName={this.state.userName} activePlayer={this.state.activePlayer}/>
         <MyCardsDIV gameState={this.state.gameState} players={this.state.players} userName={this.state.userName} activePlayer={this.state.activePlayer}/>
         <NeckDIV players={this.state.players} neck={this.state.neck} activePlayer={this.state.activePlayer}/>
-        <button onClick={restartGame} id="restartGameButton">!!!RESTART!!!</button>
+        <div id="debugDIV">
+          <button onClick={restartGame} id="restartGameButton">!!!RESTART GAME!!!</button>
+          <button onClick={reConnectPlayer} id="reConnectPlayerButton">HALP I got disconnected</button>
+        </div>
       </div>
     )
   }

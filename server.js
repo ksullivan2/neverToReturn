@@ -61,10 +61,21 @@ io.on('connection', function (socket) {
   //socket will ALWAYS emit updated logic upon connection
   socket.emit("update gameLogic in view", {gameLogic: gameLogic})
 
+  //DEBUG FUNCTIONS
   socket.on('restart game', function(){
     gameLogic = new Game()
     io.sockets.emit("new player", {playerIndex: Object.keys(gameLogic.players).length+1})
   });
+
+  socket.on("reconnect player", function(data){
+    if (gameLogic.players.hasOwnProperty(data.name)){
+      gameLogic.resetSocket(data.name,socket.id);
+      socket.emit("update userName", {userName: data.name})
+      socket.emit("update gameLogic in view", {gameLogic: gameLogic})
+    } else {
+      socket.emit('reconnect failed')
+    }
+  })
 
   socket.on('create player', function(data){   
   	var validName = gameLogic.addPlayer(data.name, data.socketID);
