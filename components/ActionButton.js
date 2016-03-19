@@ -1,6 +1,11 @@
 var React = require('react');
 var socket = io();
 
+// props are:
+//   text: ""
+//   display: bool
+//   userName: ""
+
 var ActionButton = React.createClass({
   componentDidMount: function(){
     

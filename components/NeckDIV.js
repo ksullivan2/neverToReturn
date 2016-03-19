@@ -4,7 +4,10 @@ var PlayerPiece = require('./PlayerPiece');
 var NeckCanvas = require('./NeckCanvas')
 var socket = io();
 
-
+//props are:
+//  players: {playerName: Player}
+//   neck: [Location]
+//   activePlayer: Player
 
 var NeckDIV = React.createClass({
   

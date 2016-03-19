@@ -1,6 +1,7 @@
 var React = require('react');
 
-
+// props are:
+// 	card: TerrainCard
 
 var LocationCard = React.createClass({
   render: function () {

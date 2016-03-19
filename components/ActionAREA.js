@@ -4,9 +4,13 @@ var gameStates = require('../game_modules/gameStates.js');
 var ActionButton = require('./ActionButton.js')
 
 
-//REACT CLASS
+//props are:
+//   gameState: int(enum)
+//   userName: ""
+//   activePlayer: Player
 
-// gameStates:
+
+// gameStates enum:
 //   gatherPlayers: 0,
 //   decisionMaking: 1,
 //   actionsPlayingOut: 2

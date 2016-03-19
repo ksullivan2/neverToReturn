@@ -1,7 +1,9 @@
 var React = require('react');
 var LocationCard = require('./LocationCard');
 
-
+// props are:
+//   location: Location
+//   name: ""
 
 var LocationDIV = React.createClass({
   render: function () {

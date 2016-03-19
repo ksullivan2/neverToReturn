@@ -3,6 +3,12 @@ var PlayerDIV = require('./PlayerDIV');
 var ChatDIV = require('./ChatDIV');
 var socket = io();
 
+
+// props are:
+//   players: {playerName: Player}
+//   userName: ""
+//   activePlayer: Player
+
 var OpponentsDIV = React.createClass({
   render: function () {
     var self = this;

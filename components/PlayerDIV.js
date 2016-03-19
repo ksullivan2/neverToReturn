@@ -1,6 +1,8 @@
 var React = require('react');
 
-
+//props are:
+// player: Player
+// active: bool
 
 var PlayerDIV = React.createClass({
   render: function () {

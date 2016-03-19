@@ -3,6 +3,12 @@ var ReactMotion = require('react-motion');
 var Motion = ReactMotion.Motion;
 var spring = ReactMotion.spring;
 
+//props are:
+    // player: Player
+    // active: bool
+    // coords: {top,bottom,left,right}
+    // diameter: float
+
 
 var PlayerPiece = React.createClass({
 

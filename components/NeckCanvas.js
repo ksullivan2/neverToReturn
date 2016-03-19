@@ -2,7 +2,10 @@ var React = require('react');
 var PlayerPiece = require('./PlayerPiece')
 
 
-
+//props are:
+//  players: {playerName: Player}
+//   neck: [Location]
+//   activePlayer: Player
 
 var NeckCanvas = React.createClass({
   getInitialState: function(){
