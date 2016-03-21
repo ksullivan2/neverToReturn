@@ -5,9 +5,8 @@ var Player = require("./player.js");
 var gameStates = require("./gameStates.js");
 var neckLocation = require("./neckLocation.js");
 
-
+//CONFIG FILE IMPORTS
 var playerColors = require("../CONFIG FILES/visualConfig.js").playerColors;
-
 
 
 
@@ -27,7 +26,7 @@ function gameLogic(){
 
 }
 
-//TURNS-------------------------------------------------------------------------------------------------------------------
+//TURN LOGIC-------------------------------------------------------------------------------------------------------------------
 gameLogic.prototype.nextTurn = function() {
 	this.changeActivePlayer();
 	this.turn = new Turn();
@@ -46,13 +45,18 @@ gameLogic.collectTerrainEffects(){
 	var cardsOnLocation = this.neck[this.activePlayer.location].cards[];
 
 	for (var i = 0; i < cardsOnLocation.length; i++) {
-		this.turn.terrainEffects.concat(cardsOnLocation[i].onEncounter)
+		this.turn.terrainEffects.concat(cardsOnLocation[i].onTurnStart)
 	}
 }
 
-gameLogic.prototype.performNextTerrainEffect = function(first_argument) {
-	
+gameLogic.prototype.performNextTerrainEffect = function() {
+	var terrainEffect = this.turn.terrainEffects[0];
+	//effect: {type: "pain", value: -1, stop: true}
 };
+
+gameLogic.prototype.affectPlayerStats = function(effect){
+
+}
 
 gameLogic.prototype.performNextPlayerAction = function(first_argument) {
 	// body...
@@ -61,7 +65,7 @@ gameLogic.prototype.performNextPlayerAction = function(first_argument) {
 
 
 
-//GAMESTATE ACTIONS---------------------------------------------------------------------------------------------------------
+//GAMEPLAY ACTIONS---------------------------------------------------------------------------------------------------------
 gameLogic.prototype.startGame = function() {
 	//set the first player (eventually, ask for who goes first)
 	var firstPlayer = this.findPlayerByOrder(0);
@@ -81,7 +85,6 @@ gameLogic.prototype.startGame = function() {
 	//set the gamestate
 	this.gameState = gameStates.turnStart;
 };
-
 
 
 gameLogic.prototype.changeActivePlayer(){
@@ -151,7 +154,7 @@ gameLogic.prototype.dealCard = function(player){
 }
 
 
-//SESSIONS/PLAYERS------------------------------------------------------------------------------------------------------------
+//SESSIONS/SOCKETS------------------------------------------------------------------------------------------------------------
 var testForSocketMatch = function(givenSocket, storedSocket){
 	return (givenSocket === "/#"+ storedSocket);
 }

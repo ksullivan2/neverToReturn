@@ -8,6 +8,15 @@ function Player(name, order, color, socketID){
 	this.color = color;
 	this.hand = [];
 
+	//stats
+	this.maxPain = 7;
+	this.currentPain = 7;
+
+	this.maxMadness = 5;
+	this.currentMadness = 5;
+
+	this.specialAbility = {}
+
 	//location is 0-7; it is the current space the player is on
 	this.location = 0;
 

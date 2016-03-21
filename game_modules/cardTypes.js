@@ -1,13 +1,23 @@
 module.exports = {terrainCard, monsterCard, playerCard, actionCard}
 
+
+//effect types: pain, madness, either, safest 
+
+//need to account for special values, like (for each player on space)
+//valueMultipliers: playersOnSpace, cardsInHand
+
+
 function terrainCard(name){
 	this.name = name;
 	this.onEncounter = [{
-		effect: {type: "pain", value: -1, stop: true}
+		type: "pain",
+		hasCheck: true,
+		conseq: {value: -2, stop: true, discard: 0, valueMultiplier: "playersOnSpace"}
 	}];
 	this.onTurnStart = [{
-		check: {type: "pain"},
-		effect: {type: "pain", value: -2, stop: true}
+		type: "pain",
+		hasCheck: true,
+		conseq: {value: -2, stop: true, discard: 0, valueMultiplier: null}
 	}];
 
 	this.imgSRC = "assets/terrainCards/"+name+".jpg";
