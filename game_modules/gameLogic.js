@@ -46,7 +46,9 @@ gameLogic.prototype.collectTerrainEffects = function(){
 
 	//create a list of all the effects of all of the cards
 	for (var i = 0; i < cardsOnLocation.length; i++) {
-		this.turn.terrainEffects.concat(cardsOnLocation[i].onTurnStart)
+		console.log(i, cardsOnLocation[i].onTurnStart)
+		this.turn.terrainEffects = this.turn.terrainEffects.concat(cardsOnLocation[i].onTurnStart)
+		console.log(this.turn.terrainEffects)
 	}
 }
 
