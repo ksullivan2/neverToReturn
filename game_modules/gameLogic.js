@@ -30,8 +30,7 @@ function gameLogic(){
 gameLogic.prototype.nextTurn = function() {
 	this.changeActivePlayer();
 	this.turn = new Turn();
-	this.collectTerrainEffects();
-	this.gameState = gameStates.turnStart;
+	this.changeGameState(gameStates.turnStart);
 };
 
 
@@ -41,9 +40,11 @@ var Turn = function(){
 	this.playerActions = [];
 }
 
-gameLogic.collectTerrainEffects(){
-	var cardsOnLocation = this.neck[this.activePlayer.location].cards[];
+gameLogic.prototype.collectTerrainEffects = function(){
+	//for comprehension's sake, save a reference to the cards on the current active location
+	var cardsOnLocation = this.neck[this.activePlayer.location].cards;
 
+	//create a list of all the effects of all of the cards
 	for (var i = 0; i < cardsOnLocation.length; i++) {
 		this.turn.terrainEffects.concat(cardsOnLocation[i].onTurnStart)
 	}
@@ -54,13 +55,16 @@ gameLogic.prototype.performNextTerrainEffect = function() {
 	//effect: {type: "pain", value: -1, stop: true}
 };
 
-gameLogic.prototype.affectPlayerStats = function(effect){
 
+//GAMESTATE CHANGES-------------------------------------------------------------------------------------------------------------
+gameLogic.prototype.changeGameState = function(newState){
+	if (newState === gameStates.turnStart){
+		//TODO: perform desperation check
+		this.collectTerrainEffects();
+		console.log(this.turn.terrainEffects)
+
+	}
 }
-
-gameLogic.prototype.performNextPlayerAction = function(first_argument) {
-	// body...
-};
 
 
 
@@ -83,11 +87,11 @@ gameLogic.prototype.startGame = function() {
 	this.turn = new Turn();
 
 	//set the gamestate
-	this.gameState = gameStates.turnStart;
+	this.changeGameState(gameStates.turnStart);
 };
 
 
-gameLogic.prototype.changeActivePlayer(){
+gameLogic.prototype.changeActivePlayer = function(){
 	var index = this.activePlayer.order;
 
 	//if we're at the end of the list, return the first player
