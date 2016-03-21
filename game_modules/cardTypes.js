@@ -2,14 +2,13 @@ module.exports = {terrainCard, monsterCard, playerCard, actionCard}
 
 function terrainCard(name){
 	this.name = name;
-	this.onEncounter = {
-		check: {type: "pain", exists: true},
+	this.onEncounter = [{
+		effect: {type: "pain", value: -1, stop: true}
+	}];
+	this.onTurnStart = [{
+		check: {type: "pain"},
 		effect: {type: "pain", value: -2, stop: true}
-	};
-	this.onTurnStart = {
-		check: {type: "pain", exists: true},
-		effect: {type: "pain", value: -2, stop: true}
-	};
+	}];
 
 	this.imgSRC = "assets/terrainCards/"+name+".jpg";
 }

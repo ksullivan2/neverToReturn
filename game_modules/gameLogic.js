@@ -23,8 +23,40 @@ function gameLogic(){
 	this.players = {};
 	this.activePlayer = new Player("dummyStartPlayer");
 	this.gameState = gameStates.gatherPlayers;
+	this.turn = null;
 
 }
+
+//TURNS-------------------------------------------------------------------------------------------------------------------
+gameLogic.prototype.nextTurn = function() {
+	this.changeActivePlayer();
+	this.turn = new Turn();
+	this.collectTerrainEffects();
+	this.gameState = gameStates.turnStart;
+};
+
+
+var Turn = function(){
+	//these arrays will be filled with objects/events to fire and will always be resolved in order
+	this.terrainEffects = [];
+	this.playerActions = [];
+}
+
+gameLogic.collectTerrainEffects(){
+	var cardsOnLocation = this.neck[this.activePlayer.location].cards[];
+
+	for (var i = 0; i < cardsOnLocation.length; i++) {
+		this.turn.terrainEffects.concat(cardsOnLocation[i].onEncounter)
+	}
+}
+
+gameLogic.prototype.performNextTerrainEffect = function(first_argument) {
+	
+};
+
+gameLogic.prototype.performNextPlayerAction = function(first_argument) {
+	// body...
+};
 
 
 
@@ -43,11 +75,16 @@ gameLogic.prototype.startGame = function() {
 		this.replenishHand(this.players[i])
 	}
 
+	//set up the "turn"
+	this.turn = new Turn();
+
 	//set the gamestate
-	this.gameState = gameStates.decisionMaking;
+	this.gameState = gameStates.turnStart;
 };
 
-gameLogic.prototype.nextTurn = function() {
+
+
+gameLogic.prototype.changeActivePlayer(){
 	var index = this.activePlayer.order;
 
 	//if we're at the end of the list, return the first player
@@ -56,9 +93,7 @@ gameLogic.prototype.nextTurn = function() {
 	} else{
 		this.activePlayer = this.findPlayerByOrder(index+1);
 	};
-
-	this.gameState = gameStates.decisionMaking;
-};
+}
 
 gameLogic.prototype.newNeck = function() {
 	//temporary method for dealing a dummy neck
