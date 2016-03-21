@@ -62,13 +62,11 @@ gameLogic.prototype.nextTurn = function() {
 
 gameLogic.prototype.newNeck = function() {
 	//temporary method for dealing a dummy neck
-	for (var i = 0; i <= 6; i++){
-		var cardName = "fogRiddenSwamp";
-		if (i===0){cardName = "start"};
-		if (i===6){cardName = "goal"};
+	var cardNames = ["start","verdantClearing","bloodiedThickets","shadowyVale","sobbingWillowWood","fogRiddenSwamp","goal"];
 
+	for (var i = 0; i < cardNames.length; i++){
 		this.neck[i].cards = [];
-		this.neck[i].addCard(new cardTypes.terrainCard(cardName))
+		this.neck[i].addCard(new cardTypes.terrainCard(cardNames[i]))
 	}
 };
 
