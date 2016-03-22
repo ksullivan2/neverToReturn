@@ -91,23 +91,23 @@ io.on('connection', function (socket) {
 
 //buttons in action area----------------------------------------------------------------------
   socket.on('Start Game', function(){
-    gameLogic.startGame()
-    gameLogic.turn = new Turn()
-    turnPartOne();
+    //do NOT use "start new turn" because it changes active plaeyr
+    initializeGame();
   });
 
   socket.on('End Turn', function(){
-    gameLogic.changeActivePlayer()
-    gameLogic.turn = new Turn()
-    turnPartOne()
+    startNewTurn()
   });
 
 	socket.on("Move Forward", function(data){
-    move(data.userName, 1)
+    //don't forget you have username in the data
+    gameLogic.turn.playerActions.push("Move Forward")
+    performPlayerActions()
   });
 
   socket.on("Move Backward", function(data){
-    move(data.userName, -1)
+    gameLogic.turn.playerActions.push("Move Backward")
+    performPlayerActions()
   });
 
 
@@ -120,9 +120,23 @@ function Turn(){
   this.playerActions = [];
 }
 
+var initializeGame = function(){
+  gameLogic.initializeGame()
+  gameLogic.turn = new Turn()
+  turnPartOne();
+}
+
+var startNewTurn = function(){
+  console.log("startNewTurn")
+  gameLogic.changeActivePlayer()
+  gameLogic.turn = new Turn()
+  turnPartOne()
+}
+
 var turnPartOne = function(){
+  console.log("turnPartOne")
   //set new game state
-  gameLogic.gameState = gameStates.turnStart;
+  gameLogic.gameState = gameStates.animationsPlayingOut;
   io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
 
    //TODO: desperation check
@@ -133,9 +147,22 @@ var turnPartOne = function(){
 }
 
 var turnPartTwo = function(){
-  gameLogic.gameState = gameStates.decisionMaking;
+  console.log("turnPartTwo")
+  gameLogic.gameState = gameStates.waitingForPlayerInput;
   io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+}
 
+var performPlayerActions = function(){
+  console.log("performPlayerActions")
+  gameLogic.gameState = gameStates.animationsPlayingOut;
+  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+  processQueue(gameLogic.turn.playerActions, turnPartThree)
+}
+
+var turnPartThree = function(){
+  console.log("turnPartThree")
+  //check for lost players, draw a card
+  startNewTurn();
 }
 
 

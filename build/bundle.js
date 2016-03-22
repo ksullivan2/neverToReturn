@@ -19898,7 +19898,7 @@
 
 	    if (this.props.gameState === gameStates.gatherPlayers) {
 	      displayStart = true;
-	    } else if (this.props.gameState === gameStates.decisionMaking) {
+	    } else if (this.props.gameState === gameStates.waitingForPlayerInput) {
 	      if (this.props.activePlayer.name == this.props.userName) {
 	        displayNotYourTurn = "none";
 	        displayEndTurn = true;
@@ -29775,10 +29775,8 @@
 
 	var gameStates = {
 		gatherPlayers: 0,
-		turnStart: 1,
-		decisionMaking: 2,
-		actionsPlayingOut: 3,
-		turnEnd: 4
+		waitingForPlayerInput: 1,
+		animationsPlayingOut: 2
 	};
 
 	module.exports = gameStates;

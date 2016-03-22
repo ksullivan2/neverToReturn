@@ -27,7 +27,7 @@ var ActionAREA = React.createClass({
   	if (this.props.gameState === gameStates.gatherPlayers){
       displayStart = true;
     }
-    else if (this.props.gameState === gameStates.decisionMaking){
+    else if (this.props.gameState === gameStates.waitingForPlayerInput){
       if (this.props.activePlayer.name == this.props.userName){
         displayNotYourTurn = "none";
         displayEndTurn = true;

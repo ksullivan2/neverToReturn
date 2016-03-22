@@ -26,14 +26,10 @@ function gameLogic(){
 
 }
 
-//TURN LOGIC-------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 //GAMEPLAY ACTIONS---------------------------------------------------------------------------------------------------------
-gameLogic.prototype.startGame = function() {
+gameLogic.prototype.initializeGame = function() {
 	//SHOULD ONLY DO ACTIONS UNIQUE TO STARTING GAME
 
 	//set the first player (eventually, ask for who goes first)

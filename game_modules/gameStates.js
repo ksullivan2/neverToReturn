@@ -1,9 +1,7 @@
 var gameStates = {
 	gatherPlayers: 0,
-	turnStart: 1,
-	decisionMaking: 2,
-	actionsPlayingOut: 3,
-	turnEnd: 4
+	waitingForPlayerInput: 1,
+	animationsPlayingOut: 2
 }
 
 module.exports = gameStates;
