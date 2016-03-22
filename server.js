@@ -93,13 +93,13 @@ io.on('connection', function (socket) {
   socket.on('Start Game', function(){
     gameLogic.startGame()
     gameLogic.turn = new Turn()
-    playOutTurn();
+    turnPartOne();
   });
 
   socket.on('End Turn', function(){
     gameLogic.changeActivePlayer()
     gameLogic.turn = new Turn()
-    playOutTurn()
+    turnPartOne()
   });
 
 	socket.on("Move Forward", function(data){
@@ -120,7 +120,7 @@ function Turn(){
   this.playerActions = [];
 }
 
-var playOutTurn = function(){
+var turnPartOne = function(){
   //set new game state
   gameLogic.gameState = gameStates.turnStart;
   io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
@@ -128,15 +128,23 @@ var playOutTurn = function(){
    //TODO: desperation check
   gameLogic.turn.terrainEffects = gameLogic.collectTurnStartEffects();
 
-  processQueue(gameLogic.turn.terrainEffects)
+  //process all terrain effects
+  processQueue(gameLogic.turn.terrainEffects, turnPartTwo)
 }
 
-var processQueue = function(queue){
+var turnPartTwo = function(){
+  gameLogic.gameState = gameStates.decisionMaking;
+  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+
+}
+
+
+var processQueue = function(queue, callback){
   var interval = setInterval(function(){
     if (queue.length > 0){
       processEvent(queue.shift()) ;
     } else {
-      console.log("no more events in queue");
+      callback();
       clearInterval(interval);
     }
   }, 1000);
