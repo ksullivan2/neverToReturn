@@ -103,13 +103,11 @@ io.on('connection', function (socket) {
   });
 
 	socket.on("Move Forward", function(data){
-    gameLogic.movePlayer(data.userName, 1);
-    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+    move(data.userName, 1)
   });
 
   socket.on("Move Backward", function(data){
-    gameLogic.movePlayer(data.userName, -1);
-    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+    move(data.userName, -1)
   });
 
 
@@ -131,6 +129,21 @@ var playOutTurn = function(){
   gameLogic.turn.terrainEffects = gameLogic.collectTurnStartEffects();
 
   while (gameLogic.turn.terrainEffects.length > 0){
-    console.log(gameLogic.turn.terrainEffects.shift());
+    processEvent(gameLogic.turn.terrainEffects.shift());
   }
+}
+
+var processEvent = function(event){
+  if (event === "Move Forward"){
+    move(gameLogic.activePlayer.name, 1)
+  }
+  if (event === "Move Backward"){
+    move(gameLogic.activePlayer.name, -1)
+  }
+}
+
+//EVENT TYPES----------------------------------------------------------------------
+var move = function(userName, direction){
+  gameLogic.movePlayer(userName, direction);
+  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
 }

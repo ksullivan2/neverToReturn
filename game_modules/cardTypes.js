@@ -14,7 +14,7 @@ function terrainCard(name){
 
 	//effects will be generated from csv or something like it
 	this.onEncounter = ["Move Forward", "Move Forward"];
-	this.onTurnStart = ["Move Forward", "Move Backward"];
+	this.onTurnStart = ["Move Forward", "Move Forward"];
 
 	//keeps track of if card has been revealed yet
 	this.isRevealed = false;

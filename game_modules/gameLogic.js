@@ -48,7 +48,7 @@ gameLogic.prototype.startGame = function() {
 		this.replenishHand(this.players[i])
 	}
 
-	return true;
+	
 	//the server will handle the "new turn" command
 };
 
