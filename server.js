@@ -167,6 +167,9 @@ var turnPartThree = function(){
 
 
 var processQueue = function(queue, callback){
+  //do the first one without delay
+  //processEvent(queue.shift())
+
   var interval = setInterval(function(){
     if (queue.length > 0){
       processEvent(queue.shift()) ;
