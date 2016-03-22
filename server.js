@@ -128,9 +128,18 @@ var playOutTurn = function(){
    //TODO: desperation check
   gameLogic.turn.terrainEffects = gameLogic.collectTurnStartEffects();
 
-  while (gameLogic.turn.terrainEffects.length > 0){
-    processEvent(gameLogic.turn.terrainEffects.shift());
-  }
+  processQueue(gameLogic.turn.terrainEffects)
+}
+
+var processQueue = function(queue){
+  var interval = setInterval(function(){
+    if (queue.length > 0){
+      processEvent(queue.shift()) ;
+    } else {
+      console.log("no more events in queue");
+      clearInterval(interval);
+    }
+  }, 1000);
 }
 
 var processEvent = function(event){
