@@ -8,35 +8,30 @@ module.exports = {terrainCard, monsterCard, playerCard, actionCard}
 
 
 function terrainCard(name){
+	//TO DO: figure out a way to send the name of the card with every event
 	this.name = name;
-	this.onEncounter = [
-		"effect1", "effect2"
-	];
-	
+	this.imgSRC = "assets/terrainCards/"+name+".jpg";
 
+	//effects will be generated from csv or something like it
+	this.onEncounter = ["effect1", "effect2"];
 	this.onTurnStart = ["effect1", "effect2"];
 
-	this.imgSRC = "assets/terrainCards/"+name+".jpg";
+	//keeps track of if card has been revealed yet
+	this.isRevealed = false;
 }
 
 
 function monsterCard(){
 	this.name = "";
 	this.imgSRC = "";
-	
-	this.onEncounter = {
-		check: {type: "madness", exists: true},
-		checkReducesHitPoints: true,
-		effect: {type: "madness", value: -2, stop: true}
-	};
-	this.onTurnStart = {
-		check: {type: "madness", exists: true},
-		checkReducesHitPoints: false,
-		effect: {type: "madness", value: -2, stop: true}
-	};
-
-	this.type = "m";
+	this.type = "madness";
 	this.hitPoints = 2;
+	
+	this.onEncounter = [];
+	this.onTurnStart = [];
+		
+	//keeps track of if card has been revealed yet
+	this.isRevealed = false;
 }
  
 function playerCard(){

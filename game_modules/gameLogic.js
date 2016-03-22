@@ -46,15 +46,13 @@ gameLogic.prototype.collectTerrainEffects = function(){
 
 	//create a list of all the effects of all of the cards
 	for (var i = 0; i < cardsOnLocation.length; i++) {
-		console.log(i, cardsOnLocation[i].onTurnStart)
 		this.turn.terrainEffects = this.turn.terrainEffects.concat(cardsOnLocation[i].onTurnStart)
-		console.log(this.turn.terrainEffects)
 	}
 }
 
 gameLogic.prototype.performNextTerrainEffect = function() {
 	var terrainEffect = this.turn.terrainEffects[0];
-	//effect: {type: "pain", value: -1, stop: true}
+	
 };
 
 
@@ -63,7 +61,6 @@ gameLogic.prototype.changeGameState = function(newState){
 	if (newState === gameStates.turnStart){
 		//TODO: perform desperation check
 		this.collectTerrainEffects();
-		console.log(this.turn.terrainEffects)
 
 	}
 }
