@@ -75,7 +75,7 @@ io.on('connection', function (socket) {
     } else {
       socket.emit('reconnect failed')
     }
-  })
+  });
 
   socket.on('create player', function(data){   
   	var validName = gameLogic.addPlayer(data.name, data.socketID);
@@ -91,13 +91,15 @@ io.on('connection', function (socket) {
 
 //buttons in action area----------------------------------------------------------------------
   socket.on('Start Game', function(){
-    gameLogic.startGame();
-    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+    gameLogic.startGame()
+    gameLogic.turn = new Turn()
+    playOutTurn();
   });
 
   socket.on('End Turn', function(){
-    gameLogic.nextTurn()
-    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+    gameLogic.changeActivePlayer()
+    gameLogic.turn = new Turn()
+    playOutTurn()
   });
 
 	socket.on("Move Forward", function(data){
@@ -111,5 +113,24 @@ io.on('connection', function (socket) {
   });
 
 
-
 });
+
+//CONTROLLING TURNS----------------------------------------------------------------------
+function Turn(){
+  //these arrays will be filled with objects/events to fire and will always be resolved in order
+  this.terrainEffects = [];
+  this.playerActions = [];
+}
+
+var playOutTurn = function(){
+  //set new game state
+  gameLogic.gameState = gameStates.turnStart;
+  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+
+   //TODO: desperation check
+  gameLogic.turn.terrainEffects = gameLogic.collectTurnStartEffects();
+
+  while (gameLogic.turn.terrainEffects.length > 0){
+    console.log(gameLogic.turn.terrainEffects.shift());
+  }
+}

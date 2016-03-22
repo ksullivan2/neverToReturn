@@ -75,6 +75,22 @@
 	  socket.emit("create player", { name: name, socketID: socket.id });
 	}
 
+	//DEBUG FUNCTIONS
+	function restartGame() {
+	  if (confirm("Do you REALLY want to re-start the whole game and scrap everything to this point?")) {
+	    socket.emit("restart game");
+	  }
+	}
+
+	function reConnectPlayer() {
+	  var name = prompt("Input your name EXACTLY as you typed it before");
+	  socket.emit('reconnect player', { name: name });
+	}
+
+	socket.on("reconnect failed", function () {
+	  alert("Reconnect failed. Match the name EXACTLY.");
+	});
+
 	//REACT RENDER APP---------------------------------------------------------------------------------------------------------
 
 	var App = React.createClass({
@@ -114,7 +130,21 @@
 	      React.createElement(OpponentsDIV, { players: this.state.players, userName: this.state.userName, activePlayer: this.state.activePlayer }),
 	      React.createElement(ActionAREA, { gameState: this.state.gameState, userName: this.state.userName, activePlayer: this.state.activePlayer }),
 	      React.createElement(MyCardsDIV, { gameState: this.state.gameState, players: this.state.players, userName: this.state.userName, activePlayer: this.state.activePlayer }),
-	      React.createElement(NeckDIV, { players: this.state.players, neck: this.state.neck, activePlayer: this.state.activePlayer })
+	      React.createElement(NeckDIV, { players: this.state.players, neck: this.state.neck, activePlayer: this.state.activePlayer }),
+	      React.createElement(
+	        'div',
+	        { id: 'debugDIV' },
+	        React.createElement(
+	          'button',
+	          { onClick: restartGame, id: 'restartGameButton' },
+	          '!!!RESTART GAME!!!'
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: reConnectPlayer, id: 'reConnectPlayerButton' },
+	          'HALP I got disconnected'
+	        )
+	      )
 	    );
 	  }
 	});
@@ -19860,6 +19890,7 @@
 
 
 	  render: function render() {
+	    var displayNotYourTurn = "block";
 	    var displayStart = false;
 	    var displayEndTurn = false;
 	    var displayMoveForward = false;
@@ -19869,6 +19900,7 @@
 	      displayStart = true;
 	    } else if (this.props.gameState === gameStates.decisionMaking) {
 	      if (this.props.activePlayer.name == this.props.userName) {
+	        displayNotYourTurn = "none";
 	        displayEndTurn = true;
 
 	        if (this.props.activePlayer.location != 6) {
@@ -19884,9 +19916,9 @@
 	      'div',
 	      { className: 'layoutDIV', id: 'ActionAREA' },
 	      React.createElement(
-	        'p',
-	        null,
-	        'ActionAREA'
+	        'h2',
+	        { style: { display: displayNotYourTurn } },
+	        ' It is not currently your turn'
 	      ),
 	      React.createElement(ActionButton, { text: 'Start Game', display: displayStart, userName: this.props.userName }),
 	      React.createElement(ActionButton, { text: 'End Turn', display: displayEndTurn, userName: this.props.userName }),
@@ -29743,8 +29775,10 @@
 
 	var gameStates = {
 		gatherPlayers: 0,
-		decisionMaking: 1,
-		actionsPlayingOut: 2
+		turnStart: 1,
+		decisionMaking: 2,
+		actionsPlayingOut: 3,
+		turnEnd: 4
 	};
 
 	module.exports = gameStates;
@@ -29844,7 +29878,7 @@
 			return React.createElement(
 				'div',
 				{ className: 'layoutDIV', id: 'MyCardsDIV' },
-				' '
+				'There are no cards in your hand. '
 			);
 		}
 
@@ -31597,7 +31631,6 @@
 	    var canvasStyle = { margin: 'auto',
 	      width: '100%',
 	      height: '100%',
-	      border: "2px solid red",
 	      position: "absolute" };
 
 	    return React.createElement(

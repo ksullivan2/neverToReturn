@@ -27,49 +27,15 @@ function gameLogic(){
 }
 
 //TURN LOGIC-------------------------------------------------------------------------------------------------------------------
-gameLogic.prototype.nextTurn = function() {
-	this.changeActivePlayer();
-	this.turn = new Turn();
-	this.changeGameState(gameStates.turnStart);
-};
 
-
-var Turn = function(){
-	//these arrays will be filled with objects/events to fire and will always be resolved in order
-	this.terrainEffects = [];
-	this.playerActions = [];
-}
-
-gameLogic.prototype.collectTerrainEffects = function(){
-	//for comprehension's sake, save a reference to the cards on the current active location
-	var cardsOnLocation = this.neck[this.activePlayer.location].cards;
-
-	//create a list of all the effects of all of the cards
-	for (var i = 0; i < cardsOnLocation.length; i++) {
-		this.turn.terrainEffects = this.turn.terrainEffects.concat(cardsOnLocation[i].onTurnStart)
-	}
-}
-
-gameLogic.prototype.performNextTerrainEffect = function() {
-	var terrainEffect = this.turn.terrainEffects[0];
-	
-};
-
-
-//GAMESTATE CHANGES-------------------------------------------------------------------------------------------------------------
-gameLogic.prototype.changeGameState = function(newState){
-	if (newState === gameStates.turnStart){
-		//TODO: perform desperation check
-		this.collectTerrainEffects();
-
-	}
-}
 
 
 
 
 //GAMEPLAY ACTIONS---------------------------------------------------------------------------------------------------------
 gameLogic.prototype.startGame = function() {
+	//SHOULD ONLY DO ACTIONS UNIQUE TO STARTING GAME
+
 	//set the first player (eventually, ask for who goes first)
 	var firstPlayer = this.findPlayerByOrder(0);
 	this.activePlayer = firstPlayer;
@@ -82,11 +48,8 @@ gameLogic.prototype.startGame = function() {
 		this.replenishHand(this.players[i])
 	}
 
-	//set up the "turn"
-	this.turn = new Turn();
-
-	//set the gamestate
-	this.changeGameState(gameStates.turnStart);
+	return true;
+	//the server will handle the "new turn" command
 };
 
 
@@ -110,6 +73,21 @@ gameLogic.prototype.newNeck = function() {
 		this.neck[i].addCard(new cardTypes.terrainCard(cardNames[i]))
 	}
 };
+
+gameLogic.prototype.collectTurnStartEffects = function(){
+	//for comprehension's sake, save a reference to the cards on the current active location
+	var cardsOnLocation = this.neck[this.activePlayer.location].cards;
+
+	var turnStartEffects = [];
+	//create a list of all the effects of all of the cards
+	for (var i = 0; i < cardsOnLocation.length; i++) {
+		 turnStartEffects = turnStartEffects.concat(cardsOnLocation[i].onTurnStart)
+	}
+
+	return turnStartEffects;
+}
+
+
 
 //PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------
 
