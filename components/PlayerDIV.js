@@ -14,12 +14,17 @@ var PlayerDIV = React.createClass({
       border: border
     }
 
+    var playerNameForDisplay = this.props.player.name;
+    if (!this.props.player.name){
+      playerNameForDisplay = "disconnected"
+    }
+
     
 
     if (!this.props.player.card){
       return (
         <div  className="PlayerDIV" style={divStyle}>
-          <h2>{this.props.player.name}</h2>   
+          <h2>{playerNameForDisplay}</h2>   
         </div>
       )
     } else {
