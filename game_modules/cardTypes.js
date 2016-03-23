@@ -9,12 +9,14 @@ module.exports = {terrainCard, monsterCard, playerCard, actionCard}
 
 function terrainCard(name){
 	//TO DO: figure out a way to send the name of the card with every event
+	var config = require("../CONFIG FILES/cardConfigs/terrainCards/"+name+".json")
+	
+
 	this.name = name;
 	this.imgSRC = "assets/terrainCards/"+name+".jpg";
 
-	//effects will be generated from csv or something like it
-	this.onEncounter = ["Take 1 Pain"];
-	this.onTurnStart = ["Move Forward"];
+	this.onEncounter = config.onEncounter;
+	this.onTurnStart = config.onTurnStart;
 
 	//keeps track of if card has been revealed yet
 	this.isRevealed = false;

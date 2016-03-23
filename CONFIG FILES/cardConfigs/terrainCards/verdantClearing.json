@@ -1,0 +1,7 @@
+
+
+
+{
+	"onEncounter": ["Take 1 Pain"],
+	"onTurnStart": ["Move Forward"]
+}
