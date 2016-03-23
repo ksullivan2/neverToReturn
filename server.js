@@ -132,7 +132,7 @@ var startNewTurn = function(){
 
 
 var processQueue = function(){
- //if there are any events in the terrainEventsQueue, give those priority
+ //if there are any events in the terrainEffectsQueue, give those priority
  //else do the next player action
  //finally do endTurnQueue
  //if nothing in queues, it's the end of the turn
@@ -155,7 +155,8 @@ var processQueue = function(){
 var processCheck = function(){
   var event = gameLogic.turn.currentEvent
   //roll a D10
-  var dice = Math.random() * (10-1) + 1;
+  var dice = Math.floor(Math.random() * 10 + 1);
+
 
   //all bonuses will be stored in the "turn" object, don't worry about on server
   if (gameLogic.isCheckPassed(event.target, event.checkStat, dice)){
@@ -165,6 +166,8 @@ var processCheck = function(){
     gameLogic.turn.terrainEffectsQueue = event.ifFail.concat(gameLogic.turn.terrainEffectsQueue) 
   }
 
+  //add an event to the front of the queue to view the result of the roll
+  gameLogic.turn.terrainEffectsQueue.unshift({type: "display", value: dice})
   processQueue();
 }
 
@@ -184,7 +187,9 @@ var processEvent = function(event){
     return
   }
 
-  
+  if (event.type == "display"){
+    gameLogic.gameState = gameStates.animationsPlayingOut;
+  }
   
 
   if (event.type === "pain" || event.type === "madness"){

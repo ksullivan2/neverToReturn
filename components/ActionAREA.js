@@ -53,12 +53,14 @@ var ActionAREA = React.createClass({
           actionText = "Roll a "+this.props.activePlayer[this.props.turn.currentEvent.checkStat]+
                   " or lower to pass the "+ this.props.turn.currentEvent.checkStat+ " check."
           displayRollCheck = true;
-        }
+        } 
       }
     }
     else if (this.props.gameState === gameStates.animationsPlayingOut){
       actionText = "Resolving: "+this.props.turn.currentEvent.type;
-
+      if (this.props.turn.currentEvent.type === "display"){
+          actionText = "You rolled a "+ this.props.turn.currentEvent.value
+        }
 
     }
 
