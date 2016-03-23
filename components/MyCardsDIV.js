@@ -23,8 +23,7 @@ var MyCardsDIV = React.createClass({
 		    
 		    for (var i = 0; i < userHand.length; i++){
 		      cardsInHand.push({card: userHand[i], key:(this.props.userName+"card"+i), offset:(i*10)})
-		    }
-		    console.log(userHand)
+		    }	    
 		    
 		    if (cardsInHand.length > 0){
 			    return (

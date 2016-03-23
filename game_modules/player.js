@@ -9,13 +9,10 @@ function Player(name, order, color, socketID){
 	this.hand = [];
 
 	//stats
-	this.maxPain = 7;
-	this.currentPain = 7;
-
-	this.maxMadness = 5;
-	this.currentMadness = 5;
-
-	this.specialAbility = {}
+	this.card = null;
+	this.pain = 0;
+	this.madness = 0;
+	this.progress = 0;
 
 	//location is 0-7; it is the current space the player is on
 	this.location = 0;

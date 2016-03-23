@@ -34,11 +34,12 @@ function monsterCard(){
 	this.isRevealed = false;
 }
  
-function playerCard(){
-	this.name = "";
-	this.painPoints = 5;
-	this.madnessPoints = 6;
-	this.specialAbility = ""
+function playerCard(name){
+	this.name = name;
+	this.pain = 6;
+	this.madness = 6;
+	this.specialAbility = "aMomentsRespite"
+	this.imgSRC = "assets/playerCards/"+name+".jpg";
 }
 
 function actionCard(name){

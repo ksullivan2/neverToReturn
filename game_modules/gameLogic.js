@@ -41,12 +41,21 @@ gameLogic.prototype.initializeGame = function() {
 
 	//deal action cards to each player
 	for (var i in this.players){
+		this.assignPlayerCard(this.players[i], "homelyVillager")
 		this.replenishHand(this.players[i])
 	}
 
 	
 	//the server will handle the "new turn" command
 };
+
+gameLogic.prototype.assignPlayerCard = function(player, cardName){
+	player.card = new cardTypes.playerCard(cardName)
+
+	//initialize stats
+	player.pain = player.card.pain;
+	player.madness = player.card.madness;
+}
 
 
 gameLogic.prototype.changeActivePlayer = function(){

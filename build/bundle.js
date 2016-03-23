@@ -19828,15 +19828,33 @@
 	      border: border
 	    };
 
-	    return React.createElement(
-	      'div',
-	      { className: 'PlayerDIV', style: divStyle },
-	      React.createElement(
-	        'h2',
-	        null,
-	        this.props.player.name
-	      )
-	    );
+	    if (!this.props.player.card) {
+	      return React.createElement(
+	        'div',
+	        { className: 'PlayerDIV', style: divStyle },
+	        React.createElement(
+	          'h2',
+	          null,
+	          this.props.player.name
+	        )
+	      );
+	    } else {
+	      console.log(this.props.player.card);
+	      return React.createElement(
+	        'div',
+	        { className: 'PlayerDIV', style: divStyle },
+	        React.createElement(
+	          'h2',
+	          null,
+	          this.props.player.name
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          this.props.player.card.name
+	        )
+	      );
+	    }
 	  }
 	});
 

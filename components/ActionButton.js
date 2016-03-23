@@ -12,8 +12,6 @@ var ActionButton = React.createClass({
   },
 
   handleClick: function(){
-      console.log(this.props.text," button clicked");
-      console.log(this.props.userName)
       socket.emit(this.props.text.toString(), {userName: this.props.userName});
     
   },
