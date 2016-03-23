@@ -78,7 +78,7 @@ gameLogic.prototype.newNeck = function() {
 };
 
 gameLogic.prototype.isCheckPassed = function(target, menace, dice){
-	var player = findPlayerByUserName(target)
+	var player = this.findPlayerByUserName(target)
 	var value = player[menace]
 	//ADD ALL THE BONUSES THEY GET (STORED IN TURN)
 

@@ -50,7 +50,8 @@ var ActionAREA = React.createClass({
           }
           //CHECKS:------------------------------------------------------------
         } else if (this.props.turn.currentEvent.type === "check"){
-          actionText = "Roll a "+this.props.player[this.props.turn.currentEvent.checkStat]+"or lower to pass the "+ this.props.turn.currentEvent.checkStat+ "check."
+          actionText = "Roll a "+this.props.activePlayer[this.props.turn.currentEvent.checkStat]+
+                  " or lower to pass the "+ this.props.turn.currentEvent.checkStat+ " check."
           displayRollCheck = true;
         }
       }
