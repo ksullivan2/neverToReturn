@@ -97,12 +97,12 @@ io.on('connection', function (socket) {
 
 	socket.on("Move Forward", function(data){
     //don't forget you have username in the data
-    gameLogic.turn.playerActionsQueue.push("Move Forward")
+    gameLogic.turn.playerActionsQueue.push({type:"Move Forward"})
     processQueue();
   });
 
   socket.on("Move Backward", function(data){
-    gameLogic.turn.playerActionsQueue.push("Move Backward")
+    gameLogic.turn.playerActionsQueue.push({type:"Move Backward"})
     processQueue();
   });
 
@@ -147,41 +147,49 @@ var processQueue = function(){
 
 
 var processEvent = function(event){
-  io.sockets.emit("update eventText", {event: event});
+  io.sockets.emit("update eventText", {event: event.type});
+
+  if (event.check){
+    //perform check
+    //add appropriate consequences to the beggining of the terrain event queue (unshift)
+    return
+  }
+
+  var target = gameLogic.activePlayer.name;
+  //EVENTUALLY ALLOW EVENTS TO TARGET OTHER PLAYERS/MONSTERS ETC
+  
+
+  if (event.type === "pain" || event.type === "madness"){
+    gameLogic.affectMenace(target, event.type, event.value)
+  }
 
   //add a check for if it requires user interaction
-  if (event === "choosePlayerAction"){
+  if (event.type === "choosePlayerAction"){
     gameLogic.gameState = gameStates.waitingForPlayerInput;
     io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
     return
   }
-  else if (event === "Move Forward"){
+  else if (event.type === "Move Forward"){
     gameLogic.gameState = gameStates.animationsPlayingOut;
     move(gameLogic.activePlayer.name, 1)
-   
-
   }
-  else if (event === "Move Backward"){
+  else if (event.type === "Move Backward"){
     gameLogic.gameState = gameStates.animationsPlayingOut;
     move(gameLogic.activePlayer.name, -1)
 
   }
 
-  else if (event ==="Take 1 Pain"){
-    gameLogic.activePlayer.pain -= 1;
-    io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
-
-  }
+ 
   else{
     gameLogic.gameState = gameStates.animationsPlayingOut;
     
   }
 
+  io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
   setTimeout(processQueue, 1000);
 }
 
 //EVENT TYPES----------------------------------------------------------------------
 var move = function(userName, direction){
   gameLogic.movePlayer(userName, direction);
-  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
 }

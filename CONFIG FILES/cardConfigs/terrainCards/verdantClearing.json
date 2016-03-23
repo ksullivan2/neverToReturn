@@ -1,7 +1,13 @@
 
-
-
 {
-	"onEncounter": ["Take 1 Pain"],
-	"onTurnStart": ["Move Forward"]
+	"onEncounter": 
+	[
+		{"type": "pain",
+		"value": 1}
+	],
+	"onTurnStart": 
+	[
+		{"type": "pain",
+		"value": 1}
+	]
 }

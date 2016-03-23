@@ -11,7 +11,6 @@ function terrainCard(name){
 	//TO DO: figure out a way to send the name of the card with every event
 	var config = require("../CONFIG FILES/cardConfigs/terrainCards/"+name+".json")
 	
-
 	this.name = name;
 	this.imgSRC = "assets/terrainCards/"+name+".jpg";
 

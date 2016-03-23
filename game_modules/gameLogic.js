@@ -82,9 +82,9 @@ gameLogic.prototype.newNeck = function() {
 //TURNS-------------------------------------------------------------------------------------------------
 function Turn(){
   //these arrays will be filled with objects/events to fire and will always be resolved in order
-  this.terrainEffectsQueue = ["desperationCheck"];
-  this.playerActionsQueue = ["choosePlayerAction"];
-  this.endTurnQueue = ["checkForLostPlayers","drawCard"]
+  this.terrainEffectsQueue = [{type: "desperationCheck"}];
+  this.playerActionsQueue = [{type: "choosePlayerAction"}];
+  this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"drawCard"}]
   this.numberOfActions = 1;
   this.playedActionCard = false;
 }
@@ -118,6 +118,20 @@ gameLogic.prototype.collectOnEncounterEffects = function(){
 
 
 //PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------
+
+gameLogic.prototype.affectMenace = function(userName, menace, value) {
+	var player = this.findPlayerByUserName(userName)
+	player[menace] += value
+
+	//adjust for going out of bounds
+	if (player[menace] > player.card[menace]){
+		player[menace] = player.card[menace]
+	}
+	if (player[menace] < 0){
+		player[menace] = 0;
+	}
+};
+
 
 gameLogic.prototype.movePlayer = function(userName, movement){
 	//move: pos is forward, neg is backward
