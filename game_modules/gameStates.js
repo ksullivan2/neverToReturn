@@ -1,7 +1,7 @@
 var gameStates = {
 	gatherPlayers: 0,
-	decisionMaking: 1,
-	actionsPlayingOut: 2
+	waitingForPlayerInput: 1,
+	animationsPlayingOut: 2
 }
 
 module.exports = gameStates;

@@ -5,9 +5,8 @@ var Player = require("./player.js");
 var gameStates = require("./gameStates.js");
 var neckLocation = require("./neckLocation.js");
 
-
+//CONFIG FILE IMPORTS
 var playerColors = require("../CONFIG FILES/visualConfig.js").playerColors;
-
 
 
 
@@ -23,14 +22,16 @@ function gameLogic(){
 	this.players = {};
 	this.activePlayer = new Player("dummyStartPlayer");
 	this.gameState = gameStates.gatherPlayers;
+	this.turn = null;
 
 }
 
 
 
+//GAMEPLAY ACTIONS---------------------------------------------------------------------------------------------------------
+gameLogic.prototype.initializeGame = function() {
+	//SHOULD ONLY DO ACTIONS UNIQUE TO STARTING GAME
 
-//GAMESTATE ACTIONS---------------------------------------------------------------------------------------------------------
-gameLogic.prototype.startGame = function() {
 	//set the first player (eventually, ask for who goes first)
 	var firstPlayer = this.findPlayerByOrder(0);
 	this.activePlayer = firstPlayer;
@@ -40,14 +41,24 @@ gameLogic.prototype.startGame = function() {
 
 	//deal action cards to each player
 	for (var i in this.players){
+		this.assignPlayerCard(this.players[i], "homelyVillager")
 		this.replenishHand(this.players[i])
 	}
 
-	//set the gamestate
-	this.gameState = gameStates.decisionMaking;
+	
+	//the server will handle the "new turn" command
 };
 
-gameLogic.prototype.nextTurn = function() {
+gameLogic.prototype.assignPlayerCard = function(player, cardName){
+	player.card = new cardTypes.playerCard(cardName)
+
+	//initialize stats
+	player.pain = player.card.pain;
+	player.madness = player.card.madness;
+}
+
+
+gameLogic.prototype.changeActivePlayer = function(){
 	var index = this.activePlayer.order;
 
 	//if we're at the end of the list, return the first player
@@ -56,9 +67,7 @@ gameLogic.prototype.nextTurn = function() {
 	} else{
 		this.activePlayer = this.findPlayerByOrder(index+1);
 	};
-
-	this.gameState = gameStates.decisionMaking;
-};
+}
 
 gameLogic.prototype.newNeck = function() {
 	//temporary method for dealing a dummy neck
@@ -69,6 +78,21 @@ gameLogic.prototype.newNeck = function() {
 		this.neck[i].addCard(new cardTypes.terrainCard(cardNames[i]))
 	}
 };
+
+gameLogic.prototype.collectTurnStartEffects = function(){
+	//for comprehension's sake, save a reference to the cards on the current active location
+	var cardsOnLocation = this.neck[this.activePlayer.location].cards;
+
+	var turnStartEffects = [];
+	//create a list of all the effects of all of the cards
+	for (var i = 0; i < cardsOnLocation.length; i++) {
+		 turnStartEffects = turnStartEffects.concat(cardsOnLocation[i].onTurnStart)
+	}
+
+	return turnStartEffects;
+}
+
+
 
 //PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------
 
@@ -116,7 +140,7 @@ gameLogic.prototype.dealCard = function(player){
 }
 
 
-//SESSIONS/PLAYERS------------------------------------------------------------------------------------------------------------
+//SESSIONS/SOCKETS------------------------------------------------------------------------------------------------------------
 var testForSocketMatch = function(givenSocket, storedSocket){
 	return (givenSocket === "/#"+ storedSocket);
 }

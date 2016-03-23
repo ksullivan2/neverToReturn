@@ -75,7 +75,7 @@ io.on('connection', function (socket) {
     } else {
       socket.emit('reconnect failed')
     }
-  })
+  });
 
   socket.on('create player', function(data){   
   	var validName = gameLogic.addPlayer(data.name, data.socketID);
@@ -91,25 +91,106 @@ io.on('connection', function (socket) {
 
 //buttons in action area----------------------------------------------------------------------
   socket.on('Start Game', function(){
-    gameLogic.startGame();
-    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+    //do NOT use "start new turn" because it changes active plaeyr
+    initializeGame();
   });
 
   socket.on('End Turn', function(){
-    gameLogic.nextTurn()
-    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+    startNewTurn()
   });
 
 	socket.on("Move Forward", function(data){
-    gameLogic.movePlayer(data.userName, 1);
-    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+    //don't forget you have username in the data
+    gameLogic.turn.playerActions.push("Move Forward")
+    performPlayerActions()
   });
 
   socket.on("Move Backward", function(data){
-    gameLogic.movePlayer(data.userName, -1);
-    io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+    gameLogic.turn.playerActions.push("Move Backward")
+    performPlayerActions()
   });
 
 
-
 });
+
+//CONTROLLING TURNS----------------------------------------------------------------------
+function Turn(){
+  //these arrays will be filled with objects/events to fire and will always be resolved in order
+  this.terrainEffects = [];
+  this.playerActions = [];
+}
+
+var initializeGame = function(){
+  gameLogic.initializeGame()
+  gameLogic.turn = new Turn()
+  turnPartOne();
+}
+
+var startNewTurn = function(){
+  console.log("startNewTurn")
+  gameLogic.changeActivePlayer()
+  gameLogic.turn = new Turn()
+  turnPartOne()
+}
+
+var turnPartOne = function(){
+  console.log("turnPartOne")
+  //set new game state
+  gameLogic.gameState = gameStates.animationsPlayingOut;
+  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+
+   //TODO: desperation check
+  gameLogic.turn.terrainEffects = gameLogic.collectTurnStartEffects();
+
+  //process all terrain effects
+  processQueue(gameLogic.turn.terrainEffects, turnPartTwo)
+}
+
+var turnPartTwo = function(){
+  console.log("turnPartTwo")
+  gameLogic.gameState = gameStates.waitingForPlayerInput;
+  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+}
+
+var performPlayerActions = function(){
+  console.log("performPlayerActions")
+  gameLogic.gameState = gameStates.animationsPlayingOut;
+  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+  processQueue(gameLogic.turn.playerActions, turnPartThree)
+}
+
+var turnPartThree = function(){
+  console.log("turnPartThree")
+  //check for lost players, draw a card
+  startNewTurn();
+}
+
+
+var processQueue = function(queue, callback){
+  //do the first one without delay
+  //processEvent(queue.shift())
+
+  var interval = setInterval(function(){
+    if (queue.length > 0){
+      processEvent(queue.shift()) ;
+    } else {
+      callback();
+      clearInterval(interval);
+    }
+  }, 1000);
+}
+
+var processEvent = function(event){
+  if (event === "Move Forward"){
+    move(gameLogic.activePlayer.name, 1)
+  }
+  if (event === "Move Backward"){
+    move(gameLogic.activePlayer.name, -1)
+  }
+}
+
+//EVENT TYPES----------------------------------------------------------------------
+var move = function(userName, direction){
+  gameLogic.movePlayer(userName, direction);
+  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
+}
