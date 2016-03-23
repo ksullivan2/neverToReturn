@@ -96,18 +96,32 @@ io.on('connection', function (socket) {
 
 
 	socket.on("Move Forward", function(data){
-    //don't forget you have username in the data
-    gameLogic.turn.playerActionsQueue.push({type:"Move Forward"})
-    processQueue();
+    //check for gameState so that we can't get a double-press
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      gameLogic.gameState = gameStates.animationsPlayingOut;
+      gameLogic.addActionToQueue({type:"move", value: 1})
+      processQueue()
+    }
+ 
   });
 
   socket.on("Move Backward", function(data){
-    gameLogic.turn.playerActionsQueue.push({type:"Move Backward"})
-    processQueue();
+    //check for gameState so that we can't get a double-press
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      gameLogic.addActionToQueue({type:"move", value: -1})
+      gameLogic.gameState = gameStates.animationsPlayingOut;
+      processQueue()
+    }
+    
   });
 
   socket.on("Roll Check", function(data){
-    processCheck();
+    //check for gameState so that we can't get a double-press
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      gameLogic.gameState = gameStates.animationsPlayingOut;
+      processCheck();
+    }
+    
   });
 
 
@@ -130,8 +144,16 @@ var startNewTurn = function(){
   processQueue();
 }
 
+var printQueue = function(){
+  var queue = gameLogic.turn.terrainEffectsQueue.concat(gameLogic.turn.playerActionsQueue.concat(gameLogic.turn.endTurnQueue));
+  console.log("queue currently is:")
+  for (var i = 0; i < queue.length; i++) {
+    console.log(i, queue[i].type)
+  }
+}
 
 var processQueue = function(){
+  printQueue()
  //if there are any events in the terrainEffectsQueue, give those priority
  //else do the next player action
  //finally do endTurnQueue
@@ -187,14 +209,20 @@ var processEvent = function(event){
     return
   }
 
-  if (event.type == "display"){
+  else if (event.type == "display"){
     gameLogic.gameState = gameStates.animationsPlayingOut;
   }
   
 
-  if (event.type === "pain" || event.type === "madness"){
+  else if (event.type === "pain" || event.type === "madness"){
     gameLogic.affectMenace(target, event.type, event.value)
   }
+
+  else if (event.type === "move"){
+    gameLogic.gameState = gameStates.animationsPlayingOut;
+    move(gameLogic.activePlayer.name, event.value)
+  }
+
 
 
 
@@ -205,15 +233,7 @@ var processEvent = function(event){
     io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
     return
   }
-  else if (event.type === "Move Forward"){
-    gameLogic.gameState = gameStates.animationsPlayingOut;
-    move(gameLogic.activePlayer.name, 1)
-  }
-  else if (event.type === "Move Backward"){
-    gameLogic.gameState = gameStates.animationsPlayingOut;
-    move(gameLogic.activePlayer.name, -1)
-
-  }
+ 
 
  
   else{

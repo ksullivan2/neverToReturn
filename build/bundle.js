@@ -19956,12 +19956,12 @@
 	      displayStart = true;
 	      actionText = "Waiting for all players to join...";
 	    } else if (this.props.gameState === gameStates.waitingForPlayerInput) {
-	      var event = this.props.turn.currentEvent;
+
 	      actionText = "It is " + this.props.activePlayer.name + "'s turn to choose an action.";
 
 	      if (this.props.activePlayer.name == this.props.userName) {
 	        //TURN STANDARD ACTIONS------------------------------------------------
-	        if (this.props.event.type === "choosePlayerAction") {
+	        if (this.props.turn.currentEvent.type === "choosePlayerAction") {
 	          actionText = "Choose your action.";
 
 	          if (this.props.activePlayer.location != 6) {
@@ -19971,13 +19971,16 @@
 	            displayMoveBackward = true;
 	          }
 	          //CHECKS:------------------------------------------------------------
-	        } else if (this.props.event.type === "check") {
-	            actionText = "Roll a " + this.props.player[event.checkStat] + "or lower to pass the " + event.checkStat + "check.";
+	        } else if (this.props.turn.currentEvent.type === "check") {
+	            actionText = "Roll a " + this.props.activePlayer[this.props.turn.currentEvent.checkStat] + " or lower to pass the " + this.props.turn.currentEvent.checkStat + " check.";
 	            displayRollCheck = true;
 	          }
 	      }
 	    } else if (this.props.gameState === gameStates.animationsPlayingOut) {
-	      actionText = "Resolving: " + this.props.eventType;
+	      actionText = "Resolving: " + this.props.turn.currentEvent.type;
+	      if (this.props.turn.currentEvent.type === "display") {
+	        actionText = "You rolled a " + this.props.turn.currentEvent.value;
+	      }
 	    }
 
 	    return React.createElement(
@@ -29869,6 +29872,7 @@
 	  componentDidMount: function componentDidMount() {},
 
 	  handleClick: function handleClick() {
+	    console.log(this.props.text + " button clicked by ", this.props.userName);
 	    socket.emit(this.props.text.toString(), { userName: this.props.userName });
 	  },
 

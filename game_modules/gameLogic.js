@@ -125,6 +125,9 @@ gameLogic.prototype.collectOnEncounterEffects = function(){
 	}
 }
 
+gameLogic.prototype.addActionToQueue = function(event){
+	this.turn.playerActionsQueue.push(event)
+}
 
 
 //PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------
