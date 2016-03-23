@@ -91,13 +91,9 @@ io.on('connection', function (socket) {
 
 //buttons in action area----------------------------------------------------------------------
   socket.on('Start Game', function(){
-    //do NOT use "start new turn" because it changes active plaeyr
     initializeGame();
   });
 
-  socket.on('End Turn', function(){
-    startNewTurn()
-  });
 
 	socket.on("Move Forward", function(data){
     //don't forget you have username in the data
@@ -148,20 +144,11 @@ var processQueue = function(){
 
 }
 
-// var interval = setInterval(function(){
-//     if (queue.length > 0){
-//       processEvent(queue.shift()) ;
-//     } else {
-//       callback();
-//       clearInterval(interval);
-//     }
-//   }, 1000);
-
-
 
 
 var processEvent = function(event){
-  console.log(event)
+  io.sockets.emit("update eventText", {event: event});
+
   //add a check for if it requires user interaction
   if (event === "choosePlayerAction"){
     gameLogic.gameState = gameStates.waitingForPlayerInput;

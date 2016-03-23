@@ -8,6 +8,7 @@ var ActionButton = require('./ActionButton.js')
 //   gameState: int(enum)
 //   userName: ""
 //   activePlayer: Player
+//   eventText: ""
 
 
 // gameStates enum:
@@ -18,19 +19,22 @@ var ActionButton = require('./ActionButton.js')
 var ActionAREA = React.createClass({
 	
   render: function () {
-    var displayNotYourTurn = "block";
+
     var displayStart = false;
-    var displayEndTurn = false;
     var displayMoveForward = false;
     var displayMoveBackward = false;
 
+    var actionText = ""
+
   	if (this.props.gameState === gameStates.gatherPlayers){
       displayStart = true;
+      actionText = "Waiting for all players to join..."
     }
     else if (this.props.gameState === gameStates.waitingForPlayerInput){
+      actionText = "It is "+this.props.activePlayer.name+"'s turn to choose an action.";
+
       if (this.props.activePlayer.name == this.props.userName){
-        displayNotYourTurn = "none";
-        displayEndTurn = true;
+        actionText = "Choose your action."
 
         if (this.props.activePlayer.location != 6){
           displayMoveForward = true;
@@ -40,16 +44,17 @@ var ActionAREA = React.createClass({
         }
       }
     }
-    else if (this.props.gameState === gameStates.gatherPlayers){
+    else if (this.props.gameState === gameStates.animationsPlayingOut){
+      actionText = "Resolving: "+this.props.eventText;
+
 
     }
 
 
     return (
       <div className="layoutDIV" id='ActionAREA'>
-        <h2 style={{display:displayNotYourTurn}}> It is not currently your turn</h2>
+        <h2 style={{display:"block"}}>{actionText}</h2>
         <ActionButton text="Start Game" display={displayStart} userName={this.props.userName}/>
-		    <ActionButton text="End Turn" display={displayEndTurn} userName={this.props.userName}/>
         <ActionButton text="Move Forward" display={displayMoveForward} userName={this.props.userName}/>
         <ActionButton text="Move Backward" display={displayMoveBackward} userName={this.props.userName}/>
 

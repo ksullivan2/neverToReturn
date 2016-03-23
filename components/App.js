@@ -55,7 +55,8 @@ var App = React.createClass({
       neck: [],
       activePlayer: null,
       gameState: 0,
-      userName: null
+      userName: null,
+      eventText: ""
     }
   },
 
@@ -76,6 +77,9 @@ var App = React.createClass({
       self.setState({userName: data.userName})
     })
 
+    socket.on("update eventText", function(data){
+      self.setState({eventText: data.event})
+    })
 
   },
 
@@ -83,7 +87,7 @@ var App = React.createClass({
     return (
       <div id='App'>
         <OpponentsDIV players={this.state.players} userName={this.state.userName} activePlayer={this.state.activePlayer} />
-        <ActionAREA gameState={this.state.gameState} userName={this.state.userName} activePlayer={this.state.activePlayer}/>
+        <ActionAREA gameState={this.state.gameState} userName={this.state.userName} activePlayer={this.state.activePlayer} eventText={this.state.eventText}/>
         <MyCardsDIV gameState={this.state.gameState} players={this.state.players} userName={this.state.userName} activePlayer={this.state.activePlayer}/>
         <NeckDIV players={this.state.players} neck={this.state.neck} activePlayer={this.state.activePlayer}/>
         <div id="debugDIV">
