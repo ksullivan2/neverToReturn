@@ -8,6 +8,21 @@ var PlayerPiece = require('./PlayerPiece')
 //   activePlayer: Player
 
 var NeckCanvas = React.createClass({
+  shouldComponentUpdate: function(nextProps, nextState){
+    if (!this.props.activePlayer || nextProps.activePlayer || nextProps.activePlayer.name != this.props.activePlayer.name){
+      return true;
+    }
+    for (var i = 0; i < nextProps.players.length; i++) {
+      if (!this.props.players[i] || nextProps.players[i].location != this.props.players[i].location){
+        return true;
+      }
+    }
+
+    return false;
+  },
+
+
+
   getInitialState: function(){
     return(
       {canvas_x: 0,

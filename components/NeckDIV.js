@@ -10,11 +10,8 @@ var socket = io();
 //   activePlayer: Player
 
 var NeckDIV = React.createClass({
-  
 
   render: function () {
-    
-
     var self = this;
 
     //creating an array to be rendered below

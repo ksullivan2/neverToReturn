@@ -30001,7 +30001,6 @@
 
 
 	  render: function render() {
-
 	    var self = this;
 
 	    //creating an array to be rendered below
@@ -31640,6 +31639,19 @@
 
 	var NeckCanvas = React.createClass({
 	  displayName: 'NeckCanvas',
+
+	  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+	    if (!this.props.activePlayer || nextProps.activePlayer || nextProps.activePlayer.name != this.props.activePlayer.name) {
+	      return true;
+	    }
+	    for (var i = 0; i < nextProps.players.length; i++) {
+	      if (!this.props.players[i] || nextProps.players[i].location != this.props.players[i].location) {
+	        return true;
+	      }
+	    }
+
+	    return false;
+	  },
 
 	  getInitialState: function getInitialState() {
 	    return { canvas_x: 0,
