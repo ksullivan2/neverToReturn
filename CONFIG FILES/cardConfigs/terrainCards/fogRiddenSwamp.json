@@ -1,7 +1,13 @@
 
-
-
 {
-	"onEncounter": [],
+	"onEncounter": [
+		{"check": "madness",
+			"ifPass": [],
+			"ifFail": [
+				{"type":"stop"}
+			]
+
+		}
+	],
 	"onTurnStart": []
 }

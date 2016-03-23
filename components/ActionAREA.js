@@ -8,7 +8,7 @@ var ActionButton = require('./ActionButton.js')
 //   gameState: int(enum)
 //   userName: ""
 //   activePlayer: Player
-//   eventText: ""
+//   turn: Turn
 
 
 // gameStates enum:
@@ -19,33 +19,44 @@ var ActionButton = require('./ActionButton.js')
 var ActionAREA = React.createClass({
 	
   render: function () {
+    
 
     var displayStart = false;
     var displayMoveForward = false;
     var displayMoveBackward = false;
+    var displayRollCheck = false;
 
     var actionText = ""
+
 
   	if (this.props.gameState === gameStates.gatherPlayers){
       displayStart = true;
       actionText = "Waiting for all players to join..."
     }
     else if (this.props.gameState === gameStates.waitingForPlayerInput){
+      
       actionText = "It is "+this.props.activePlayer.name+"'s turn to choose an action.";
 
       if (this.props.activePlayer.name == this.props.userName){
-        actionText = "Choose your action."
+        //TURN STANDARD ACTIONS------------------------------------------------
+        if(this.props.turn.currentEvent.type === "choosePlayerAction"){
+          actionText = "Choose your action."
 
-        if (this.props.activePlayer.location != 6){
-          displayMoveForward = true;
-        }
-        if (this.props.activePlayer.location != 0){
-          displayMoveBackward = true;
+          if (this.props.activePlayer.location != 6){
+            displayMoveForward = true;
+          }
+          if (this.props.activePlayer.location != 0){
+            displayMoveBackward = true;
+          }
+          //CHECKS:------------------------------------------------------------
+        } else if (this.props.turn.currentEvent.type === "check"){
+          actionText = "Roll a "+this.props.player[this.props.turn.currentEvent.checkStat]+"or lower to pass the "+ this.props.turn.currentEvent.checkStat+ "check."
+          displayRollCheck = true;
         }
       }
     }
     else if (this.props.gameState === gameStates.animationsPlayingOut){
-      actionText = "Resolving: "+this.props.eventText;
+      actionText = "Resolving: "+this.props.turn.currentEvent.type;
 
 
     }
@@ -57,6 +68,7 @@ var ActionAREA = React.createClass({
         <ActionButton text="Start Game" display={displayStart} userName={this.props.userName}/>
         <ActionButton text="Move Forward" display={displayMoveForward} userName={this.props.userName}/>
         <ActionButton text="Move Backward" display={displayMoveBackward} userName={this.props.userName}/>
+        <ActionButton text="Roll Check" display={displayRollCheck} userName={this.props.userName}/>
 
       </div>
     )

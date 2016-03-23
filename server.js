@@ -91,7 +91,7 @@ io.on('connection', function (socket) {
 
 //buttons in action area----------------------------------------------------------------------
   socket.on('Start Game', function(){
-    initializeGame();
+    startGame();
   });
 
 
@@ -106,13 +106,18 @@ io.on('connection', function (socket) {
     processQueue();
   });
 
+  socket.on("Roll Check", function(data){
+    processCheck();
+  });
+
 
 });
 
 //CONTROLLING TURNS----------------------------------------------------------------------
 
 
-var initializeGame = function(){
+var startGame = function(){
+  console.log("startGame")
   gameLogic.initializeGame();
   gameLogic.initializeTurn();
   processQueue();
@@ -133,36 +138,62 @@ var processQueue = function(){
  //if nothing in queues, it's the end of the turn
 
  if (gameLogic.turn.terrainEffectsQueue.length > 0){
-  processEvent(gameLogic.turn.terrainEffectsQueue.shift())
+  gameLogic.turn.currentEvent = gameLogic.turn.terrainEffectsQueue.shift()
  } else if (gameLogic.turn.playerActionsQueue.length > 0){
-    processEvent(gameLogic.turn.playerActionsQueue.shift())
+    gameLogic.turn.currentEvent = gameLogic.turn.playerActionsQueue.shift()
  } else if (gameLogic.turn.endTurnQueue.length > 0){
-      processEvent(gameLogic.turn.endTurnQueue.shift())
+      gameLogic.turn.currentEvent = gameLogic.turn.endTurnQueue.shift()
  } else {
-  startNewTurn();
+      startNewTurn();
+      return
  }
+
+ processEvent(gameLogic.turn.currentEvent);
 
 }
 
+var processCheck = function(){
+  var event = gameLogic.turn.currentEvent
+  //roll a D10
+  var dice = Math.random() * (10-1) + 1;
 
+  //all bonuses will be stored in the "turn" object, don't worry about on server
+  if (gameLogic.isCheckPassed(event.target, event.checkStat, dice)){
+    //add the check's consequences to the queue to be processed next
+    gameLogic.turn.terrainEffectsQueue = event.ifPass.concat(gameLogic.turn.terrainEffectsQueue)
+  } else {
+    gameLogic.turn.terrainEffectsQueue = event.ifFail.concat(gameLogic.turn.terrainEffectsQueue) 
+  }
+
+  processQueue();
+}
 
 var processEvent = function(event){
-  io.sockets.emit("update eventText", {event: event.type});
+  io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
 
-  if (event.check){
-    //perform check
-    //add appropriate consequences to the beggining of the terrain event queue (unshift)
+  var target = gameLogic.activePlayer.name;
+  if (!event.target){
+    event.target = target;
+  }
+  //EVENTUALLY ALLOW EVENTS TO TARGET OTHER PLAYERS/MONSTERS ETC
+
+
+  if (event.type == "check"){
+    gameLogic.gameState = gameStates.waitingForPlayerInput;
+    io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
     return
   }
 
-  var target = gameLogic.activePlayer.name;
-  //EVENTUALLY ALLOW EVENTS TO TARGET OTHER PLAYERS/MONSTERS ETC
+  
   
 
   if (event.type === "pain" || event.type === "madness"){
     gameLogic.affectMenace(target, event.type, event.value)
   }
 
+
+
+  //OLD EVENTS HERE
   //add a check for if it requires user interaction
   if (event.type === "choosePlayerAction"){
     gameLogic.gameState = gameStates.waitingForPlayerInput;
@@ -181,8 +212,7 @@ var processEvent = function(event){
 
  
   else{
-    gameLogic.gameState = gameStates.animationsPlayingOut;
-    
+    gameLogic.gameState = gameStates.animationsPlayingOut; 
   }
 
   io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})

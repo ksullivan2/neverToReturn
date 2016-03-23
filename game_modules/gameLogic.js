@@ -44,8 +44,6 @@ gameLogic.prototype.initializeGame = function() {
 		this.assignPlayerCard(this.players[i], "homelyVillager")
 		this.replenishHand(this.players[i])
 	}
-
-	
 	//the server will handle the "new turn" command
 };
 
@@ -79,8 +77,20 @@ gameLogic.prototype.newNeck = function() {
 	}
 };
 
+gameLogic.prototype.isCheckPassed = function(target, menace, dice){
+	var player = findPlayerByUserName(target)
+	var value = player[menace]
+	//ADD ALL THE BONUSES THEY GET (STORED IN TURN)
+
+	if (dice <= value){
+		return true;
+	}
+	return false;
+}
+
 //TURNS-------------------------------------------------------------------------------------------------
 function Turn(){
+  this.currentEvent = null;
   //these arrays will be filled with objects/events to fire and will always be resolved in order
   this.terrainEffectsQueue = [{type: "desperationCheck"}];
   this.playerActionsQueue = [{type: "choosePlayerAction"}];

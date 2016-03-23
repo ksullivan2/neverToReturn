@@ -102,7 +102,8 @@
 	      neck: [],
 	      activePlayer: null,
 	      gameState: 0,
-	      userName: null
+	      userName: null,
+	      turn: null
 	    };
 	  },
 
@@ -114,7 +115,8 @@
 	      self.setState({ players: data.gameLogic.players,
 	        neck: data.gameLogic.neck,
 	        activePlayer: data.gameLogic.activePlayer,
-	        gameState: data.gameLogic.gameState });
+	        gameState: data.gameLogic.gameState,
+	        turn: data.gameLogic.turn });
 	    });
 
 	    socket.on("update userName", function (data) {
@@ -128,7 +130,7 @@
 	      'div',
 	      { id: 'App' },
 	      React.createElement(OpponentsDIV, { players: this.state.players, userName: this.state.userName, activePlayer: this.state.activePlayer }),
-	      React.createElement(ActionAREA, { gameState: this.state.gameState, userName: this.state.userName, activePlayer: this.state.activePlayer }),
+	      React.createElement(ActionAREA, { gameState: this.state.gameState, userName: this.state.userName, activePlayer: this.state.activePlayer, turn: this.state.turn }),
 	      React.createElement(MyCardsDIV, { gameState: this.state.gameState, players: this.state.players, userName: this.state.userName, activePlayer: this.state.activePlayer }),
 	      React.createElement(NeckDIV, { players: this.state.players, neck: this.state.neck, activePlayer: this.state.activePlayer }),
 	      React.createElement(
@@ -19824,9 +19826,14 @@
 	    }
 
 	    var divStyle = {
-	      color: this.props.player.color,
+	      backgroundColor: this.props.player.color,
 	      border: border
 	    };
+
+	    var playerNameForDisplay = this.props.player.name;
+	    if (!this.props.player.name) {
+	      playerNameForDisplay = "disconnected";
+	    }
 
 	    if (!this.props.player.card) {
 	      return React.createElement(
@@ -19835,11 +19842,12 @@
 	        React.createElement(
 	          'h2',
 	          null,
-	          this.props.player.name
+	          playerNameForDisplay
 	        )
 	      );
 	    } else {
-	      console.log(this.props.player.card);
+	      var imgSRC = "/assets/playerThumbnails/" + this.props.player.card.name + ".jpg";
+
 	      return React.createElement(
 	        'div',
 	        { className: 'PlayerDIV', style: divStyle },
@@ -19849,9 +19857,36 @@
 	          this.props.player.name
 	        ),
 	        React.createElement(
-	          'p',
+	          'h4',
 	          null,
 	          this.props.player.card.name
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'PlayerDIVThumbnail' },
+	          React.createElement('img', { src: imgSRC, className: 'playerThumbnail' })
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          'Pain: ',
+	          this.props.player.pain,
+	          '/',
+	          this.props.player.card.pain
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          'Madness: ',
+	          this.props.player.madness,
+	          '/',
+	          this.props.player.card.madness
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          'Progress: ',
+	          this.props.player.progress
 	        )
 	      );
 	    }
@@ -19897,6 +19932,7 @@
 	//   gameState: int(enum)
 	//   userName: ""
 	//   activePlayer: Player
+	//   turn: Turn
 
 	// gameStates enum:
 	//   gatherPlayers: 0,
@@ -19908,40 +19944,54 @@
 
 
 	  render: function render() {
-	    var displayNotYourTurn = "block";
+
 	    var displayStart = false;
-	    var displayEndTurn = false;
 	    var displayMoveForward = false;
 	    var displayMoveBackward = false;
+	    var displayRollCheck = false;
+
+	    var actionText = "";
 
 	    if (this.props.gameState === gameStates.gatherPlayers) {
 	      displayStart = true;
+	      actionText = "Waiting for all players to join...";
 	    } else if (this.props.gameState === gameStates.waitingForPlayerInput) {
-	      if (this.props.activePlayer.name == this.props.userName) {
-	        displayNotYourTurn = "none";
-	        displayEndTurn = true;
+	      var event = this.props.turn.currentEvent;
+	      actionText = "It is " + this.props.activePlayer.name + "'s turn to choose an action.";
 
-	        if (this.props.activePlayer.location != 6) {
-	          displayMoveForward = true;
-	        }
-	        if (this.props.activePlayer.location != 0) {
-	          displayMoveBackward = true;
-	        }
+	      if (this.props.activePlayer.name == this.props.userName) {
+	        //TURN STANDARD ACTIONS------------------------------------------------
+	        if (this.props.event.type === "choosePlayerAction") {
+	          actionText = "Choose your action.";
+
+	          if (this.props.activePlayer.location != 6) {
+	            displayMoveForward = true;
+	          }
+	          if (this.props.activePlayer.location != 0) {
+	            displayMoveBackward = true;
+	          }
+	          //CHECKS:------------------------------------------------------------
+	        } else if (this.props.event.type === "check") {
+	            actionText = "Roll a " + this.props.player[event.checkStat] + "or lower to pass the " + event.checkStat + "check.";
+	            displayRollCheck = true;
+	          }
 	      }
-	    } else if (this.props.gameState === gameStates.gatherPlayers) {}
+	    } else if (this.props.gameState === gameStates.animationsPlayingOut) {
+	      actionText = "Resolving: " + this.props.eventType;
+	    }
 
 	    return React.createElement(
 	      'div',
 	      { className: 'layoutDIV', id: 'ActionAREA' },
 	      React.createElement(
 	        'h2',
-	        { style: { display: displayNotYourTurn } },
-	        ' It is not currently your turn'
+	        { style: { display: "block" } },
+	        actionText
 	      ),
 	      React.createElement(ActionButton, { text: 'Start Game', display: displayStart, userName: this.props.userName }),
-	      React.createElement(ActionButton, { text: 'End Turn', display: displayEndTurn, userName: this.props.userName }),
 	      React.createElement(ActionButton, { text: 'Move Forward', display: displayMoveForward, userName: this.props.userName }),
-	      React.createElement(ActionButton, { text: 'Move Backward', display: displayMoveBackward, userName: this.props.userName })
+	      React.createElement(ActionButton, { text: 'Move Backward', display: displayMoveBackward, userName: this.props.userName }),
+	      React.createElement(ActionButton, { text: 'Roll Check', display: displayRollCheck, userName: this.props.userName })
 	    );
 	  }
 	});
@@ -29819,8 +29869,6 @@
 	  componentDidMount: function componentDidMount() {},
 
 	  handleClick: function handleClick() {
-	    console.log(this.props.text, " button clicked");
-	    console.log(this.props.userName);
 	    socket.emit(this.props.text.toString(), { userName: this.props.userName });
 	  },
 
@@ -29877,7 +29925,6 @@
 					for (var i = 0; i < userHand.length; i++) {
 						cardsInHand.push({ card: userHand[i], key: this.props.userName + "card" + i, offset: i * 10 });
 					}
-					console.log(userHand);
 
 					if (cardsInHand.length > 0) {
 						return React.createElement(

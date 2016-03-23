@@ -1,7 +1,11 @@
 
 
-
 {
 	"onEncounter": [],
-	"onTurnStart": []
+
+	"onTurnStart": 
+	[
+		{"type": "pain",
+		"value": -1}
+	]
 }
