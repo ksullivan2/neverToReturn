@@ -10,9 +10,11 @@ var PlayerDIV = React.createClass({
     if (this.props.active){border = "2px solid black"}
 
     var divStyle = {
-      color: this.props.player.color,
+      backgroundColor: this.props.player.color,
       border: border
     }
+
+    
 
     if (!this.props.player.card){
       return (
@@ -21,12 +23,18 @@ var PlayerDIV = React.createClass({
         </div>
       )
     } else {
+      var imgSRC = "/assets/playerThumbnails/"+this.props.player.card.name+".jpg"
+      
       return(
         <div  className="PlayerDIV" style={divStyle}>
           <h2>{this.props.player.name}</h2>
           <h4>{this.props.player.card.name}</h4>
+          <div className="PlayerDIVThumbnail">
+            <img src={imgSRC} className="playerThumbnail" />
+          </div>
           <p>Pain: {this.props.player.pain}/{this.props.player.card.pain}</p>
           <p>Madness: {this.props.player.madness}/{this.props.player.card.madness}</p>
+          <p>Progress: {this.props.player.progress}</p>
           
         </div>
         )
