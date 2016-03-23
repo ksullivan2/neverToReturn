@@ -101,92 +101,96 @@ io.on('connection', function (socket) {
 
 	socket.on("Move Forward", function(data){
     //don't forget you have username in the data
-    gameLogic.turn.playerActions.push("Move Forward")
-    performPlayerActions()
+    gameLogic.turn.playerActionsQueue.push("Move Forward")
+    processQueue();
   });
 
   socket.on("Move Backward", function(data){
-    gameLogic.turn.playerActions.push("Move Backward")
-    performPlayerActions()
+    gameLogic.turn.playerActionsQueue.push("Move Backward")
+    processQueue();
   });
 
 
 });
 
 //CONTROLLING TURNS----------------------------------------------------------------------
-function Turn(){
-  //these arrays will be filled with objects/events to fire and will always be resolved in order
-  this.terrainEffects = [];
-  this.playerActions = [];
-}
+
 
 var initializeGame = function(){
-  gameLogic.initializeGame()
-  gameLogic.turn = new Turn()
-  turnPartOne();
+  gameLogic.initializeGame();
+  gameLogic.initializeTurn();
+  processQueue();
 }
 
 var startNewTurn = function(){
   console.log("startNewTurn")
-  gameLogic.changeActivePlayer()
-  gameLogic.turn = new Turn()
-  turnPartOne()
+  gameLogic.changeActivePlayer();
+  gameLogic.initializeTurn();
+  processQueue();
 }
 
-var turnPartOne = function(){
-  console.log("turnPartOne")
-  //set new game state
-  gameLogic.gameState = gameStates.animationsPlayingOut;
-  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
 
-   //TODO: desperation check
-  gameLogic.turn.terrainEffects = gameLogic.collectTurnStartEffects();
+var processQueue = function(){
+ //if there are any events in the terrainEventsQueue, give those priority
+ //else do the next player action
+ //finally do endTurnQueue
+ //if nothing in queues, it's the end of the turn
 
-  //process all terrain effects
-  processQueue(gameLogic.turn.terrainEffects, turnPartTwo)
-}
-
-var turnPartTwo = function(){
-  console.log("turnPartTwo")
-  gameLogic.gameState = gameStates.waitingForPlayerInput;
-  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
-}
-
-var performPlayerActions = function(){
-  console.log("performPlayerActions")
-  gameLogic.gameState = gameStates.animationsPlayingOut;
-  io.sockets.emit('update gameLogic in view', {gameLogic: gameLogic})
-  processQueue(gameLogic.turn.playerActions, turnPartThree)
-}
-
-var turnPartThree = function(){
-  console.log("turnPartThree")
-  //check for lost players, draw a card
+ if (gameLogic.turn.terrainEffectsQueue.length > 0){
+  processEvent(gameLogic.turn.terrainEffectsQueue.shift())
+ } else if (gameLogic.turn.playerActionsQueue.length > 0){
+    processEvent(gameLogic.turn.playerActionsQueue.shift())
+ } else if (gameLogic.turn.endTurnQueue.length > 0){
+      processEvent(gameLogic.turn.endTurnQueue.shift())
+ } else {
   startNewTurn();
+ }
+
 }
 
+// var interval = setInterval(function(){
+//     if (queue.length > 0){
+//       processEvent(queue.shift()) ;
+//     } else {
+//       callback();
+//       clearInterval(interval);
+//     }
+//   }, 1000);
 
-var processQueue = function(queue, callback){
-  //do the first one without delay
-  //processEvent(queue.shift())
 
-  var interval = setInterval(function(){
-    if (queue.length > 0){
-      processEvent(queue.shift()) ;
-    } else {
-      callback();
-      clearInterval(interval);
-    }
-  }, 1000);
-}
+
 
 var processEvent = function(event){
-  if (event === "Move Forward"){
+  console.log(event)
+  //add a check for if it requires user interaction
+  if (event === "choosePlayerAction"){
+    gameLogic.gameState = gameStates.waitingForPlayerInput;
+    io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
+    return
+  }
+  else if (event === "Move Forward"){
+    gameLogic.gameState = gameStates.animationsPlayingOut;
     move(gameLogic.activePlayer.name, 1)
+   
+
   }
-  if (event === "Move Backward"){
+  else if (event === "Move Backward"){
+    gameLogic.gameState = gameStates.animationsPlayingOut;
     move(gameLogic.activePlayer.name, -1)
+
   }
+
+  else if (event ==="Take 1 Pain"){
+    gameLogic.activePlayer.pain -= 1;
+    io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
+
+  }
+  else{
+    gameLogic.gameState = gameStates.animationsPlayingOut;
+    
+  }
+
+  setTimeout(processQueue, 1000);
 }
 
 //EVENT TYPES----------------------------------------------------------------------

@@ -79,17 +79,40 @@ gameLogic.prototype.newNeck = function() {
 	}
 };
 
+//TURNS-------------------------------------------------------------------------------------------------
+function Turn(){
+  //these arrays will be filled with objects/events to fire and will always be resolved in order
+  this.terrainEffectsQueue = ["desperationCheck"];
+  this.playerActionsQueue = ["choosePlayerAction"];
+  this.endTurnQueue = ["checkForLostPlayers","drawCard"]
+  this.numberOfActions = 1;
+  this.playedActionCard = false;
+}
+
+gameLogic.prototype.initializeTurn = function(){
+	this.turn = new Turn();
+	this.collectTurnStartEffects();
+}
+
+
 gameLogic.prototype.collectTurnStartEffects = function(){
 	//for comprehension's sake, save a reference to the cards on the current active location
 	var cardsOnLocation = this.neck[this.activePlayer.location].cards;
 
-	var turnStartEffects = [];
 	//create a list of all the effects of all of the cards
 	for (var i = 0; i < cardsOnLocation.length; i++) {
-		 turnStartEffects = turnStartEffects.concat(cardsOnLocation[i].onTurnStart)
+		 this.turn.terrainEffectsQueue = this.turn.terrainEffectsQueue.concat(cardsOnLocation[i].onTurnStart)
 	}
+}
 
-	return turnStartEffects;
+gameLogic.prototype.collectOnEncounterEffects = function(){
+	//for comprehension's sake, save a reference to the cards on the current active location
+	var cardsOnLocation = this.neck[this.activePlayer.location].cards;
+
+	//create a list of all the effects of all of the cards
+	for (var i = 0; i < cardsOnLocation.length; i++) {
+		this.turn.terrainEffectsQueue = this.turn.terrainEffectsQueue.concat(cardsOnLocation[i].onEncounter)
+	}
 }
 
 
@@ -108,7 +131,7 @@ gameLogic.prototype.movePlayer = function(userName, movement){
 	//update the location of the player object
 	player.location += (1*movement);
 
-
+	this.collectOnEncounterEffects();
 }
 
 gameLogic.prototype.removePlayerFromLocation = function(locationIndex, name){

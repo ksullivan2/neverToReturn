@@ -13,8 +13,8 @@ function terrainCard(name){
 	this.imgSRC = "assets/terrainCards/"+name+".jpg";
 
 	//effects will be generated from csv or something like it
-	this.onEncounter = ["Move Forward", "Move Forward"];
-	this.onTurnStart = ["Move Forward", "Move Forward"];
+	this.onEncounter = ["Take 1 Pain"];
+	this.onTurnStart = ["Move Forward"];
 
 	//keeps track of if card has been revealed yet
 	this.isRevealed = false;
