@@ -9,7 +9,7 @@ var $ = require('jquery');
 var socket = io();
 
 
-//INTERACT WITH HUMAN--------------------------------------------------------------------------------------------------------
+//INTERACT WITH HUMAN----------------------------------------------------------------------------------------------
 
 socket.on("new player", function(data){
   getName(data);
@@ -30,7 +30,7 @@ function getName(data){
 }
 
 
-//DEBUG FUNCTIONS
+//DEBUG FUNCTIONS------------------------------------------------------------------------------------------------------
 function restartGame(){
   if (confirm("Do you REALLY want to re-start the whole game and scrap everything to this point?")){
     socket.emit("restart game")
@@ -46,21 +46,19 @@ socket.on("reconnect failed", function(){
   alert("Reconnect failed. Match the name EXACTLY.")
 })
 
-//REACT RENDER APP---------------------------------------------------------------------------------------------------------
+//REACT RENDER APP-----------------------------------------------------------------------------------------------
 
 var App = React.createClass({
   getInitialState: function(){
     return{
       players: [],
       neck: [],
-      activePlayer: null,
+      activePlayer: {name: "dummyPlayer"},
       gameState: 0,
       userName: null,
       turn: null
     }
   },
-
-
 
   componentDidMount(){
     var self = this;

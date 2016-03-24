@@ -6,6 +6,23 @@ var LocationCard = require('./LocationCard');
 //   name: ""
 
 var LocationDIV = React.createClass({
+  shouldComponentUpdate: function(nextProps, nextState){
+    //only update if: number of cards changes, or one of the cards changes
+
+    if (this.props.location.cards.length != nextProps.location.cards.length){
+      return true;
+    }
+
+    for (var i = 0; i < nextProps.location.cards.length; i++) {
+      if (this.props.location.cards[i].name != nextProps.location.cards[i].name){
+        return true;
+      }
+    }
+
+    return false;
+  },
+
+
   render: function () {
     var cardsInLocation = [];
     for (var i = 0; i < this.props.location.cards.length; i++){

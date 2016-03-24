@@ -56,7 +56,7 @@
 
 	var socket = io();
 
-	//INTERACT WITH HUMAN--------------------------------------------------------------------------------------------------------
+	//INTERACT WITH HUMAN----------------------------------------------------------------------------------------------
 
 	socket.on("new player", function (data) {
 	  getName(data);
@@ -75,7 +75,7 @@
 	  socket.emit("create player", { name: name, socketID: socket.id });
 	}
 
-	//DEBUG FUNCTIONS
+	//DEBUG FUNCTIONS------------------------------------------------------------------------------------------------------
 	function restartGame() {
 	  if (confirm("Do you REALLY want to re-start the whole game and scrap everything to this point?")) {
 	    socket.emit("restart game");
@@ -91,7 +91,7 @@
 	  alert("Reconnect failed. Match the name EXACTLY.");
 	});
 
-	//REACT RENDER APP---------------------------------------------------------------------------------------------------------
+	//REACT RENDER APP-----------------------------------------------------------------------------------------------
 
 	var App = React.createClass({
 	  displayName: 'App',
@@ -100,7 +100,7 @@
 	    return {
 	      players: [],
 	      neck: [],
-	      activePlayer: null,
+	      activePlayer: { name: "dummyPlayer" },
 	      gameState: 0,
 	      userName: null,
 	      turn: null
@@ -30044,6 +30044,22 @@
 	var LocationDIV = React.createClass({
 	  displayName: 'LocationDIV',
 
+	  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+	    //only update if: number of cards changes, or one of the cards changes
+
+	    if (this.props.location.cards.length != nextProps.location.cards.length) {
+	      return true;
+	    }
+
+	    for (var i = 0; i < nextProps.location.cards.length; i++) {
+	      if (this.props.location.cards[i].name != nextProps.location.cards[i].name) {
+	        return true;
+	      }
+	    }
+
+	    return false;
+	  },
+
 	  render: function render() {
 	    var cardsInLocation = [];
 	    for (var i = 0; i < this.props.location.cards.length; i++) {
@@ -31641,15 +31657,28 @@
 	  displayName: 'NeckCanvas',
 
 	  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-	    if (!this.props.activePlayer || nextProps.activePlayer || nextProps.activePlayer.name != this.props.activePlayer.name) {
+
+	    //update if the active player changes
+	    if (nextProps.activePlayer.name != this.props.activePlayer.name) {
+	      console.log("neckCanvas is updating because activeplayer changed");
 	      return true;
 	    }
-	    for (var i = 0; i < nextProps.players.length; i++) {
-	      if (!this.props.players[i] || nextProps.players[i].location != this.props.players[i].location) {
+
+	    //if someone joins the game
+	    if (Object.keys(this.props.players).length != Object.keys(nextProps.players).length) {
+	      console.log("neckCanvas is updating because someone joined the game");
+	      return true;
+	    }
+
+	    //if someone moves
+	    for (var i in nextProps.players) {
+	      if (nextProps.players[i].location != this.props.players[i].location) {
+	        console.log("neckCanvas is updating because someone moved");
 	        return true;
 	      }
 	    }
 
+	    console.log("neckCanvas is NOT updating");
 	    return false;
 	  },
 
