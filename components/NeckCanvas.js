@@ -12,25 +12,21 @@ var NeckCanvas = React.createClass({
 
     //update if the active player changes
     if (nextProps.activePlayer.name != this.props.activePlayer.name){
-      console.log("neckCanvas is updating because activeplayer changed")
       return true;
     }
 
     //if someone joins the game
     if (Object.keys(this.props.players).length != Object.keys(nextProps.players).length){
-      console.log("neckCanvas is updating because someone joined the game")
       return true;
     }
 
     //if someone moves
     for (var i in nextProps.players) {
       if (nextProps.players[i].location != this.props.players[i].location){
-        console.log("neckCanvas is updating because someone moved")
         return true;
       }
     }
 
-    console.log("neckCanvas is NOT updating")
     return false;
   },
 
