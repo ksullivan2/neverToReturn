@@ -10,6 +10,21 @@ var gameStates = require('../game_modules/gameStates.js');
 
 
 var MyCardsDIV = React.createClass({
+  shouldComponentUpdate: function(nextProps, nextState){
+  	//if a card is added or removed
+  	if (this.props.players[userName].hand.length != nextProps.players[userName].hand.length){
+  		return true;
+  	}
+
+  	//if any card has changed
+  	for (var i = 0; i < nextProps.players[userName].hand.length; i++) {
+  		if (nextProps.players[userName].hand[i].name != this.props.players[userName].hand[i].name){
+  			return true;
+  		}
+  	}
+
+  },
+
   render: function () {
   	if (this.props.userName){
 		  	

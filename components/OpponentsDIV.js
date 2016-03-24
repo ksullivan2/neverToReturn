@@ -10,6 +10,34 @@ var socket = io();
 //   activePlayer: Player
 
 var OpponentsDIV = React.createClass({
+  shouldComponentUpdate: function(nextProps, nextState){
+
+    //update if the active player changes
+    if (nextProps.activePlayer.name != this.props.activePlayer.name){
+      console.log("OpponentsDIV rendering because activePlayer changed")
+      return true;
+    }
+
+    //if someone joins the game
+    if (Object.keys(this.props.players).length != Object.keys(nextProps.players).length){
+      console.log("OpponentsDIV rendering because someone joined the game")
+      return true;
+    }
+
+    //if someone's stats change
+    for (var i in nextProps.players) {
+      if (nextProps.players[i].pain != this.props.players[i].pain 
+        || nextProps.players[i].madness != this.props.players[i].madness
+        || nextProps.players[i].progress != this.props.players[i].progress)
+      {
+        return true;
+      }
+    }
+
+    return false;
+  },
+
+
   render: function () {
     var self = this;
 

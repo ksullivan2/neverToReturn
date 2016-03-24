@@ -10,13 +10,11 @@ var LocationDIV = React.createClass({
     //only update if: number of cards changes, or one of the cards changes
 
     if (this.props.location.cards.length != nextProps.location.cards.length){
-      console.log(this.props.name + " is updating because a card was added or removed")
       return true;
     }
 
     for (var i = 0; i < nextProps.location.cards.length; i++) {
       if (this.props.location.cards[i].name != nextProps.location.cards[i].name){
-        console.log(this.props.name + " is updating because a card was changed")
         return true;
       }
     }

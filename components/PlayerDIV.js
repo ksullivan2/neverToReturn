@@ -5,6 +5,27 @@ var React = require('react');
 // active: bool
 
 var PlayerDIV = React.createClass({
+  shouldComponentUpdate: function(nextProps, nextState){
+    //if stats changed
+    if (nextProps.player.pain != this.props.player.pain 
+        || nextProps.player.madness != this.props.player.madness
+        || nextProps.player.progress != this.props.player.progress)
+      {
+        console.log(this.props.player.name + "'s DIV is rendering because stats changed")
+        return true;
+      }
+
+    //if we're swapping the active player to/from this player
+    if (this.props.active != nextProps.active){
+      console.log(this.props.player.name + "'s DIV is rendering because active status changed")
+      return true;
+    }
+
+    return false;
+
+  },
+
+
   render: function () {
     var border = '';
     if (this.props.active){border = "2px solid black"}
