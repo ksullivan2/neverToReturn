@@ -19,18 +19,14 @@ var ActionButton = require('./ActionButton.js')
 var ActionAREA = React.createClass({
 	
   render: function () {
+    var self = this
     
-
-    var displayStart = false;
-    var displayMoveForward = false;
-    var displayMoveBackward = false;
-    var displayRollCheck = false;
-
+    var actionButtons = [];
     var actionText = ""
 
 
   	if (this.props.gameState === gameStates.gatherPlayers){
-      displayStart = true;
+      actionButtons = ["Start Game"]
       actionText = "Waiting for all players to join..."
     }
     else if (this.props.gameState === gameStates.waitingForPlayerInput){
@@ -42,17 +38,12 @@ var ActionAREA = React.createClass({
         if(this.props.turn.currentEvent.type === "choosePlayerAction"){
           actionText = "Choose your action."
 
-          if (this.props.activePlayer.location != 6){
-            displayMoveForward = true;
-          }
-          if (this.props.activePlayer.location != 0){
-            displayMoveBackward = true;
-          }
+          actionButtons = this.props.turn.currentEvent.actionList
           //CHECKS:------------------------------------------------------------
         } else if (this.props.turn.currentEvent.type === "check"){
           actionText = "Roll a "+this.props.activePlayer[this.props.turn.currentEvent.checkStat]+
                   " or lower to pass the "+ this.props.turn.currentEvent.checkStat+ " check."
-          displayRollCheck = true;
+          actionButtons = this.props.turn.currentEvent.actionList
         } 
       }
     }
@@ -61,17 +52,15 @@ var ActionAREA = React.createClass({
       if (this.props.turn.currentEvent.type === "display"){
           actionText = "You rolled a "+ this.props.turn.currentEvent.value
         }
-
     }
 
 
     return (
       <div className="layoutDIV" id='ActionAREA'>
         <h2 style={{display:"block"}}>{actionText}</h2>
-        <ActionButton text="Start Game" display={displayStart} userName={this.props.userName}/>
-        <ActionButton text="Move Forward" display={displayMoveForward} userName={this.props.userName}/>
-        <ActionButton text="Move Backward" display={displayMoveBackward} userName={this.props.userName}/>
-        <ActionButton text="Roll Check" display={displayRollCheck} userName={this.props.userName}/>
+        {actionButtons.map(function(text){
+          return <ActionButton text={text} key={text} userName={self.props.userName} /> })
+        }
 
       </div>
     )

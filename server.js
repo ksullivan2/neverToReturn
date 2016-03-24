@@ -99,7 +99,7 @@ io.on('connection', function (socket) {
     //check for gameState so that we can't get a double-press
     if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
       gameLogic.gameState = gameStates.animationsPlayingOut;
-      gameLogic.addActionToQueue({type:"move", value: 1})
+      gameLogic.addActionToPlayerActionsQueue(data.userName, {type:"move", value: 1})
       processQueue()
     }
  
@@ -108,7 +108,7 @@ io.on('connection', function (socket) {
   socket.on("Move Backward", function(data){
     //check for gameState so that we can't get a double-press
     if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      gameLogic.addActionToQueue({type:"move", value: -1})
+      gameLogic.addActionToPlayerActionsQueue(data.userName, {type:"move", value: -1})
       gameLogic.gameState = gameStates.animationsPlayingOut;
       processQueue()
     }

@@ -3,9 +3,9 @@
 	"onEncounter": [
 		{"type": "check",
 		"checkStat":"madness",
-			"ifPass": [],
-			"ifFail": [
-				{"type":"stop"}
+		"ifPass": [],
+		"ifFail": [
+			{"type":"stop"}
 			]
 
 		}

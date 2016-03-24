@@ -27,7 +27,6 @@ function gameLogic(){
 }
 
 
-
 //GAMEPLAY ACTIONS---------------------------------------------------------------------------------------------------------
 gameLogic.prototype.initializeGame = function() {
 	//SHOULD ONLY DO ACTIONS UNIQUE TO STARTING GAME
@@ -89,44 +88,92 @@ gameLogic.prototype.isCheckPassed = function(target, menace, dice){
 }
 
 //TURNS-------------------------------------------------------------------------------------------------
-function Turn(){
+
+const MOVE_FORWARD = "Move Forward"
+const MOVE_BACKWARD = "Move Backward"
+const ROLL_CHECK = "Roll Check"
+const DISCARD_FOR_BONUS = "Discard For Bonus"
+const OPTION_1 = "Option 1"
+const OPTION_2 = "Option 2"
+
+
+const STANDARD_ACTIONS = [MOVE_FORWARD,MOVE_BACKWARD];
+const CHECK_ACTIONS = [ROLL_CHECK, DISCARD_FOR_BONUS];
+const CARD_CHOICE = [OPTION_1, OPTION_2]
+
+function Turn(activePlayer){
+	//filter standard actions list if the player is on first or last space
+	var standardActions = STANDARD_ACTIONS
+	
+	if (activePlayer.location === 0){
+		standardActions = standardActions.filter(function(action){return (action !== MOVE_BACKWARD)})
+	} else if (activePlayer.location === 6){
+		standardActions = standardActions.filter(function(action){return (action !== MOVE_FORWARD)})
+	}
+
+
   this.currentEvent = null;
   //these arrays will be filled with objects/events to fire and will always be resolved in order
   this.terrainEffectsQueue = [{type: "desperationCheck"}];
-  this.playerActionsQueue = [{type: "choosePlayerAction"}];
+  this.playerActionsQueue = [{type: "choosePlayerAction", actionList: standardActions}];
   this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"drawCard"}]
-  this.numberOfActions = 1;
   this.playedActionCard = false;
 }
 
 gameLogic.prototype.initializeTurn = function(){
-	this.turn = new Turn();
+	this.turn = new Turn(this.activePlayer);
 	this.collectTurnStartEffects();
 }
 
 
 gameLogic.prototype.collectTurnStartEffects = function(){
+	var self = this;
+
 	//for comprehension's sake, save a reference to the cards on the current active location
 	var cardsOnLocation = this.neck[this.activePlayer.location].cards;
 
-	//create a list of all the effects of all of the cards
-	for (var i = 0; i < cardsOnLocation.length; i++) {
-		 this.turn.terrainEffectsQueue = this.turn.terrainEffectsQueue.concat(cardsOnLocation[i].onTurnStart)
-	}
+
+	cardsOnLocation.forEach(function(card){
+		card.onTurnStart.forEach(function(event){
+			self.addActionToTerrainQueue(card.name, event)
+		})
+	})
 }
 
 gameLogic.prototype.collectOnEncounterEffects = function(){
+	var self = this;
 	//for comprehension's sake, save a reference to the cards on the current active location
 	var cardsOnLocation = this.neck[this.activePlayer.location].cards;
 
 	//create a list of all the effects of all of the cards
-	for (var i = 0; i < cardsOnLocation.length; i++) {
-		this.turn.terrainEffectsQueue = this.turn.terrainEffectsQueue.concat(cardsOnLocation[i].onEncounter)
-	}
+	cardsOnLocation.forEach(function(card){
+		card.onEncounter.forEach(function(event){
+			self.addActionToTerrainQueue(card.name, event)
+		})
+	})
 }
 
-gameLogic.prototype.addActionToQueue = function(event){
+gameLogic.prototype.addActionToTerrainQueue = function(source, event){
+	this.preprocessEvent(source,event)
+	this.turn.terrainEffectsQueue.push(event)
+}
+
+gameLogic.prototype.addActionToPlayerActionsQueue = function(source, event){
+	this.preprocessEvent(source,event)
 	this.turn.playerActionsQueue.push(event)
+}
+
+gameLogic.prototype.addActionToEndTurnQueue = function(source, event){
+	this.preprocessEvent(source,event)
+	this.turn.endTurnQueue.push(event)
+}
+
+gameLogic.prototype.preprocessEvent = function(source, event){
+	if (event.type === "check"){
+		event.actionList = CHECK_ACTIONS
+	}
+
+	event.source = source
 }
 
 
