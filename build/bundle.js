@@ -29964,26 +29964,33 @@
 	    });
 	  },
 
+	  handleMouseOver: function handleMouseOver(cardName) {},
+
+	  calculateCardOffset: function calculateCardOffset() {
+	    var userHand = this.props.players[this.props.userName].hand;
+
+	    var cardsInHand = [];
+
+	    for (var i = 0; i < userHand.length; i++) {
+	      cardsInHand.push({ card: userHand[i], key: this.props.userName + "card" + i, offset: i * 10 });
+	    }
+	    return cardsInHand;
+	  },
+
 	  render: function render() {
 
 	    if (this.props.userName) {
 
 	      if (this.props.gameState != gameStates.gatherPlayers) {
 
-	        var userHand = this.props.players[this.props.userName].hand;
-
-	        var cardsInHand = [];
-
-	        for (var i = 0; i < userHand.length; i++) {
-	          cardsInHand.push({ card: userHand[i], key: this.props.userName + "card" + i, offset: i * 10 });
-	        }
+	        var cardsInHand = this.calculateCardOffset();
 
 	        if (cardsInHand.length > 0) {
 	          return React.createElement(
 	            'div',
 	            { className: 'layoutDIV', id: 'MyCardsDIV' },
 	            cardsInHand.map(function (eachCard) {
-	              return React.createElement(ActionCard, { card: eachCard.card, key: eachCard.key, offset: eachCard.offset });
+	              return React.createElement(ActionCard, { card: eachCard.card, key: eachCard.key, offset: eachCard.offset, handleMouseOver: this.handleMouseOver });
 	            })
 	          );
 	        }
@@ -30018,6 +30025,14 @@
 
 	var ActionCard = React.createClass({
 	  displayName: 'ActionCard',
+
+	  componentDidMount: function componentDidMount() {
+	    window.addEventListener("mouseover", this.handleMouseOver);
+	  },
+
+	  handleMouseOver: function handleMouseOver() {
+	    this.props.handleMouseOver(this.props.card.name);
+	  },
 
 	  render: function render() {
 	    var self = this;

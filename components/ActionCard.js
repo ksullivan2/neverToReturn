@@ -9,6 +9,16 @@ var spring = ReactMotion.spring;
 
 
 var ActionCard = React.createClass({
+	componentDidMount: function(){
+		window.addEventListener("mouseover", this.handleMouseOver);
+
+	},
+
+	handleMouseOver: function(){
+		this.props.handleMouseOver(this.props.card.name)
+	},
+
+
   render: function () {
   	var self = this;
 
