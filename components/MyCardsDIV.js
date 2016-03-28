@@ -10,31 +10,10 @@ var gameStates = require('../game_modules/gameStates.js');
 
 
 var MyCardsDIV = React.createClass({
-  shouldComponentUpdate: function(nextProps, nextState){
-  	if (!this.props.userName && nextProps.userName){
-  		return true
-  	}
-
-  	if (nextProps.players[nextProps.userName] && this.props.players[this.props.userName]){
-	  	//if a card is added or removed
-	  	if (this.props.players[this.props.userName].hand.length != nextProps.players[nextProps.userName].hand.length){
-	  		return true;
-	  	}
-
-	  	//if any card has changed
-	  	for (var i = 0; i < nextProps.players[nextProps.userName].hand.length; i++) {
-	  		if (nextProps.players[nextProps.userName].hand[i].name != this.props.players[this.props.userName].hand[i].name){
-	  			return true;
-	  		}
-	  	}
-  	}
-  	return false;
-  },
 
   render: function () {
   	if (this.props.userName){
 		  	
-
 	  	if (this.props.gameState != gameStates.gatherPlayers){
 
 		  	var userHand = this.props.players[this.props.userName].hand;
@@ -52,7 +31,7 @@ var MyCardsDIV = React.createClass({
 			        {cardsInHand.map(function(eachCard){
 			        	return(
 								<ActionCard card={eachCard.card} key={eachCard.key} offset={eachCard.offset}/>
-			        		)
+			       )
 			        	})  	
 			       	}
 			      </div>
