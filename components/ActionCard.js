@@ -5,7 +5,7 @@ var spring = ReactMotion.spring;
 
 // props are:
 //   card: ActionCard
-//	offset: int (index in player's hand)
+//	offset: {left: int, rotation: int}
 
 
 var ActionCard = React.createClass({
@@ -24,11 +24,12 @@ var ActionCard = React.createClass({
   	var self = this;
 
     return (
-    	<Motion defaultStyle={{left: 0}} 
-              style={{left: spring(self.props.offset)}}>
+    	<Motion defaultStyle={{left: 0, rotation:0}} 
+              style={{left: spring(self.props.offset.left), rotation: spring(self.props.offset.rotation)}}>
             {function(interpolatingStyle){
             	return(
-			      <div  className="actionCard" style={{left: interpolatingStyle.left+"%"}} onMouseOver={self.handleMouseOver}>
+			      <div  className="actionCard" style={{left: interpolatingStyle.left+"%", 
+			      transform: "rotate("+interpolatingStyle.rotation+"deg)"}} onMouseOver={self.handleMouseOver}>
 			        <img src={self.props.card.imgSRC} className="cardImage"/>
 			      </div>
 
