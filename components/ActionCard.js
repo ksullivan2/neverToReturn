@@ -9,12 +9,13 @@ var spring = ReactMotion.spring;
 
 
 var ActionCard = React.createClass({
-	componentDidMount: function(){
-		window.addEventListener("mouseover", this.handleMouseOver);
+	// componentDidMount: function(){
+	// 	window.addEventListener("mouseover", this.handleMouseOver);
 
-	},
+	// },
 
 	handleMouseOver: function(){
+		console.log(this.props.card.name)
 		this.props.handleMouseOver(this.props.card.name)
 	},
 
@@ -27,7 +28,7 @@ var ActionCard = React.createClass({
               style={{left: spring(self.props.offset)}}>
             {function(interpolatingStyle){
             	return(
-			      <div  className="actionCard" style={{left: interpolatingStyle.left+"%"}}>
+			      <div  className="actionCard" style={{left: interpolatingStyle.left+"%"}} onMouseOver={self.handleMouseOver}>
 			        <img src={self.props.card.imgSRC} className="cardImage"/>
 			      </div>
 

@@ -29964,20 +29964,33 @@
 	    });
 	  },
 
-	  handleMouseOver: function handleMouseOver(cardName) {},
+	  handleMouseOver: function handleMouseOver(cardName) {
+	    this.calculateCardOffset(cardName);
+	  },
 
-	  calculateCardOffset: function calculateCardOffset() {
+	  calculateCardOffset: function calculateCardOffset(activeCard) {
 	    var userHand = this.props.players[this.props.userName].hand;
 
 	    var cardsInHand = [];
 
 	    for (var i = 0; i < userHand.length; i++) {
-	      cardsInHand.push({ card: userHand[i], key: this.props.userName + "card" + i, offset: i * 10 });
+	      if (i === 0) {
+	        var offset = 0;
+	      } else {
+	        var offset = cardsInHand[i - 1].offset + 5;
+	      }
+
+	      if (userHand[i].name === activeCard) {
+	        offset += 5;
+	      }
+
+	      cardsInHand.push({ card: userHand[i], key: this.props.userName + "card" + i, offset: offset });
 	    }
 	    return cardsInHand;
 	  },
 
 	  render: function render() {
+	    var self = this;
 
 	    if (this.props.userName) {
 
@@ -29990,7 +30003,7 @@
 	            'div',
 	            { className: 'layoutDIV', id: 'MyCardsDIV' },
 	            cardsInHand.map(function (eachCard) {
-	              return React.createElement(ActionCard, { card: eachCard.card, key: eachCard.key, offset: eachCard.offset, handleMouseOver: this.handleMouseOver });
+	              return React.createElement(ActionCard, { card: eachCard.card, key: eachCard.key, offset: eachCard.offset, handleMouseOver: self.handleMouseOver });
 	            })
 	          );
 	        }
