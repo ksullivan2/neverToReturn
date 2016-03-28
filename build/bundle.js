@@ -51,7 +51,7 @@
 	var OpponentsDIV = __webpack_require__(159);
 	var ActionAREA = __webpack_require__(162);
 	var MyCardsDIV = __webpack_require__(166);
-	var NeckDIV = __webpack_require__(168);
+	var NeckDIV = __webpack_require__(182);
 	var $ = __webpack_require__(163);
 
 	var socket = io();
@@ -29939,60 +29939,63 @@
 	//   gameState: int(enum)
 
 	var MyCardsDIV = React.createClass({
-		displayName: 'MyCardsDIV',
+	  displayName: 'MyCardsDIV',
 
-		shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-			if (!this.props.userName && nextProps.userName) {
-				return true;
-			}
+	  getInitialState: function getInitialState() {
+	    return { canvas_x: 0,
+	      canvas_y: 0,
+	      canvas_height: 0,
+	      canvas_width: 0 };
+	  },
 
-			if (nextProps.players[nextProps.userName] && this.props.players[this.props.userName]) {
-				//if a card is added or removed
-				if (this.props.players[this.props.userName].hand.length != nextProps.players[nextProps.userName].hand.length) {
-					return true;
-				}
+	  componentDidMount: function componentDidMount() {
+	    this.calculateCanvas();
+	    window.addEventListener("resize", this.calculateCanvas);
+	  },
 
-				//if any card has changed
-				for (var i = 0; i < nextProps.players[nextProps.userName].hand.length; i++) {
-					if (nextProps.players[nextProps.userName].hand[i].name != this.props.players[this.props.userName].hand[i].name) {
-						return true;
-					}
-				}
-			}
-			return false;
-		},
+	  calculateCanvas: function calculateCanvas() {
+	    var neckLocation = document.getElementById("MyCardsDIV").getBoundingClientRect();
 
-		render: function render() {
-			if (this.props.userName) {
+	    this.setState({
+	      canvas_x: neckLocation.left,
+	      canvas_y: neckLocation.top,
+	      canvas_height: neckLocation.bottom - neckLocation.top,
+	      canvas_width: neckLocation.right - neckLocation.left
+	    });
+	  },
 
-				if (this.props.gameState != gameStates.gatherPlayers) {
+	  render: function render() {
 
-					var userHand = this.props.players[this.props.userName].hand;
+	    if (this.props.userName) {
 
-					var cardsInHand = [];
+	      if (this.props.gameState != gameStates.gatherPlayers) {
 
-					for (var i = 0; i < userHand.length; i++) {
-						cardsInHand.push({ card: userHand[i], key: this.props.userName + "card" + i, offset: i * 10 });
-					}
+	        var userHand = this.props.players[this.props.userName].hand;
 
-					if (cardsInHand.length > 0) {
-						return React.createElement(
-							'div',
-							{ className: 'layoutDIV', id: 'MyCardsDIV' },
-							cardsInHand.map(function (eachCard) {
-								return React.createElement(ActionCard, { card: eachCard.card, key: eachCard.key, offset: eachCard.offset });
-							})
-						);
-					}
-				}
-			}
+	        var cardsInHand = [];
 
-			return React.createElement(
-				'div',
-				{ className: 'layoutDIV', id: 'MyCardsDIV' },
-				'There are no cards in your hand. '
-			);
-		}
+	        for (var i = 0; i < userHand.length; i++) {
+	          cardsInHand.push({ card: userHand[i], key: this.props.userName + "card" + i, offset: i * 10 });
+	        }
+
+	        if (cardsInHand.length > 0) {
+	          return React.createElement(
+	            'div',
+	            { className: 'layoutDIV', id: 'MyCardsDIV' },
+	            cardsInHand.map(function (eachCard) {
+	              return React.createElement(ActionCard, { card: eachCard.card, key: eachCard.key, offset: eachCard.offset });
+	            })
+	          );
+	        }
+	      }
+	    }
+
+	    return React.createElement(
+	      'div',
+	      { className: 'layoutDIV', id: 'MyCardsDIV' },
+	      'There are no cards in your hand. '
+	    );
+	  }
 
 	});
 
@@ -30002,22 +30005,34 @@
 /* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	var React = __webpack_require__(1);
+	var ReactMotion = __webpack_require__(168);
+	var Motion = ReactMotion.Motion;
+	var spring = ReactMotion.spring;
 
 	// props are:
 	//   card: ActionCard
 	//	offset: int (index in player's hand)
 
 	var ActionCard = React.createClass({
-	  displayName: "ActionCard",
+	  displayName: 'ActionCard',
 
 	  render: function render() {
+	    var self = this;
+
 	    return React.createElement(
-	      "div",
-	      { className: "actionCard", style: { left: this.props.offset + "%" } },
-	      React.createElement("img", { src: this.props.card.imgSRC, className: "cardImage" })
+	      Motion,
+	      { defaultStyle: { left: 0 },
+	        style: { left: spring(self.props.offset) } },
+	      function (interpolatingStyle) {
+	        return React.createElement(
+	          'div',
+	          { className: 'actionCard', style: { left: interpolatingStyle.left + "%" } },
+	          React.createElement('img', { src: self.props.card.imgSRC, className: 'cardImage' })
+	        );
+	      }
 	    );
 	  }
 	});
@@ -30030,225 +30045,38 @@
 
 	'use strict';
 
-	var React = __webpack_require__(1);
-	var LocationDIV = __webpack_require__(169);
-	var PlayerPiece = __webpack_require__(171);
-	var NeckCanvas = __webpack_require__(186);
-	var socket = io();
-
-	//props are:
-	//  players: {playerName: Player}
-	//   neck: [Location]
-	//   activePlayer: Player
-
-	var NeckDIV = React.createClass({
-	  displayName: 'NeckDIV',
-
-
-	  render: function render() {
-	    var self = this;
-
-	    //creating an array to be rendered below
-	    var locationsInNeck = [];
-	    for (var i = 0; i < this.props.neck.length; i++) {
-	      locationsInNeck.push({ location: this.props.neck[i], key: "location" + i });
-	    }
-
-	    return React.createElement(
-	      'div',
-	      { className: 'layoutDIV', id: 'NeckDIV' },
-	      React.createElement(NeckCanvas, { players: this.props.players, activePlayer: this.props.activePlayer, neck: this.props.neck }),
-	      React.createElement(
-	        'div',
-	        { id: 'allCardsDIV', className: 'layoutDIV' },
-	        locationsInNeck.map(function (eachLocation) {
-	          return React.createElement(LocationDIV, { location: eachLocation.location,
-	            key: eachLocation.key,
-	            name: eachLocation.key });
-	        })
-	      )
-	    );
-	  }
-	});
-
-	module.exports = NeckDIV;
-
-/***/ },
-/* 169 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var LocationCard = __webpack_require__(170);
-
-	// props are:
-	//   location: Location
-	//   name: ""
-
-	var LocationDIV = React.createClass({
-	  displayName: 'LocationDIV',
-
-	  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-	    //only update if: number of cards changes, or one of the cards changes
-
-	    if (this.props.location.cards.length != nextProps.location.cards.length) {
-	      return true;
-	    }
-
-	    for (var i = 0; i < nextProps.location.cards.length; i++) {
-	      if (this.props.location.cards[i].name != nextProps.location.cards[i].name) {
-	        return true;
-	      }
-	    }
-
-	    return false;
-	  },
-
-	  render: function render() {
-	    var cardsInLocation = [];
-	    for (var i = 0; i < this.props.location.cards.length; i++) {
-	      cardsInLocation.push({ card: this.props.location.cards[i], key: this.props.name + "card" + i });
-	    }
-
-	    return React.createElement(
-	      'div',
-	      { className: 'locationDIV' },
-	      cardsInLocation.map(function (eachCard) {
-	        return React.createElement(LocationCard, { card: eachCard.card, key: eachCard.key });
-	      })
-	    );
-	  }
-	});
-
-	module.exports = LocationDIV;
-
-/***/ },
-/* 170 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var React = __webpack_require__(1);
-
-	// props are:
-	// 	card: TerrainCard
-
-	var LocationCard = React.createClass({
-	  displayName: "LocationCard",
-
-	  render: function render() {
-	    return React.createElement(
-	      "div",
-	      { className: "terrainCard" },
-	      React.createElement("img", { src: this.props.card.imgSRC, className: "cardImage" })
-	    );
-	  }
-	});
-
-	module.exports = LocationCard;
-
-/***/ },
-/* 171 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var ReactMotion = __webpack_require__(172);
-	var Motion = ReactMotion.Motion;
-	var spring = ReactMotion.spring;
-
-	//props are:
-	// player: Player
-	// active: bool
-	// coords: {top,bottom,left,right}
-	// diameter: float
-
-	var PlayerPiece = React.createClass({
-	  displayName: 'PlayerPiece',
-
-
-	  render: function render() {
-	    var self = this;
-
-	    var border = '';
-	    var zIndex = "99";
-
-	    if (this.props.active) {
-	      border = "2px solid black";
-	      zIndex = "100";
-	    }
-
-	    return React.createElement(
-	      Motion,
-	      { defaultStyle: { left: 0, bottom: 0 },
-	        style: { left: spring(this.props.coords.left), bottom: spring(this.props.coords.bottom) } },
-	      function (interpolatingStyle) {
-	        return React.createElement(
-	          'div',
-	          { className: 'playerPiece',
-	            style: { border: border,
-	              left: interpolatingStyle.left,
-	              bottom: interpolatingStyle.bottom,
-	              width: self.props.diameter,
-	              height: self.props.diameter,
-	              zIndex: zIndex } },
-	          React.createElement(
-	            'div',
-	            { className: 'playerThumbnail', style: { background: "url('/assets/playerThumbnails/homelyVillager.jpg')",
-	                backgroundSize: "contain" } },
-	            React.createElement('div', { className: 'playerPieceColor',
-
-	              style: { background: self.props.player.color,
-	                opacity: ".35" } })
-	          )
-	        );
-	      }
-	    );
-	  }
-	});
-
-	module.exports = PlayerPiece;
-
-/***/ },
-/* 172 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
 	exports.__esModule = true;
 
 	function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
-	var _Motion = __webpack_require__(173);
+	var _Motion = __webpack_require__(169);
 
 	exports.Motion = _interopRequire(_Motion);
 
-	var _StaggeredMotion = __webpack_require__(180);
+	var _StaggeredMotion = __webpack_require__(176);
 
 	exports.StaggeredMotion = _interopRequire(_StaggeredMotion);
 
-	var _TransitionMotion = __webpack_require__(181);
+	var _TransitionMotion = __webpack_require__(177);
 
 	exports.TransitionMotion = _interopRequire(_TransitionMotion);
 
-	var _spring = __webpack_require__(183);
+	var _spring = __webpack_require__(179);
 
 	exports.spring = _interopRequire(_spring);
 
-	var _presets = __webpack_require__(184);
+	var _presets = __webpack_require__(180);
 
 	exports.presets = _interopRequire(_presets);
 
 	// deprecated, dummy warning function
 
-	var _reorderKeys = __webpack_require__(185);
+	var _reorderKeys = __webpack_require__(181);
 
 	exports.reorderKeys = _interopRequire(_reorderKeys);
 
 /***/ },
-/* 173 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30259,27 +30087,27 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _mapToZero = __webpack_require__(174);
+	var _mapToZero = __webpack_require__(170);
 
 	var _mapToZero2 = _interopRequireDefault(_mapToZero);
 
-	var _stripStyle = __webpack_require__(175);
+	var _stripStyle = __webpack_require__(171);
 
 	var _stripStyle2 = _interopRequireDefault(_stripStyle);
 
-	var _stepper3 = __webpack_require__(176);
+	var _stepper3 = __webpack_require__(172);
 
 	var _stepper4 = _interopRequireDefault(_stepper3);
 
-	var _performanceNow = __webpack_require__(177);
+	var _performanceNow = __webpack_require__(173);
 
 	var _performanceNow2 = _interopRequireDefault(_performanceNow);
 
-	var _raf = __webpack_require__(178);
+	var _raf = __webpack_require__(174);
 
 	var _raf2 = _interopRequireDefault(_raf);
 
-	var _shouldStopAnimation = __webpack_require__(179);
+	var _shouldStopAnimation = __webpack_require__(175);
 
 	var _shouldStopAnimation2 = _interopRequireDefault(_shouldStopAnimation);
 
@@ -30494,7 +30322,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 174 */
+/* 170 */
 /***/ function(module, exports) {
 
 	
@@ -30518,7 +30346,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 175 */
+/* 171 */
 /***/ function(module, exports) {
 
 	
@@ -30544,7 +30372,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 176 */
+/* 172 */
 /***/ function(module, exports) {
 
 	
@@ -30592,7 +30420,7 @@
 	// array reference around.
 
 /***/ },
-/* 177 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
@@ -30631,10 +30459,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 178 */
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(177)
+	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(173)
 	  , root = typeof window === 'undefined' ? global : window
 	  , vendors = ['moz', 'webkit']
 	  , suffix = 'AnimationFrame'
@@ -30710,7 +30538,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 179 */
+/* 175 */
 /***/ function(module, exports) {
 
 	
@@ -30746,7 +30574,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 180 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30757,27 +30585,27 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _mapToZero = __webpack_require__(174);
+	var _mapToZero = __webpack_require__(170);
 
 	var _mapToZero2 = _interopRequireDefault(_mapToZero);
 
-	var _stripStyle = __webpack_require__(175);
+	var _stripStyle = __webpack_require__(171);
 
 	var _stripStyle2 = _interopRequireDefault(_stripStyle);
 
-	var _stepper3 = __webpack_require__(176);
+	var _stepper3 = __webpack_require__(172);
 
 	var _stepper4 = _interopRequireDefault(_stepper3);
 
-	var _performanceNow = __webpack_require__(177);
+	var _performanceNow = __webpack_require__(173);
 
 	var _performanceNow2 = _interopRequireDefault(_performanceNow);
 
-	var _raf = __webpack_require__(178);
+	var _raf = __webpack_require__(174);
 
 	var _raf2 = _interopRequireDefault(_raf);
 
-	var _shouldStopAnimation = __webpack_require__(179);
+	var _shouldStopAnimation = __webpack_require__(175);
 
 	var _shouldStopAnimation2 = _interopRequireDefault(_shouldStopAnimation);
 
@@ -31013,7 +30841,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 181 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31024,31 +30852,31 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _mapToZero = __webpack_require__(174);
+	var _mapToZero = __webpack_require__(170);
 
 	var _mapToZero2 = _interopRequireDefault(_mapToZero);
 
-	var _stripStyle = __webpack_require__(175);
+	var _stripStyle = __webpack_require__(171);
 
 	var _stripStyle2 = _interopRequireDefault(_stripStyle);
 
-	var _stepper3 = __webpack_require__(176);
+	var _stepper3 = __webpack_require__(172);
 
 	var _stepper4 = _interopRequireDefault(_stepper3);
 
-	var _mergeDiff = __webpack_require__(182);
+	var _mergeDiff = __webpack_require__(178);
 
 	var _mergeDiff2 = _interopRequireDefault(_mergeDiff);
 
-	var _performanceNow = __webpack_require__(177);
+	var _performanceNow = __webpack_require__(173);
 
 	var _performanceNow2 = _interopRequireDefault(_performanceNow);
 
-	var _raf = __webpack_require__(178);
+	var _raf = __webpack_require__(174);
 
 	var _raf2 = _interopRequireDefault(_raf);
 
-	var _shouldStopAnimation = __webpack_require__(179);
+	var _shouldStopAnimation = __webpack_require__(175);
 
 	var _shouldStopAnimation2 = _interopRequireDefault(_shouldStopAnimation);
 
@@ -31506,7 +31334,7 @@
 	// that you've unmounted but that's still animating. This is where it lives
 
 /***/ },
-/* 182 */
+/* 178 */
 /***/ function(module, exports) {
 
 	
@@ -31619,7 +31447,7 @@
 	// to loop through and find a key's index each time), but I no longer care
 
 /***/ },
-/* 183 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31632,7 +31460,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _presets = __webpack_require__(184);
+	var _presets = __webpack_require__(180);
 
 	var _presets2 = _interopRequireDefault(_presets);
 
@@ -31647,7 +31475,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 184 */
+/* 180 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -31662,7 +31490,7 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 185 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -31685,13 +31513,200 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var LocationDIV = __webpack_require__(183);
+	var PlayerPiece = __webpack_require__(185);
+	var NeckCanvas = __webpack_require__(186);
+	var socket = io();
+
+	//props are:
+	//  players: {playerName: Player}
+	//   neck: [Location]
+	//   activePlayer: Player
+
+	var NeckDIV = React.createClass({
+	  displayName: 'NeckDIV',
+
+
+	  render: function render() {
+	    var self = this;
+
+	    //creating an array to be rendered below
+	    var locationsInNeck = [];
+	    for (var i = 0; i < this.props.neck.length; i++) {
+	      locationsInNeck.push({ location: this.props.neck[i], key: "location" + i });
+	    }
+
+	    return React.createElement(
+	      'div',
+	      { className: 'layoutDIV', id: 'NeckDIV' },
+	      React.createElement(NeckCanvas, { players: this.props.players, activePlayer: this.props.activePlayer, neck: this.props.neck }),
+	      React.createElement(
+	        'div',
+	        { id: 'allCardsDIV', className: 'layoutDIV' },
+	        locationsInNeck.map(function (eachLocation) {
+	          return React.createElement(LocationDIV, { location: eachLocation.location,
+	            key: eachLocation.key,
+	            name: eachLocation.key });
+	        })
+	      )
+	    );
+	  }
+	});
+
+	module.exports = NeckDIV;
+
+/***/ },
+/* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var LocationCard = __webpack_require__(184);
+
+	// props are:
+	//   location: Location
+	//   name: ""
+
+	var LocationDIV = React.createClass({
+	  displayName: 'LocationDIV',
+
+	  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+	    //only update if: number of cards changes, or one of the cards changes
+
+	    if (this.props.location.cards.length != nextProps.location.cards.length) {
+	      return true;
+	    }
+
+	    for (var i = 0; i < nextProps.location.cards.length; i++) {
+	      if (this.props.location.cards[i].name != nextProps.location.cards[i].name) {
+	        return true;
+	      }
+	    }
+
+	    return false;
+	  },
+
+	  render: function render() {
+	    var cardsInLocation = [];
+	    for (var i = 0; i < this.props.location.cards.length; i++) {
+	      cardsInLocation.push({ card: this.props.location.cards[i], key: this.props.name + "card" + i });
+	    }
+
+	    return React.createElement(
+	      'div',
+	      { className: 'locationDIV' },
+	      cardsInLocation.map(function (eachCard) {
+	        return React.createElement(LocationCard, { card: eachCard.card, key: eachCard.key });
+	      })
+	    );
+	  }
+	});
+
+	module.exports = LocationDIV;
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(1);
+
+	// props are:
+	// 	card: TerrainCard
+
+	var LocationCard = React.createClass({
+	  displayName: "LocationCard",
+
+	  render: function render() {
+	    return React.createElement(
+	      "div",
+	      { className: "terrainCard" },
+	      React.createElement("img", { src: this.props.card.imgSRC, className: "cardImage" })
+	    );
+	  }
+	});
+
+	module.exports = LocationCard;
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var ReactMotion = __webpack_require__(168);
+	var Motion = ReactMotion.Motion;
+	var spring = ReactMotion.spring;
+
+	//props are:
+	// player: Player
+	// active: bool
+	// coords: {top,bottom,left,right}
+	// diameter: float
+
+	var PlayerPiece = React.createClass({
+	  displayName: 'PlayerPiece',
+
+
+	  render: function render() {
+	    var self = this;
+
+	    var border = '';
+	    var zIndex = "99";
+
+	    if (this.props.active) {
+	      border = "2px solid black";
+	      zIndex = "100";
+	    }
+
+	    return React.createElement(
+	      Motion,
+	      { defaultStyle: { left: 0, bottom: 0 },
+	        style: { left: spring(this.props.coords.left), bottom: spring(this.props.coords.bottom) } },
+	      function (interpolatingStyle) {
+	        return React.createElement(
+	          'div',
+	          { className: 'playerPiece',
+	            style: { border: border,
+	              left: interpolatingStyle.left,
+	              bottom: interpolatingStyle.bottom,
+	              width: self.props.diameter,
+	              height: self.props.diameter,
+	              zIndex: zIndex } },
+	          React.createElement(
+	            'div',
+	            { className: 'playerThumbnail', style: { background: "url('/assets/playerThumbnails/homelyVillager.jpg')",
+	                backgroundSize: "contain" } },
+	            React.createElement('div', { className: 'playerPieceColor',
+
+	              style: { background: self.props.player.color,
+	                opacity: ".35" } })
+	          )
+	        );
+	      }
+	    );
+	  }
+	});
+
+	module.exports = PlayerPiece;
+
+/***/ },
 /* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var PlayerPiece = __webpack_require__(171);
+	var PlayerPiece = __webpack_require__(185);
 
 	//props are:
 	//  players: {playerName: Player}

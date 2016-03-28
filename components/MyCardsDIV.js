@@ -10,8 +10,33 @@ var gameStates = require('../game_modules/gameStates.js');
 
 
 var MyCardsDIV = React.createClass({
+  getInitialState: function(){
+    return(
+      {canvas_x: 0,
+      canvas_y: 0,
+      canvas_height: 0,
+      canvas_width: 0}
+    )
+  },
+
+  componentDidMount: function(){
+    this.calculateCanvas();
+    window.addEventListener("resize", this.calculateCanvas);
+  },
+
+  calculateCanvas: function(){
+    var neckLocation = document.getElementById("MyCardsDIV").getBoundingClientRect();
+
+    this.setState({
+      canvas_x: neckLocation.left,
+      canvas_y: neckLocation.top,
+      canvas_height: neckLocation.bottom - neckLocation.top,
+      canvas_width: neckLocation.right - neckLocation.left
+    })
+  },
 
   render: function () {
+
   	if (this.props.userName){
 		  	
 	  	if (this.props.gameState != gameStates.gatherPlayers){
