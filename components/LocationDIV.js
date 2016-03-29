@@ -47,18 +47,35 @@ var LocationDIV = React.createClass({
 
   calculateCardOffset: function(activeCard){
     var cardsInLocation = [];
+    var activeIndex = 0;
+    var offsetPerCard = 10;
+    var activeOffset = 30;
+    var startingOffset = 10;
+
+
+    for (var i = 0; i < this.props.location.cards.length; i++) {
+      if (this.props.location.cards[i].name === activeCard){
+        activeIndex = i
+        break
+      }
+    }
 
     for (var i = 0; i < this.props.location.cards.length; i++){
-      var offset = {bottom: 0, zIndex: 50}
-      if (i != 0){
-        
-        offset.bottom = cardsInLocation[i-1].offset.bottom + 5
+      var offset = {bottom: offsetPerCard*i, zIndex: 50}
+      if (i !== 0){
         offset.zIndex = cardsInLocation[i-1].offset.zIndex -1
-        
-        if (cardsInLocation[i-1].card.name === activeCard){
-          offset.bottom += 30
-        }
       }
+      
+      if (i === activeIndex){
+        offset.bottom = offset.bottom;
+      } else if (i < activeIndex){
+
+        offset.bottom = offset.bottom - activeOffset 
+      } 
+      // else if (i > activeIndex){
+      //   offset.bottom = offset.bottom + offsetPerCard*(i - activeIndex)
+      //   console.log(i, " > activeIndex", offset.bottom)
+      // }
 
 
       cardsInLocation.push({card: this.props.location.cards[i], key:(this.props.name+"card"+i), offset: offset})

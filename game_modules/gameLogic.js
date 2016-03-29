@@ -73,7 +73,9 @@ gameLogic.prototype.newNeck = function() {
 	for (var i = 0; i < cardNames.length; i++){
 		this.neck[i].cards = [];
 		this.neck[i].addCard(new cardTypes.terrainCard(cardNames[i]))
-		this.neck[i].addCard(new cardTypes.terrainCard(cardNames[i]))
+		this.neck[i].addCard(new cardTypes.terrainCard("start"))
+		this.neck[i].addCard(new cardTypes.terrainCard("goal"))
+		this.neck[i].addCard(new cardTypes.terrainCard("fogRiddenSwamp"))
 	}
 };
 
