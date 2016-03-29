@@ -33,10 +33,6 @@ var ActionCard = React.createClass({
 
             }}
 
-
-
-
-
 		</Motion>
     )
   }

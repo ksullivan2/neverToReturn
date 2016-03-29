@@ -33,53 +33,52 @@ var LocationDIV = React.createClass({
   },
 
   handleMouseOver: function(cardName){
-  
     this.setState({
       activeCard: cardName
     })
   },
 
   handleMouseOut: function(){
+    console.log("handleMouseOut")
     this.setState({
       activeCard: ""
     })
   },
 
   calculateCardOffset: function(activeCard){
-    var userHand = this.props.players[this.props.userName].hand;
+    var cardsInLocation = [];
 
-    var cardsInHand = [];
-  
-    
-    for (var i = 0; i < userHand.length; i++){
-      if (i === 0){
-        var offset = 5;
-      } else {
-        var offset = cardsInHand[i-1].offset + 5
-        if (cardsInHand[i-1].card.name === activeCard){
-          offset += 30
+    for (var i = 0; i < this.props.location.cards.length; i++){
+      var offset = {bottom: 0, zIndex: 50}
+      if (i != 0){
+        
+        offset.bottom = cardsInLocation[i-1].offset.bottom + 5
+        offset.zIndex = cardsInLocation[i-1].offset.zIndex -1
+        
+        if (cardsInLocation[i-1].card.name === activeCard){
+          offset.bottom += 30
         }
       }
-      
-      cardsInHand.push({card: userHand[i], key:(this.props.userName+"card"+i), offset:offset})
+
+
+      cardsInLocation.push({card: this.props.location.cards[i], key:(this.props.name+"card"+i), offset: offset})
     }
-    return cardsInHand
+    return cardsInLocation
   },
 
 
   render: function () {
     var self = this;
 
-    var cardsInLocation = [];
-    for (var i = 0; i < this.props.location.cards.length; i++){
-      cardsInLocation.push({card: this.props.location.cards[i], key:(this.props.name+"card"+i)})
-    }
+    var cardsInLocation = this.calculateCardOffset(this.state.activeCard)
+    
 
     return (
-      <div className="locationDIV">
+      <div className="locationDIV" onMouseOut={self.handleMouseOut}>
         {cardsInLocation.map(function(eachCard){
           return(
-            <LocationCard card={eachCard.card} key={eachCard.key} offset={eachCard.offset} handleMouseOver={self.handleMouseOver}/>
+            <LocationCard card={eachCard.card} key={eachCard.key} offset={eachCard.offset} 
+            handleMouseOver={self.handleMouseOver}/>
           )
         })
         }

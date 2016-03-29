@@ -130,8 +130,8 @@ body {
 .terrainCard{
   width: 100%;
   position: absolute;
-  bottom: 10%;
   left: 0;
+  border: 1px dashed red;
 }
 
 .terrainCardImage{

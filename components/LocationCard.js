@@ -5,12 +5,11 @@ var spring = ReactMotion.spring;
 
 // props are:
 // 	card: TerrainCard/MonsterCard
-//	offset: int 
+//	offset: {bottom: int, zIndex: int}
 // handleMouseOver: function
 
 var LocationCard = React.createClass({
 	handleMouseOver: function(){
-		console.log(this.props.card.name)
 		this.props.handleMouseOver(this.props.card.name)
 	},
 
@@ -20,10 +19,11 @@ var LocationCard = React.createClass({
 
     return (
     	<Motion defaultStyle={{bottom: 0}} 
-              style={{bottom: spring(self.props.offset)}}>
+              style={{bottom: spring(self.props.offset.bottom)}}>
             {function(interpolatingStyle){
             	return(
-			      <div  className="terrainCard" style={{bottom: interpolatingStyle.bottom+"%"}} onMouseOver={self.handleMouseOver}>
+			      <div  className="terrainCard" style={{bottom: interpolatingStyle.bottom+"%", zIndex: self.props.offset.zIndex}} 
+			      		onMouseOver={self.handleMouseOver}>
 			        <img src={self.props.card.imgSRC} className="terrainCardImage"/>
 			      </div>
             		)
