@@ -7,7 +7,7 @@ var LocationCard = React.createClass({
   render: function () {
     return (
       <div  className="terrainCard">
-        <img src={this.props.card.imgSRC} className="cardImage"/>
+        <img src={this.props.card.imgSRC} className="terrainCardImage"/>
       </div>
       )
   }

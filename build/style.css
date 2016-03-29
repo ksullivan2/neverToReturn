@@ -89,8 +89,7 @@ body {
 
 .locationDIV{
   border: 1px dashed green;
-  display: inline;
-  vertical-align: top;
+  
   height: 90%;
   width: 14%;
   order: 2;
@@ -135,18 +134,24 @@ body {
   left: 0;
 }
 
+.terrainCardImage{
+  max-width: 100%;
+  max-height: 100%;
+}
+
 .actionCard{
   position: absolute;
   width: 35%;
   height: 90%;
   bottom: 5%;
-  border: 1px dashed red;
+
 }
 
-.cardImage{
+.actionCardImage{
   max-width: 100%;
   max-height: 100%;
   bottom: 0;
   position: absolute;
 }
+
 

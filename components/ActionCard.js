@@ -29,7 +29,7 @@ var ActionCard = React.createClass({
             {function(interpolatingStyle){
             	return(
 			      <div  className="actionCard" style={{left: interpolatingStyle.left+"%"}} onMouseOver={self.handleMouseOver}>
-			        <img src={self.props.card.imgSRC} className="cardImage"/>
+			        <img src={self.props.card.imgSRC} className="actionCardImage"/>
 			      </div>
 
             		)
