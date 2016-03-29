@@ -57,7 +57,7 @@ var MyCardsDIV = React.createClass({
   	
     for (var i = 0; i < userHand.length; i++){
     	if (i === 0){
-    		var offset = 0;
+    		var offset = 5;
     	} else {
     		var offset = cardsInHand[i-1].offset + 5
 	    	if (cardsInHand[i-1].card.name === activeCard){
