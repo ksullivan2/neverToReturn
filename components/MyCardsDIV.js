@@ -57,8 +57,7 @@ var MyCardsDIV = React.createClass({
   		}
   	}
   
-  	var leftSeparation = 5
-  	var cardRotation = 10
+  	
 
     for (var i = 0; i < userHand.length; i++){
     	var offset = {left: 0, rotation: 0, X: 0}
@@ -67,12 +66,12 @@ var MyCardsDIV = React.createClass({
     		offset.left = 30;
     		offset.rotation = 0;
     	} else {
-    		offset.left = ((i - center) * leftSeparation ) + 30
-    		offset.rotation = ((i - center) * cardRotation )
+    		offset.left = ((i - center) * 10 ) + 30
+    		offset.rotation = ((i - center) * 10 )
     	}
     	
     	if (i > activeIndex){
-    		offset.rotation += cardRotation
+    		offset.left += 10
     	}
 
     	if (i < center){

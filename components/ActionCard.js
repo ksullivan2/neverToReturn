@@ -24,13 +24,12 @@ var ActionCard = React.createClass({
   	var self = this;
 
     return (
-    	<Motion defaultStyle={{left: 0, rotation:0, X:0}} 
-              style={{left: spring(self.props.offset.left), rotation: spring(self.props.offset.rotation), 
-              	X:spring(self.props.offset.X)}}>
+    	<Motion defaultStyle={{left: 0, rotation:0}} 
+              style={{left: spring(self.props.offset.left), rotation: spring(self.props.offset.rotation)}}>
             {function(interpolatingStyle){
             	return(
 			      <div  className="actionCard" style={{left: interpolatingStyle.left+"%", 
-			      transform: "rotate("+interpolatingStyle.rotation+"deg)", transformOrigin: interpolatingStyle.X+"% 100%"}} 
+			      transform: "rotate("+interpolatingStyle.rotation+"deg)", transformOrigin: self.props.offset.X+"% 100%"}} 
 			      onMouseOver={self.handleMouseOver}>
 			        <img src={self.props.card.imgSRC} className="cardImage"/>
 			      </div>
