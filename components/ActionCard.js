@@ -5,14 +5,12 @@ var spring = ReactMotion.spring;
 
 // props are:
 //   card: ActionCard
-//	offset: int (index in player's hand)
+//	offset: int 
+// handleMouseOver: function
 
 
 var ActionCard = React.createClass({
-	// componentDidMount: function(){
-	// 	window.addEventListener("mouseover", this.handleMouseOver);
 
-	// },
 
 	handleMouseOver: function(){
 		this.props.handleMouseOver(this.props.card.name)
