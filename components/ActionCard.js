@@ -29,7 +29,7 @@ var ActionCard = React.createClass({
               	X:spring(self.props.offset.X)}}>
             {function(interpolatingStyle){
             	return(
-			      <div  className="actionCard" style={{left: interpolatingStyle.left+"%",
+			      <div  className="actionCard" style={{left: interpolatingStyle.left+"%", 
 			      transform: "rotate("+interpolatingStyle.rotation+"deg)", transformOrigin: interpolatingStyle.X+"% 100%"}} 
 			      onMouseOver={self.handleMouseOver}>
 			        <img src={self.props.card.imgSRC} className="cardImage"/>

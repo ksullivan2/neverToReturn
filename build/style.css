@@ -140,9 +140,9 @@ body {
 .actionCard{
   width: 40%;
   height: 80%;
+
   position: absolute;
   bottom: 10%; 
-  left: 50%;
   
 }
 
