@@ -60,7 +60,7 @@ var MyCardsDIV = React.createClass({
   	
 
     for (var i = 0; i < userHand.length; i++){
-    	var offset = {left: 0, rotation: 0, X: 0}
+    	var offset = {left: 0, rotation: 0}
     	
     	if (i === center){
     		offset.left = 30;
@@ -72,10 +72,6 @@ var MyCardsDIV = React.createClass({
     	
     	if (i > activeIndex){
     		offset.left += 10
-    	}
-
-    	if (i < center){
-    		offset.X = 100
     	}
     	
       cardsInHand.push({card: userHand[i], key:(this.props.userName+"card"+i), offset:offset})
