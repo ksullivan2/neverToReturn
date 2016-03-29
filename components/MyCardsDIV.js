@@ -47,7 +47,7 @@ var MyCardsDIV = React.createClass({
   	var userHand = this.props.players[this.props.userName].hand;
 
   	var cardsInHand = [];
-  	var center = Math.floor(userHand.length/2)
+  	var center = Math.ceil(userHand.length/2)
   	var activeIndex = null;
 
   	for (var i = 0; i < userHand.length; i++) {
@@ -57,21 +57,15 @@ var MyCardsDIV = React.createClass({
   		}
   	}
   
-  	
-
     for (var i = 0; i < userHand.length; i++){
-    	var offset = {left: 0, rotation: 0}
-    	
     	if (i === center){
-    		offset.left = 30;
-    		offset.rotation = 0;
+    		var offset = 30;
     	} else {
-    		offset.left = ((i - center) * 10 ) + 30
-    		offset.rotation = ((i - center) * 10 )
+    		var offset = ((i - center) * 10 ) + 30
     	}
     	
     	if (i > activeIndex){
-    		offset.left += 10
+    		offset += 10
     	}
     	
       cardsInHand.push({card: userHand[i], key:(this.props.userName+"card"+i), offset:offset})
@@ -93,8 +87,7 @@ var MyCardsDIV = React.createClass({
 			      <div  className="layoutDIV" id='MyCardsDIV'>
 			        {cardsInHand.map(function(eachCard){
 			        	return(
-								<ActionCard card={eachCard.card} key={eachCard.key} 
-								offset={eachCard.offset} handleMouseOver={self.handleMouseOver}/>
+								<ActionCard card={eachCard.card} key={eachCard.key} offset={eachCard.offset} handleMouseOver={self.handleMouseOver}/>
 			       )
 			        	})  	
 			       	}
