@@ -15,7 +15,6 @@ var ActionCard = React.createClass({
 	// },
 
 	handleMouseOver: function(){
-		console.log(this.props.card.name)
 		this.props.handleMouseOver(this.props.card.name)
 	},
 

@@ -26,13 +26,13 @@ var MyCardsDIV = React.createClass({
   },
 
   calculateCanvas: function(){
-    var neckLocation = document.getElementById("MyCardsDIV").getBoundingClientRect();
+    var divLocation = document.getElementById("MyCardsDIV").getBoundingClientRect();
 
     this.setState({
-      canvas_x: neckLocation.left,
-      canvas_y: neckLocation.top,
-      canvas_height: neckLocation.bottom - neckLocation.top,
-      canvas_width: neckLocation.right - neckLocation.left
+      canvas_x: divLocation.left,
+      canvas_y: divLocation.top,
+      canvas_height: divLocation.bottom - divLocation.top,
+      canvas_width: divLocation.right - divLocation.left
     })
   },
 
@@ -41,6 +41,12 @@ var MyCardsDIV = React.createClass({
   	this.setState({
   		activeCard: cardName
   	})
+  },
+
+  handleMouseOut: function(){
+    this.setState({
+      activeCard: ""
+    })
   },
 
   calculateCardOffset: function(activeCard){
@@ -75,7 +81,7 @@ var MyCardsDIV = React.createClass({
 		    
 		    if (cardsInHand.length > 0){
 			    return (
-			      <div  className="layoutDIV" id='MyCardsDIV'>
+			      <div  className="layoutDIV" id='MyCardsDIV' onMouseOut={self.handleMouseOut}>
 			        {cardsInHand.map(function(eachCard){
 			        	return(
 								<ActionCard card={eachCard.card} key={eachCard.key} offset={eachCard.offset} handleMouseOver={self.handleMouseOver}/>
