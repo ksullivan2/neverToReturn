@@ -49,8 +49,7 @@ var LocationDIV = React.createClass({
     var cardsInLocation = [];
     var activeIndex = 0;
     var offsetPerCard = 10;
-    var activeOffset = 30;
-    var startingOffset = 10;
+    var activeOffset = 60;
 
 
     for (var i = 0; i < this.props.location.cards.length; i++) {
