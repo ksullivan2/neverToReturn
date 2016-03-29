@@ -139,8 +139,9 @@ body {
 
 .actionCard{
   width: 30%;
-  height: 60%;
-  border: 1px dashed red;
+  height: 80%;
+  bottom: 10%;
+
   position: absolute;
 }
 
