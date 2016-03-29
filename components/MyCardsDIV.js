@@ -47,25 +47,16 @@ var MyCardsDIV = React.createClass({
   	var userHand = this.props.players[this.props.userName].hand;
 
   	var cardsInHand = [];
-  	var center = Math.ceil(userHand.length/2)
-  	var activeIndex = null;
-
-  	for (var i = 0; i < userHand.length; i++) {
-  		if (userHand[i].name === activeCard){
-  			activeIndex = i;
-  			break;
-  		}
-  	}
   
+  	
     for (var i = 0; i < userHand.length; i++){
-    	if (i === center){
-    		var offset = 30;
+    	if (i === 0){
+    		var offset = 0;
     	} else {
-    		var offset = ((i - center) * 10 ) + 30
-    	}
-    	
-    	if (i > activeIndex){
-    		offset += 10
+    		var offset = cardsInHand[i-1].offset + 5
+	    	if (cardsInHand[i-1].card.name === activeCard){
+	    		offset += 5
+	    	}
     	}
     	
       cardsInHand.push({card: userHand[i], key:(this.props.userName+"card"+i), offset:offset})
