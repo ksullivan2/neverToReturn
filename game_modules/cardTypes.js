@@ -8,7 +8,6 @@ module.exports = {terrainCard, monsterCard, playerCard, actionCard}
 
 
 function terrainCard(name){
-	//TO DO: figure out a way to send the name of the card with every event
 	var config = require("../CONFIG FILES/cardConfigs/terrainCards/"+name+".json")
 	
 	this.name = name;
@@ -44,6 +43,10 @@ function playerCard(name){
 }
 
 function actionCard(name){
+	var config = require("../CONFIG FILES/cardConfigs/actionCards/"+name+".json")
+
 	this.name = name;
 	this.imgSRC = "assets/actionCards/"+name+".jpg";
+	
+	this.actions = config.actions;
 }

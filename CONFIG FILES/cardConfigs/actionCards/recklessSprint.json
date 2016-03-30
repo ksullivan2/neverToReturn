@@ -1,0 +1,15 @@
+{
+	"actions": 
+	[	
+		{
+		"type": "handicap",
+		"stat": "pain",
+		"value":  -1
+		},
+		{
+		"type": "move",
+		"value": 2
+		}
+
+	]
+}

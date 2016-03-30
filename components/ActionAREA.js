@@ -57,9 +57,10 @@ var ActionAREA = React.createClass({
 
     return (
       <div className="layoutDIV" id='ActionAREA'>
+
         <h2 style={{display:"block"}}>{actionText}</h2>
         {actionButtons.map(function(text){
-          return <ActionButton text={text} key={text} userName={self.props.userName} /> })
+          return <ActionButton text={text} key={text} userName={self.props.userName}/> })
         }
 
       </div>

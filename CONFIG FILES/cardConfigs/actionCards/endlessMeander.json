@@ -1,0 +1,13 @@
+{
+	"actions": 
+	[
+		{
+			"type": "madness",
+			"value": -1
+		},
+		{
+			"type": "move",
+			"value": 2
+		}
+	]
+}

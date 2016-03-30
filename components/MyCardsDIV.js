@@ -84,7 +84,8 @@ var MyCardsDIV = React.createClass({
 			      <div  className="layoutDIV" id='MyCardsDIV' onMouseOut={self.handleMouseOut}>
 			        {cardsInHand.map(function(eachCard){
 			        	return(
-								<ActionCard card={eachCard.card} key={eachCard.key} offset={eachCard.offset} handleMouseOver={self.handleMouseOver}/>
+								<ActionCard card={eachCard.card} key={eachCard.key} offset={eachCard.offset} 
+                handleMouseOver={self.handleMouseOver} userName={self.props.userName}/>
 			       )
 			        	})  	
 			       	}

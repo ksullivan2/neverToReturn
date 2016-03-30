@@ -91,13 +91,14 @@ gameLogic.prototype.isCheckPassed = function(target, menace, dice){
 
 const MOVE_FORWARD = "Move Forward"
 const MOVE_BACKWARD = "Move Backward"
+const ACTION_CARD = "Play Action Card"
 const ROLL_CHECK = "Roll Check"
 const DISCARD_FOR_BONUS = "Discard For Bonus"
 const OPTION_1 = "Option 1"
 const OPTION_2 = "Option 2"
 
 
-const STANDARD_ACTIONS = [MOVE_FORWARD,MOVE_BACKWARD];
+const STANDARD_ACTIONS = [MOVE_FORWARD,MOVE_BACKWARD,ACTION_CARD];
 const CHECK_ACTIONS = [ROLL_CHECK, DISCARD_FOR_BONUS];
 const CARD_CHOICE = [OPTION_1, OPTION_2]
 
@@ -115,13 +116,12 @@ function Turn(activePlayer){
   //these arrays will be filled with objects/events to fire and will always be resolved in order
   this.terrainEffectsQueue = [{type: "desperationCheck"}];
   this.playerActionsQueue = [{type: "choosePlayerAction", actionList: standardActions}];
-  this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"checkIfPlayedActionCard"}]
+  this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"addDrawCardsEvent"}]
 
   //these are various stat effects and checks per turn
   this.numberOfActions = 1;
-  this.madnessHandicap = 0;
-  this.painHandicap = 0;
-  this.playedActionCard = false;
+  this.handicap = {pain: 0, madness: 0}
+  this.cardsToDraw = 0;
   this.stopped = false;
 }
 

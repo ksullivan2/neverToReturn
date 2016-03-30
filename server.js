@@ -92,30 +92,81 @@ io.on('connection', function (socket) {
 //buttons in action area----------------------------------------------------------------------
   socket.on('Start Game', function(){
     startGame();
-    gameLogic.decrementTurnActions();
   });
 
 
 	socket.on("Move Forward", function(data){
-    processMove(data, 1)
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      processMove(data, 1)
+    }
  
   });
 
   socket.on("Move Backward", function(data){
-    processMove(data, -1)
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      processMove(data, -1)
+    }
     
   });
 
   socket.on("Roll Check", function(data){
     //check for gameState so that we can't get a double-press
     if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      gameLogic.gameState = gameStates.animationsPlayingOut;
       processCheck();
     }
     
   });
 
+  socket.on("Play Action Card", function(data){
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      gameLogic.gameState = gameStates.chooseActionCard;
+      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
+    }
+  })
+
+  socket.on("Action Card", function(data){
+    if (gameLogic.gameState === gameStates.chooseActionCard && data.userName === gameLogic.activePlayer.name){
+      processActionCard(data)
+    }
+  })
+
 });
+
+
+//SOCKET EVENT PROCESSERS----------------------------------------------------------------------------------
+var processActionCard = function(data){
+  //data is username and card
+
+}
+
+
+var processMove = function(data, value)  
+  gameLogic.gameState = gameStates.animationsPlayingOut;
+  gameLogic.addActionToPlayerActionsQueue(data.userName, {type:"move", value: value})
+  gameLogic.decrementTurnActions();
+  processQueue()
+}
+
+var processCheck = function(){
+  gameLogic.gameState = gameStates.animationsPlayingOut;
+
+  var event = gameLogic.turn.currentEvent
+  //roll a D10
+  var dice = Math.floor(Math.random() * 10 + 1);
+
+  //all handicaps will be stored in the "turn" object, don't worry about on server
+  if (gameLogic.isCheckPassed(event.target, event.stat, dice)){
+    //add the check's consequences to the queue to be processed next
+    gameLogic.turn.terrainEffectsQueue = event.ifPass.concat(gameLogic.turn.terrainEffectsQueue)
+  } else {
+    gameLogic.turn.terrainEffectsQueue = event.ifFail.concat(gameLogic.turn.terrainEffectsQueue) 
+  }
+
+  //add an event to the front of the queue to view the result of the roll
+  gameLogic.turn.terrainEffectsQueue.unshift({type: "display", value: dice})
+  processQueue();
+}
+
 
 //CONTROLLING TURNS----------------------------------------------------------------------
 
@@ -221,32 +272,3 @@ var processEvent = function(event){
   setTimeout(processQueue, 1000);
 }
 
-//SOCKET EVENT PROCESSERS----------------------------------------------------------------------------------
-var processMove = function(data, direction){
-  //check for gameState so that we can't get a double-press
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      gameLogic.gameState = gameStates.animationsPlayingOut;
-      gameLogic.addActionToPlayerActionsQueue(data.userName, {type:"move", value: direction})
-      gameLogic.decrementTurnActions();
-      processQueue()
-    }
-
-}
-
-var processCheck = function(){
-  var event = gameLogic.turn.currentEvent
-  //roll a D10
-  var dice = Math.floor(Math.random() * 10 + 1);
-
-  //all bonuses will be stored in the "turn" object, don't worry about on server
-  if (gameLogic.isCheckPassed(event.target, event.checkStat, dice)){
-    //add the check's consequences to the queue to be processed next
-    gameLogic.turn.terrainEffectsQueue = event.ifPass.concat(gameLogic.turn.terrainEffectsQueue)
-  } else {
-    gameLogic.turn.terrainEffectsQueue = event.ifFail.concat(gameLogic.turn.terrainEffectsQueue) 
-  }
-
-  //add an event to the front of the queue to view the result of the roll
-  gameLogic.turn.terrainEffectsQueue.unshift({type: "display", value: dice})
-  processQueue();
-}

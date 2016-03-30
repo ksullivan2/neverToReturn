@@ -2,7 +2,7 @@
 {
 	"onEncounter": [
 		{"type": "check",
-		"checkStat":"madness",
+		"stat":"madness",
 		"ifPass": [],
 		"ifFail": [
 			{"type":"stop"}
