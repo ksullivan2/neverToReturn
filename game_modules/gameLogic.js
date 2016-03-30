@@ -68,7 +68,7 @@ gameLogic.prototype.changeActivePlayer = function(){
 
 gameLogic.prototype.newNeck = function() {
 	//temporary method for dealing a dummy neck
-	var cardNames = ["start","verdantClearing","bloodiedThickets","shadowyVale","sobbingWillowWood","fogRiddenSwamp","goal"];
+	var cardNames = ["start","shadowyVale","sobbingWillowWood","verdantClearing","bloodiedThickets","fogRiddenSwamp","goal"];
 
 	for (var i = 0; i < cardNames.length; i++){
 		this.neck[i].cards = [];

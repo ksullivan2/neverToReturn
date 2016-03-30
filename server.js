@@ -203,17 +203,15 @@ var processEvent = function(event){
   //EVENTUALLY ALLOW EVENTS TO TARGET OTHER PLAYERS/MONSTERS ETC
 
   switch(event.type){
-    //event types with user interaction will break; 
-    //without user interaction will fall through to default
+    //event types with user interaction will return so that they don't have the timeout
+    
 
     case "check": 
       gameLogic.gameState = gameStates.waitingForPlayerInput;
       io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
       return
       
-
     case "display":
-      gameLogic.gameState = gameStates.animationsPlayingOut;
       break;
 
     case "pain":
@@ -224,7 +222,6 @@ var processEvent = function(event){
       break;
     
     case "move":
-      gameLogic.gameState = gameStates.animationsPlayingOut;
       move(gameLogic.activePlayer.name, event.value)
       break;
 
@@ -232,6 +229,8 @@ var processEvent = function(event){
       gameLogic.gameState = gameStates.waitingForPlayerInput;
       io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
       return
+
+
       
   }
 
