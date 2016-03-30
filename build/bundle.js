@@ -29945,7 +29945,8 @@
 	    return { canvas_x: 0,
 	      canvas_y: 0,
 	      canvas_height: 0,
-	      canvas_width: 0 };
+	      canvas_width: 0,
+	      activeCard: "" };
 	  },
 
 	  componentDidMount: function componentDidMount() {
@@ -29954,18 +29955,27 @@
 	  },
 
 	  calculateCanvas: function calculateCanvas() {
-	    var neckLocation = document.getElementById("MyCardsDIV").getBoundingClientRect();
+	    var divLocation = document.getElementById("MyCardsDIV").getBoundingClientRect();
 
 	    this.setState({
-	      canvas_x: neckLocation.left,
-	      canvas_y: neckLocation.top,
-	      canvas_height: neckLocation.bottom - neckLocation.top,
-	      canvas_width: neckLocation.right - neckLocation.left
+	      canvas_x: divLocation.left,
+	      canvas_y: divLocation.top,
+	      canvas_height: divLocation.bottom - divLocation.top,
+	      canvas_width: divLocation.right - divLocation.left
 	    });
 	  },
 
 	  handleMouseOver: function handleMouseOver(cardName) {
-	    this.calculateCardOffset(cardName);
+
+	    this.setState({
+	      activeCard: cardName
+	    });
+	  },
+
+	  handleMouseOut: function handleMouseOut() {
+	    this.setState({
+	      activeCard: ""
+	    });
 	  },
 
 	  calculateCardOffset: function calculateCardOffset(activeCard) {
@@ -29975,13 +29985,12 @@
 
 	    for (var i = 0; i < userHand.length; i++) {
 	      if (i === 0) {
-	        var offset = 0;
+	        var offset = 5;
 	      } else {
 	        var offset = cardsInHand[i - 1].offset + 5;
-	      }
-
-	      if (userHand[i].name === activeCard) {
-	        offset += 5;
+	        if (cardsInHand[i - 1].card.name === activeCard) {
+	          offset += 30;
+	        }
 	      }
 
 	      cardsInHand.push({ card: userHand[i], key: this.props.userName + "card" + i, offset: offset });
@@ -29996,12 +30005,12 @@
 
 	      if (this.props.gameState != gameStates.gatherPlayers) {
 
-	        var cardsInHand = this.calculateCardOffset();
+	        var cardsInHand = this.calculateCardOffset(self.state.activeCard);
 
 	        if (cardsInHand.length > 0) {
 	          return React.createElement(
 	            'div',
-	            { className: 'layoutDIV', id: 'MyCardsDIV' },
+	            { className: 'layoutDIV', id: 'MyCardsDIV', onMouseOut: self.handleMouseOut },
 	            cardsInHand.map(function (eachCard) {
 	              return React.createElement(ActionCard, { card: eachCard.card, key: eachCard.key, offset: eachCard.offset, handleMouseOver: self.handleMouseOver });
 	            })
@@ -30034,14 +30043,12 @@
 
 	// props are:
 	//   card: ActionCard
-	//	offset: int (index in player's hand)
+	//	offset: int
+	// handleMouseOver: function
 
 	var ActionCard = React.createClass({
 	  displayName: 'ActionCard',
 
-	  componentDidMount: function componentDidMount() {
-	    window.addEventListener("mouseover", this.handleMouseOver);
-	  },
 
 	  handleMouseOver: function handleMouseOver() {
 	    this.props.handleMouseOver(this.props.card.name);
@@ -30057,8 +30064,8 @@
 	      function (interpolatingStyle) {
 	        return React.createElement(
 	          'div',
-	          { className: 'actionCard', style: { left: interpolatingStyle.left + "%" } },
-	          React.createElement('img', { src: self.props.card.imgSRC, className: 'cardImage' })
+	          { className: 'actionCard', style: { left: interpolatingStyle.left + "%" }, onMouseOver: self.handleMouseOver },
+	          React.createElement('img', { src: self.props.card.imgSRC, className: 'actionCardImage' })
 	        );
 	      }
 	    );
@@ -31605,33 +31612,89 @@
 	var LocationDIV = React.createClass({
 	  displayName: 'LocationDIV',
 
-	  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-	    //only update if: number of cards changes, or one of the cards changes
+	  getInitialState: function getInitialState() {
+	    return { canvas_x: 0,
+	      canvas_y: 0,
+	      canvas_height: 0,
+	      canvas_width: 0,
+	      activeCard: "" };
+	  },
 
-	    if (this.props.location.cards.length != nextProps.location.cards.length) {
-	      return true;
-	    }
+	  componentDidMount: function componentDidMount() {
+	    this.calculateCanvas();
+	    window.addEventListener("resize", this.calculateCanvas);
+	  },
 
-	    for (var i = 0; i < nextProps.location.cards.length; i++) {
-	      if (this.props.location.cards[i].name != nextProps.location.cards[i].name) {
-	        return true;
+	  calculateCanvas: function calculateCanvas() {
+	    var divLocation = document.getElementById("MyCardsDIV").getBoundingClientRect();
+
+	    this.setState({
+	      canvas_x: divLocation.left,
+	      canvas_y: divLocation.top,
+	      canvas_height: divLocation.bottom - divLocation.top,
+	      canvas_width: divLocation.right - divLocation.left
+	    });
+	  },
+
+	  handleMouseOver: function handleMouseOver(cardName) {
+	    this.setState({
+	      activeCard: cardName
+	    });
+	  },
+
+	  handleMouseOut: function handleMouseOut() {
+	    console.log("handleMouseOut");
+	    this.setState({
+	      activeCard: ""
+	    });
+	  },
+
+	  calculateCardOffset: function calculateCardOffset(activeCard) {
+	    var cardsInLocation = [];
+	    var activeIndex = 0;
+	    var offsetPerCard = 10;
+	    var activeOffset = 60;
+
+	    for (var i = 0; i < this.props.location.cards.length; i++) {
+	      if (this.props.location.cards[i].name === activeCard) {
+	        activeIndex = i;
+	        break;
 	      }
 	    }
 
-	    return false;
+	    for (var i = 0; i < this.props.location.cards.length; i++) {
+	      var offset = { bottom: offsetPerCard * i, zIndex: 50 };
+	      if (i !== 0) {
+	        offset.zIndex = cardsInLocation[i - 1].offset.zIndex - 1;
+	      }
+
+	      if (i === activeIndex) {
+	        offset.bottom = offset.bottom;
+	      } else if (i < activeIndex) {
+
+	        offset.bottom = offset.bottom - activeOffset;
+	      }
+	      // else if (i > activeIndex){
+	      //   offset.bottom = offset.bottom + offsetPerCard*(i - activeIndex)
+	      //   console.log(i, " > activeIndex", offset.bottom)
+	      // }
+
+	      cardsInLocation.push({ card: this.props.location.cards[i], key: this.props.name + "card" + i, offset: offset });
+	    }
+	    return cardsInLocation;
 	  },
 
 	  render: function render() {
-	    var cardsInLocation = [];
-	    for (var i = 0; i < this.props.location.cards.length; i++) {
-	      cardsInLocation.push({ card: this.props.location.cards[i], key: this.props.name + "card" + i });
-	    }
+	    var self = this;
+
+	    var cardsInLocation = this.calculateCardOffset(this.state.activeCard);
 
 	    return React.createElement(
 	      'div',
-	      { className: 'locationDIV' },
+	      { className: 'locationDIV', onMouseOut: self.handleMouseOut },
 	      cardsInLocation.map(function (eachCard) {
-	        return React.createElement(LocationCard, { card: eachCard.card, key: eachCard.key });
+	        return React.createElement(LocationCard, { card: eachCard.card, key: eachCard.key, offset: eachCard.offset,
+	          handleMouseOver: self.handleMouseOver });
 	      })
 	    );
 	  }
@@ -31643,21 +31706,40 @@
 /* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	var React = __webpack_require__(1);
+	var ReactMotion = __webpack_require__(168);
+	var Motion = ReactMotion.Motion;
+	var spring = ReactMotion.spring;
 
 	// props are:
-	// 	card: TerrainCard
+	// 	card: TerrainCard/MonsterCard
+	//	offset: {bottom: int, zIndex: int}
+	// handleMouseOver: function
 
 	var LocationCard = React.createClass({
-	  displayName: "LocationCard",
+	  displayName: 'LocationCard',
+
+	  handleMouseOver: function handleMouseOver() {
+	    this.props.handleMouseOver(this.props.card.name);
+	  },
 
 	  render: function render() {
+	    var self = this;
+
 	    return React.createElement(
-	      "div",
-	      { className: "terrainCard" },
-	      React.createElement("img", { src: this.props.card.imgSRC, className: "cardImage" })
+	      Motion,
+	      { defaultStyle: { bottom: 0 },
+	        style: { bottom: spring(self.props.offset.bottom) } },
+	      function (interpolatingStyle) {
+	        return React.createElement(
+	          'div',
+	          { className: 'terrainCard', style: { bottom: interpolatingStyle.bottom + "%", zIndex: self.props.offset.zIndex },
+	            onMouseOver: self.handleMouseOver },
+	          React.createElement('img', { src: self.props.card.imgSRC, className: 'terrainCardImage' })
+	        );
+	      }
 	    );
 	  }
 	});

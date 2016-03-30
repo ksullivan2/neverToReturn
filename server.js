@@ -202,43 +202,40 @@ var processEvent = function(event){
   }
   //EVENTUALLY ALLOW EVENTS TO TARGET OTHER PLAYERS/MONSTERS ETC
 
+  switch(event.type){
+    //event types with user interaction will break; 
+    //without user interaction will fall through to default
 
-  if (event.type == "check"){
-    gameLogic.gameState = gameStates.waitingForPlayerInput;
-    io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
-    return
+    case "check": 
+      gameLogic.gameState = gameStates.waitingForPlayerInput;
+      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
+      return
+      
+
+    case "display":
+      gameLogic.gameState = gameStates.animationsPlayingOut;
+      break;
+
+    case "pain":
+      //fall-through
+
+    case "madness":
+      gameLogic.affectMenace(target, event.type, event.value)
+      break;
+    
+    case "move":
+      gameLogic.gameState = gameStates.animationsPlayingOut;
+      move(gameLogic.activePlayer.name, event.value)
+      break;
+
+    case "choosePlayerAction":
+      gameLogic.gameState = gameStates.waitingForPlayerInput;
+      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
+      return
+      
   }
 
-  else if (event.type == "display"){
-    gameLogic.gameState = gameStates.animationsPlayingOut;
-  }
-  
-
-  else if (event.type === "pain" || event.type === "madness"){
-    gameLogic.affectMenace(target, event.type, event.value)
-  }
-
-  else if (event.type === "move"){
-    gameLogic.gameState = gameStates.animationsPlayingOut;
-    move(gameLogic.activePlayer.name, event.value)
-  }
-
-
-
-
-  //OLD EVENTS HERE
-  //add a check for if it requires user interaction
-  if (event.type === "choosePlayerAction"){
-    gameLogic.gameState = gameStates.waitingForPlayerInput;
-    io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
-    return
-  }
- 
-
- 
-  else{
-    gameLogic.gameState = gameStates.animationsPlayingOut; 
-  }
+  gameLogic.gameState = gameStates.animationsPlayingOut; 
 
   io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
   setTimeout(processQueue, 1000);
