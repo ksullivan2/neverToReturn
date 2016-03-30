@@ -153,12 +153,12 @@ var printQueue = function(){
 }
 
 var processQueue = function(){
-  printQueue()
  //if there are any events in the terrainEffectsQueue, give those priority
  //else do the next player action
  //finally do endTurnQueue
  //if nothing in queues, it's the end of the turn
 
+  //printQueue()
  if (gameLogic.turn.terrainEffectsQueue.length > 0){
   gameLogic.turn.currentEvent = gameLogic.turn.terrainEffectsQueue.shift()
  } else if (gameLogic.turn.playerActionsQueue.length > 0){
@@ -174,11 +174,60 @@ var processQueue = function(){
 
 }
 
+var processEvent = function(event){
+  io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
+
+  var target = gameLogic.activePlayer.name;
+  if (!event.target){
+    event.target = target;
+  }
+  //EVENTUALLY ALLOW EVENTS TO TARGET OTHER PLAYERS/MONSTERS ETC
+
+  switch(event.type){
+    case "display":
+      break;
+
+    case "pain":
+      //fall-through
+
+    case "madness":
+      gameLogic.affectMenace(target, event.type, event.value)
+      break;
+    
+    case "move":
+      gameLogic.movePlayer(target, event.value);
+      break;
+
+    case "discard":
+      gameLogic.discardCard(target) 
+      break;
+
+    case "draw":
+      gameLogic.dealCard(target)
+      break;
+
+    //ANYTHING WITH PLAYER INTERACTION:
+    //event types with user interaction will return so that they don't have the timeout
+    case "check": 
+      //fall-through
+
+    case "choosePlayerAction":
+      gameLogic.gameState = gameStates.waitingForPlayerInput;
+      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
+      return
+  }
+
+  gameLogic.gameState = gameStates.animationsPlayingOut; 
+
+  io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
+  setTimeout(processQueue, 1000);
+}
+
+
 var processCheck = function(){
   var event = gameLogic.turn.currentEvent
   //roll a D10
   var dice = Math.floor(Math.random() * 10 + 1);
-
 
   //all bonuses will be stored in the "turn" object, don't worry about on server
   if (gameLogic.isCheckPassed(event.target, event.checkStat, dice)){
@@ -191,56 +240,4 @@ var processCheck = function(){
   //add an event to the front of the queue to view the result of the roll
   gameLogic.turn.terrainEffectsQueue.unshift({type: "display", value: dice})
   processQueue();
-}
-
-var processEvent = function(event){
-  io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
-
-  var target = gameLogic.activePlayer.name;
-  if (!event.target){
-    event.target = target;
-  }
-  //EVENTUALLY ALLOW EVENTS TO TARGET OTHER PLAYERS/MONSTERS ETC
-
-  switch(event.type){
-    //event types with user interaction will return so that they don't have the timeout
-    
-
-    case "check": 
-      gameLogic.gameState = gameStates.waitingForPlayerInput;
-      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
-      return
-      
-    case "display":
-      break;
-
-    case "pain":
-      //fall-through
-
-    case "madness":
-      gameLogic.affectMenace(target, event.type, event.value)
-      break;
-    
-    case "move":
-      move(gameLogic.activePlayer.name, event.value)
-      break;
-
-    case "choosePlayerAction":
-      gameLogic.gameState = gameStates.waitingForPlayerInput;
-      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
-      return
-
-
-      
-  }
-
-  gameLogic.gameState = gameStates.animationsPlayingOut; 
-
-  io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
-  setTimeout(processQueue, 1000);
-}
-
-//EVENT TYPES----------------------------------------------------------------------
-var move = function(userName, direction){
-  gameLogic.movePlayer(userName, direction);
 }

@@ -87,7 +87,7 @@ gameLogic.prototype.isCheckPassed = function(target, menace, dice){
 	return false;
 }
 
-//TURNS-------------------------------------------------------------------------------------------------
+//TURNS/QUEUES-----------------------------------------------------------------------------------------------
 
 const MOVE_FORWARD = "Move Forward"
 const MOVE_BACKWARD = "Move Backward"
@@ -104,19 +104,18 @@ const CARD_CHOICE = [OPTION_1, OPTION_2]
 function Turn(activePlayer){
 	//filter standard actions list if the player is on first or last space
 	var standardActions = STANDARD_ACTIONS
-	
 	if (activePlayer.location === 0){
-		standardActions = standardActions.filter(function(action){return (action !== MOVE_BACKWARD)})
+		var standardActions = standardActions.filter(function(action){return (action !== MOVE_BACKWARD)})
 	} else if (activePlayer.location === 6){
-		standardActions = standardActions.filter(function(action){return (action !== MOVE_FORWARD)})
+		var standardActions = standardActions.filter(function(action){return (action !== MOVE_FORWARD)})
 	}
 
 
   this.currentEvent = null;
   //these arrays will be filled with objects/events to fire and will always be resolved in order
-  this.terrainEffectsQueue = [{type: "desperationCheck"}];
+  this.terrainEffectsQueue = [{type: "desperationCheck", type: "discard"}];
   this.playerActionsQueue = [{type: "choosePlayerAction", actionList: standardActions}];
-  this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"drawCard"}]
+  this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"draw"}]
   this.playedActionCard = false;
 }
 
@@ -177,7 +176,8 @@ gameLogic.prototype.preprocessEvent = function(source, event){
 }
 
 
-//PLAYER ACTIONS------------------------------------------------------------------------------------------------------------------
+
+//PLAYER ACTIONS IN GAME--------------------------------------------------------------------------------------
 
 gameLogic.prototype.affectMenace = function(userName, menace, value) {
 	var player = this.findPlayerByUserName(userName)
@@ -193,6 +193,8 @@ gameLogic.prototype.affectMenace = function(userName, menace, value) {
 };
 
 
+
+//MOVING---------------------------------------
 gameLogic.prototype.movePlayer = function(userName, movement){
 	//move: pos is forward, neg is backward
 
@@ -217,13 +219,14 @@ gameLogic.prototype.addPlayerToLocation = function(locationIndex, name){
 	this.neck[locationIndex].playersOnLocation.push(name);
 }
 
+//CARDS---------------------------------------
 gameLogic.prototype.replenishHand = function(player){
 	//DUMMY METHOD FOR LIMITED ASSETS
 	player.hand = [new cardTypes.actionCard("cannibalism"),
-	new cardTypes.actionCard("endlessMeander"),
 	new cardTypes.actionCard("filthyWateringHole"),
 	new cardTypes.actionCard("questionableFlensing"),
-	new cardTypes.actionCard("recklessSprint")]
+	new cardTypes.actionCard("recklessSprint"),
+	new cardTypes.actionCard("endlessMeander")]
 
 	//ACTUAL METHOD:
 	// while (player.hand.length < 5){
@@ -231,7 +234,25 @@ gameLogic.prototype.replenishHand = function(player){
 	// }
 }
 
-gameLogic.prototype.dealCard = function(player){
+gameLogic.prototype.discardCard = function(userName, index){
+	var player = this.findPlayerByUserName(userName)
+	
+	if (player.hand.length ===0){
+		return false;
+	}
+
+	//could be random OR NOT
+	if (!index){
+		index = Math.floor(Math.random()*player.hand.length)
+	}
+
+	player.hand.splice(index, 1)
+	//RETURN CARD TO DECK LATER!!! (splice returns removed element)
+}
+
+gameLogic.prototype.dealCard = function(userName){
+	var player = this.findPlayerByUserName(userName)
+
 	player.hand.push(new cardTypes.actionCard("cannibalism"))
 	//remove card from deck when I create the deck...
 }
