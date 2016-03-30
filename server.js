@@ -92,26 +92,17 @@ io.on('connection', function (socket) {
 //buttons in action area----------------------------------------------------------------------
   socket.on('Start Game', function(){
     startGame();
+    gameLogic.decrementTurnActions();
   });
 
 
 	socket.on("Move Forward", function(data){
-    //check for gameState so that we can't get a double-press
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      gameLogic.gameState = gameStates.animationsPlayingOut;
-      gameLogic.addActionToPlayerActionsQueue(data.userName, {type:"move", value: 1})
-      processQueue()
-    }
+    processMove(data, 1)
  
   });
 
   socket.on("Move Backward", function(data){
-    //check for gameState so that we can't get a double-press
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      gameLogic.addActionToPlayerActionsQueue(data.userName, {type:"move", value: -1})
-      gameLogic.gameState = gameStates.animationsPlayingOut;
-      processQueue()
-    }
+    processMove(data, -1)
     
   });
 
@@ -123,7 +114,6 @@ io.on('connection', function (socket) {
     }
     
   });
-
 
 });
 
@@ -206,6 +196,14 @@ var processEvent = function(event){
       gameLogic.dealCard(target)
       break;
 
+    //TURN LOGIC CHECKS
+    case "checkIfPlayedActionCard":
+      if (gameLogic.turn.playedActionCard){
+        gameLogic.dealCard(target)
+      }
+      break;
+
+
     //ANYTHING WITH PLAYER INTERACTION:
     //event types with user interaction will return so that they don't have the timeout
     case "check": 
@@ -223,6 +221,17 @@ var processEvent = function(event){
   setTimeout(processQueue, 1000);
 }
 
+//SOCKET EVENT PROCESSERS----------------------------------------------------------------------------------
+var processMove = function(data, direction){
+  //check for gameState so that we can't get a double-press
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      gameLogic.gameState = gameStates.animationsPlayingOut;
+      gameLogic.addActionToPlayerActionsQueue(data.userName, {type:"move", value: direction})
+      gameLogic.decrementTurnActions();
+      processQueue()
+    }
+
+}
 
 var processCheck = function(){
   var event = gameLogic.turn.currentEvent

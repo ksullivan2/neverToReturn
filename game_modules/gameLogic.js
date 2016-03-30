@@ -113,10 +113,16 @@ function Turn(activePlayer){
 
   this.currentEvent = null;
   //these arrays will be filled with objects/events to fire and will always be resolved in order
-  this.terrainEffectsQueue = [{type: "desperationCheck", type: "discard"}];
+  this.terrainEffectsQueue = [{type: "desperationCheck"}];
   this.playerActionsQueue = [{type: "choosePlayerAction", actionList: standardActions}];
-  this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"draw"}]
+  this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"checkIfPlayedActionCard"}]
+
+  //these are various stat effects and checks per turn
+  this.numberOfActions = 1;
+  this.madnessHandicap = 0;
+  this.painHandicap = 0;
   this.playedActionCard = false;
+  this.stopped = false;
 }
 
 gameLogic.prototype.initializeTurn = function(){
@@ -124,6 +130,9 @@ gameLogic.prototype.initializeTurn = function(){
 	this.collectTurnStartEffects();
 }
 
+gameLogic.prototype.decrementTurnActions = function(){
+	this.turn.numberOfActions -= 1
+}
 
 gameLogic.prototype.collectTurnStartEffects = function(){
 	var self = this;
