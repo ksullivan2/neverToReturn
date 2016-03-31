@@ -11,13 +11,11 @@ var PlayerDIV = React.createClass({
         || nextProps.player.madness != this.props.player.madness
         || nextProps.player.progress != this.props.player.progress)
       {
-        console.log(this.props.player.name + "'s DIV is rendering because stats changed")
         return true;
       }
 
     //if we're swapping the active player to/from this player
     if (this.props.active != nextProps.active){
-      console.log(this.props.player.name + "'s DIV is rendering because active status changed")
       return true;
     }
 

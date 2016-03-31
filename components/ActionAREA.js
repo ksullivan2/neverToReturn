@@ -15,6 +15,7 @@ var ActionButton = require('./ActionButton.js')
 //   gatherPlayers: 0,
 //   decisionMaking: 1,
 //   actionsPlayingOut: 2
+//   chooseActionCard: 3
 
 var ActionAREA = React.createClass({
 	
@@ -32,7 +33,7 @@ var ActionAREA = React.createClass({
     else if (this.props.gameState === gameStates.chooseActionCard){
       console.log("chooseActionCard")
       if (this.props.activePlayer.name == this.props.userName){
-        actionText = "Choose which card to play."
+        actionText = "Choose which card."
       }else{
         actionText = "It is "+this.props.activePlayer.name+"'s turn to choose an action.";
       }
@@ -51,8 +52,8 @@ var ActionAREA = React.createClass({
           actionButtons = this.props.turn.currentEvent.actionList
           //CHECKS:------------------------------------------------------------
         } else if (this.props.turn.currentEvent.type === "check"){
-          actionText = "Roll a "+this.props.activePlayer[this.props.turn.currentEvent.checkStat]+
-                  " or lower to pass the "+ this.props.turn.currentEvent.checkStat+ " check."
+          actionText = "Roll a "+this.props.activePlayer[this.props.turn.currentEvent.stat]+
+                  " or lower to pass the "+ this.props.turn.currentEvent.stat+ " check."
           actionButtons = this.props.turn.currentEvent.actionList
         } 
       }

@@ -14,13 +14,11 @@ var OpponentsDIV = React.createClass({
 
     //update if the active player changes
     if (nextProps.activePlayer.name != this.props.activePlayer.name){
-      console.log("OpponentsDIV rendering because activePlayer changed")
       return true;
     }
 
     //if someone joins the game
     if (Object.keys(this.props.players).length != Object.keys(nextProps.players).length){
-      console.log("OpponentsDIV rendering because someone joined the game")
       return true;
     }
 

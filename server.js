@@ -141,6 +141,7 @@ var processActionCard = function(data){
   }
   gameLogic.discardCard(data.userName, data.card.name)
   gameLogic.decrementTurnActions();
+  gameLogic.incrementCardsToDraw(1);
   processQueue()
 }
 
@@ -248,14 +249,14 @@ var processEvent = function(event){
       break;
 
     case "draw":
-      gameLogic.dealCard(target)
+      for (var i = 0; i < event.value; i++) {
+         gameLogic.dealCard(target)
+       } 
       break;
 
     //TURN LOGIC CHECKS
-    case "checkIfPlayedActionCard":
-      if (gameLogic.turn.playedActionCard){
-        gameLogic.dealCard(target)
-      }
+    case "addDrawCardsEvent":
+      gameLogic.addActionToEndTurnQueue(null, {type: "draw", value: gameLogic.turn.cardsToDraw})
       break;
 
 

@@ -134,6 +134,14 @@ gameLogic.prototype.decrementTurnActions = function(){
 	this.turn.numberOfActions -= 1
 }
 
+gameLogic.prototype.incrementTurnActions = function(number) {
+	this.turn.numberOfActions += number
+};
+
+gameLogic.prototype.incrementCardsToDraw = function(number){
+	this.turn.cardsToDraw += number
+}
+
 gameLogic.prototype.collectTurnStartEffects = function(){
 	var self = this;
 
