@@ -198,7 +198,7 @@ processDiscardForBonus = function(data){
   gameLogic.addToImmediateQueue(data.userName, {type: "handicap", stat: gameLogic.turn.currentEvent.stat, value: -2})
 
   gameLogic.discardCard(data.userName, data.card.name)
-  
+
   //make sure the button doesn't show up if there are no cards left
   //TO DO: MOVE THIS CHECK TO GAMELOGIC
   if (gameLogic.activePlayer.hand.length === 0){
@@ -263,7 +263,7 @@ var processQueue = function(){
 }
 
 var processEvent = function(event){
-  io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
+  // io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
 
   var target = gameLogic.activePlayer.name;
   if (!event.target){
@@ -294,6 +294,10 @@ var processEvent = function(event){
       for (var i = 0; i < event.value; i++) {
          gameLogic.dealCard(target)
        } 
+      break;
+
+    case "handicap":
+      gameLogic.updateHandicap(event.stat, event.value)
       break;
 
     //TURN LOGIC CHECKS
