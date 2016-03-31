@@ -129,8 +129,6 @@ gameLogic.prototype.pruneActionsList = function(first_argument) {
 		this.turn.currentEvent.actionList  = this.turn.currentEvent.actionList .filter(function(action){return (action !== MOVE_FORWARD)})
 	}
 
-
-	console.log(this.turn.currentEvent.actionList)
 	//ADD PLAYER-SPECIFIC ACTIONS HERE
 	
 };
@@ -150,6 +148,9 @@ gameLogic.prototype.incrementTurnActions = function(number) {
 
 gameLogic.prototype.incrementCardsToDraw = function(number){
 	this.turn.cardsToDraw += number
+	if (this.turn.cardsToDraw < 0){
+		this.turn.cardsToDraw = 0
+	}
 }
 
 gameLogic.prototype.collectTurnStartEffects = function(){
@@ -313,7 +314,7 @@ gameLogic.prototype.discardCard = function(userName, cardName){
 gameLogic.prototype.dealCard = function(userName){
 	var player = this.findPlayerByUserName(userName)
 
-	player.hand.push(new cardTypes.actionCard("cannibalism"))
+	player.hand.push(new cardTypes.actionCard("endlessMeander"))
 	//remove card from deck when I create the deck...
 }
 

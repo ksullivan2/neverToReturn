@@ -2,8 +2,16 @@
 	"actions": 
 	[
 		{
+			"type": "pain",
+			"value": -2
+		},
+		{
 			"type": "madness",
-			"value": -1
+			"value": 3
+		},
+		{
+			"type": "drawExtra",
+			"value": 1
 		}
 	]
 }

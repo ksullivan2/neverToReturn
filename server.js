@@ -158,7 +158,7 @@ var processActionCard = function(data){
 
 var processMove = function(data, direction){  
   gameLogic.gameState = gameStates.animationsPlayingOut;
-  gameLogic.addActionToPlayerActionsQueue(data.userName, {type:"move", direction: direction})
+  gameLogic.addActionToImmediateQueue(data.userName, {type:"move", direction: direction})
   gameLogic.decrementTurnActions();
   processQueue()
 }
@@ -210,14 +210,12 @@ processDiscardForBonus = function(data){
 
 
 var startGame = function(){
-  console.log("startGame")
   gameLogic.initializeGame();
   gameLogic.initializeTurn();
   processQueue();
 }
 
 var startNewTurn = function(){
-  console.log("startNewTurn")
   gameLogic.changeActivePlayer();
   gameLogic.initializeTurn();
   processQueue();
@@ -276,7 +274,9 @@ var processEvent = function(event){
       gameLogic.affectMenace(target, event.type, event.value)
       break;
     
-    
+    case "drawExtra":
+      gameLogic.incrementCardsToDraw(event.value)
+      break;
 
     case "discard":
       gameLogic.discardCard(target) 
@@ -301,11 +301,12 @@ var processEvent = function(event){
     //ANYTHING WITH PLAYER INTERACTION:
     //event types with user interaction will return instead of break so that they don't have the timeout
     case "move":
-      console.log(event.direction)
+
       if (event.direction){
         gameLogic.movePlayer(target, event.direction);
         break;
       }
+      console.log("no direction")
       //else fall-through
       
     case "check": 

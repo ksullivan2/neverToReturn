@@ -2,12 +2,15 @@
 	"actions": 
 	[	
 		{
-		"type": "handicap",
-		"stat": "pain",
-		"value":  -1
+			"type": "handicap",
+			"stat": "pain",
+			"value":  -1
 		},
 		{
-		"type": "move"
+			"type": "move"
+		},
+		{
+			"type": "move"
 		}
 
 	]

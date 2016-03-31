@@ -19779,13 +19779,11 @@
 
 	    //update if the active player changes
 	    if (nextProps.activePlayer.name != this.props.activePlayer.name) {
-	      console.log("OpponentsDIV rendering because activePlayer changed");
 	      return true;
 	    }
 
 	    //if someone joins the game
 	    if (Object.keys(this.props.players).length != Object.keys(nextProps.players).length) {
-	      console.log("OpponentsDIV rendering because someone joined the game");
 	      return true;
 	    }
 
@@ -19832,7 +19830,7 @@
 /* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	var React = __webpack_require__(1);
 
@@ -19841,18 +19839,16 @@
 	// active: bool
 
 	var PlayerDIV = React.createClass({
-	  displayName: "PlayerDIV",
+	  displayName: 'PlayerDIV',
 
 	  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
 	    //if stats changed
 	    if (nextProps.player.pain != this.props.player.pain || nextProps.player.madness != this.props.player.madness || nextProps.player.progress != this.props.player.progress) {
-	      console.log(this.props.player.name + "'s DIV is rendering because stats changed");
 	      return true;
 	    }
 
 	    //if we're swapping the active player to/from this player
 	    if (this.props.active != nextProps.active) {
-	      console.log(this.props.player.name + "'s DIV is rendering because active status changed");
 	      return true;
 	    }
 
@@ -19877,10 +19873,10 @@
 
 	    if (!this.props.player.card) {
 	      return React.createElement(
-	        "div",
-	        { className: "PlayerDIV", style: divStyle },
+	        'div',
+	        { className: 'PlayerDIV', style: divStyle },
 	        React.createElement(
-	          "h2",
+	          'h2',
 	          null,
 	          playerNameForDisplay
 	        )
@@ -19889,43 +19885,43 @@
 	      var imgSRC = "/assets/playerThumbnails/" + this.props.player.card.name + ".jpg";
 
 	      return React.createElement(
-	        "div",
-	        { className: "PlayerDIV", style: divStyle },
+	        'div',
+	        { className: 'PlayerDIV', style: divStyle },
 	        React.createElement(
-	          "h2",
+	          'h2',
 	          null,
 	          this.props.player.name
 	        ),
 	        React.createElement(
-	          "h4",
+	          'h4',
 	          null,
 	          this.props.player.card.name
 	        ),
 	        React.createElement(
-	          "div",
-	          { className: "PlayerDIVThumbnail" },
-	          React.createElement("img", { src: imgSRC, className: "playerThumbnail" })
+	          'div',
+	          { className: 'PlayerDIVThumbnail' },
+	          React.createElement('img', { src: imgSRC, className: 'playerThumbnail' })
 	        ),
 	        React.createElement(
-	          "p",
+	          'p',
 	          null,
-	          "Pain: ",
+	          'Pain: ',
 	          this.props.player.pain,
-	          "/",
+	          '/',
 	          this.props.player.card.pain
 	        ),
 	        React.createElement(
-	          "p",
+	          'p',
 	          null,
-	          "Madness: ",
+	          'Madness: ',
 	          this.props.player.madness,
-	          "/",
+	          '/',
 	          this.props.player.card.madness
 	        ),
 	        React.createElement(
-	          "p",
+	          'p',
 	          null,
-	          "Progress: ",
+	          'Progress: ',
 	          this.props.player.progress
 	        )
 	      );
@@ -19977,7 +19973,9 @@
 	// gameStates enum:
 	//   gatherPlayers: 0,
 	//   decisionMaking: 1,
-	//   actionsPlayingOut: 2
+	//   actionsPlayingOut: 2,
+	//   chooseActionCard: 3,
+	//   chooseCardToDiscard: 4
 
 	var ActionAREA = React.createClass({
 	  displayName: 'ActionAREA',
@@ -19992,19 +19990,26 @@
 	    if (this.props.gameState === gameStates.gatherPlayers) {
 	      actionButtons = ["Start Game"];
 	      actionText = "Waiting for all players to join...";
+	    } else if (this.props.gameState === gameStates.chooseActionCard || this.props.gameState === gameStates.chooseCardToDiscard) {
+	      if (this.props.activePlayer.name == this.props.userName) {
+	        actionText = "Choose which card.";
+	      } else {
+	        actionText = "It is " + this.props.activePlayer.name + "'s turn to choose an action.";
+	      }
 	    } else if (this.props.gameState === gameStates.waitingForPlayerInput) {
 
 	      actionText = "It is " + this.props.activePlayer.name + "'s turn to choose an action.";
 
 	      if (this.props.activePlayer.name == this.props.userName) {
 	        //TURN STANDARD ACTIONS------------------------------------------------
-	        if (this.props.turn.currentEvent.type === "choosePlayerAction") {
+	        if (this.props.turn.currentEvent.type === "choosePlayerAction" || this.props.turn.currentEvent.type === "move") {
 	          actionText = "Choose your action.";
 
 	          actionButtons = this.props.turn.currentEvent.actionList;
 	          //CHECKS:------------------------------------------------------------
 	        } else if (this.props.turn.currentEvent.type === "check") {
-	            actionText = "Roll a " + this.props.activePlayer[this.props.turn.currentEvent.checkStat] + " or lower to pass the " + this.props.turn.currentEvent.checkStat + " check.";
+	            var value = this.props.activePlayer[this.props.turn.currentEvent.stat] + this.props.turn.handicaps[this.props.turn.currentEvent.stat];
+	            actionText = "Roll a " + value + " or lower to pass the " + this.props.turn.currentEvent.stat + " check.";
 	            actionButtons = this.props.turn.currentEvent.actionList;
 	          }
 	      }
@@ -29879,7 +29884,8 @@
 		gatherPlayers: 0,
 		waitingForPlayerInput: 1,
 		animationsPlayingOut: 2,
-		chooseActionCard: 3
+		chooseActionCard: 3,
+		chooseCardToDiscard: 4
 	};
 
 	module.exports = gameStates;
@@ -30059,8 +30065,8 @@
 		},
 
 		handleClick: function handleClick() {
-			console.log("clicked ", card.name);
-			socket.emit("Action Card", { userName: userName, card: card });
+			console.log("clicked ", this.props.card.name);
+			socket.emit("Action Card Pressed", { userName: this.props.userName, card: this.props.card });
 		},
 
 		render: function render() {
