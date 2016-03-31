@@ -78,8 +78,7 @@ gameLogic.prototype.newNeck = function() {
 
 gameLogic.prototype.isCheckPassed = function(target, menace, dice){
 	var player = this.findPlayerByUserName(target)
-	var value = player[menace]
-	//ADD ALL THE BONUSES THEY GET (STORED IN TURN)
+	var value = player[menace] + this.turn.handicaps[menace]
 
 	if (dice <= value){
 		return true;
@@ -114,13 +113,14 @@ function Turn(activePlayer){
 
   this.currentEvent = null;
   //these arrays will be filled with objects/events to fire and will always be resolved in order
+  this.immediateQueue = [];
   this.terrainEffectsQueue = [{type: "desperationCheck"}];
   this.playerActionsQueue = [{type: "choosePlayerAction", actionList: standardActions}];
   this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"addDrawCardsEvent"}]
 
   //these are various stat effects and checks per turn
   this.numberOfActions = 1;
-  this.handicap = {pain: 0, madness: 0}
+  this.handicaps = {pain: 0, madness: 0}
   this.cardsToDraw = 0;
   this.stopped = false;
 }
@@ -184,9 +184,19 @@ gameLogic.prototype.addActionToEndTurnQueue = function(source, event){
 	this.turn.endTurnQueue.push(event)
 }
 
+gameLogic.prototype.addToImmediateQueue = function(source, event){
+	this.preprocessEvent(source,event)
+	this.turn.immediateQueue.push(event)
+}
+
+
 gameLogic.prototype.preprocessEvent = function(source, event){
 	if (event.type === "check"){
-		event.actionList = CHECK_ACTIONS
+		if (this.activePlayer.hand.length === 0){
+			event.actionList = CHECK_ACTIONS.filter(function(action){return (action !== DISCARD_FOR_BONUS)})
+		} else{
+			event.actionList = CHECK_ACTIONS
+		}
 	}
 
 	event.source = source
@@ -208,6 +218,10 @@ gameLogic.prototype.affectMenace = function(userName, menace, value) {
 		player[menace] = 0;
 	}
 };
+
+gameLogic.prototype.updateHandicap = function(stat, value){
+	this.turn.handicaps[stat] += value
+}
 
 
 

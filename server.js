@@ -124,11 +124,22 @@ io.on('connection', function (socket) {
     }
   })
 
-  socket.on("Action Card", function(data){
+  socket.on("Action Card Pressed", function(data){
     if (gameLogic.gameState === gameStates.chooseActionCard && data.userName === gameLogic.activePlayer.name){
       processActionCard(data)
     }
+    if (gameLogic.gameState === gameStates.chooseCardToDiscard && data.userName === gameLogic.activePlayer.name){
+      processDiscardForBonus(data)
+    }
   })
+
+  socket.on("Discard For Bonus", function(data){
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      gameLogic.gameState = gameStates.chooseCardToDiscard;
+      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
+    }
+  })
+
 
 });
 
@@ -159,17 +170,45 @@ var processCheck = function(){
   //roll a D10
   var dice = Math.floor(Math.random() * 10 + 1);
 
+  //add an event to the front of the queue to view the result of the roll
+  gameLogic.addToImmediateQueue(null,{type: "display", value: dice})
+
   //all handicaps will be stored in the "turn" object, don't worry about on server
   if (gameLogic.isCheckPassed(event.target, event.stat, dice)){
     //add the check's consequences to the queue to be processed next
-    gameLogic.turn.terrainEffectsQueue = event.ifPass.concat(gameLogic.turn.terrainEffectsQueue)
+    for (var i = 0; i < event.ifPass.length; i++) {
+      gameLogic.addToImmediateQueue(event.source, event.ifPass[i])
+    }
+    
   } else {
-    gameLogic.turn.terrainEffectsQueue = event.ifFail.concat(gameLogic.turn.terrainEffectsQueue) 
+    for (var i = 0; i < event.ifFail.length; i++) {
+      gameLogic.addToImmediateQueue(event.source, event.ifFail[i])
+    } 
   }
 
-  //add an event to the front of the queue to view the result of the roll
-  gameLogic.turn.terrainEffectsQueue.unshift({type: "display", value: dice})
+  
   processQueue();
+}
+
+processDiscardForBonus = function(data){
+  gameLogic.gameState = gameStates.waitingForPlayerInput;
+  gameLogic.updateHandicap(gameLogic.turn.currentEvent.stat, 2)
+
+  //directly update the handicap, then immediately undo that before anything else is processed
+  gameLogic.addToImmediateQueue(data.userName, {type: "handicap", stat: gameLogic.turn.currentEvent.stat, value: -2})
+
+  gameLogic.discardCard(data.userName, data.card.name)
+  
+  //make sure the button doesn't show up if there are no cards left
+  //TO DO: MOVE THIS CHECK TO GAMELOGIC
+  if (gameLogic.activePlayer.hand.length === 0){
+    gameLogic.turn.currentEvent.actionList = gameLogic.turn.currentEvent.actionList.filter(
+      function(action){return action !== "Discard For Bonus"})
+  }
+
+
+
+  io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
 }
 
 
@@ -191,7 +230,7 @@ var startNewTurn = function(){
 }
 
 var printQueue = function(){
-  var queue = gameLogic.turn.terrainEffectsQueue.concat(gameLogic.turn.playerActionsQueue.concat(gameLogic.turn.endTurnQueue));
+  var queue = gameLogic.turn.immediateQueue.concat(gameLogic.turn.terrainEffectsQueue.concat(gameLogic.turn.playerActionsQueue.concat(gameLogic.turn.endTurnQueue)));
   console.log("queue currently is:")
   for (var i = 0; i < queue.length; i++) {
     console.log(i, queue[i].type)
@@ -199,22 +238,25 @@ var printQueue = function(){
 }
 
 var processQueue = function(){
+  //immediate actions are things like the effects of checks
  //if there are any events in the terrainEffectsQueue, give those priority
  //else do the next player action
  //finally do endTurnQueue
  //if nothing in queues, it's the end of the turn
 
   //printQueue()
- if (gameLogic.turn.terrainEffectsQueue.length > 0){
-  gameLogic.turn.currentEvent = gameLogic.turn.terrainEffectsQueue.shift()
- } else if (gameLogic.turn.playerActionsQueue.length > 0){
-    gameLogic.turn.currentEvent = gameLogic.turn.playerActionsQueue.shift()
- } else if (gameLogic.turn.endTurnQueue.length > 0){
-      gameLogic.turn.currentEvent = gameLogic.turn.endTurnQueue.shift()
- } else {
-      startNewTurn();
-      return
- }
+  if (gameLogic.turn.immediateQueue.length > 0){
+    gameLogic.turn.currentEvent = gameLogic.turn.immediateQueue.shift()
+   } else if (gameLogic.turn.terrainEffectsQueue.length > 0){
+    gameLogic.turn.currentEvent = gameLogic.turn.terrainEffectsQueue.shift()
+   } else if (gameLogic.turn.playerActionsQueue.length > 0){
+      gameLogic.turn.currentEvent = gameLogic.turn.playerActionsQueue.shift()
+   } else if (gameLogic.turn.endTurnQueue.length > 0){
+        gameLogic.turn.currentEvent = gameLogic.turn.endTurnQueue.shift()
+   } else {
+        startNewTurn();
+        return
+   }
 
  processEvent(gameLogic.turn.currentEvent);
 

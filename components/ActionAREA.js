@@ -14,8 +14,9 @@ var ActionButton = require('./ActionButton.js')
 // gameStates enum:
 //   gatherPlayers: 0,
 //   decisionMaking: 1,
-//   actionsPlayingOut: 2
-//   chooseActionCard: 3
+//   actionsPlayingOut: 2,
+//   chooseActionCard: 3,
+//   chooseCardToDiscard: 4
 
 var ActionAREA = React.createClass({
 	
@@ -30,8 +31,7 @@ var ActionAREA = React.createClass({
       actionButtons = ["Start Game"]
       actionText = "Waiting for all players to join..."
     }
-    else if (this.props.gameState === gameStates.chooseActionCard){
-      console.log("chooseActionCard")
+    else if (this.props.gameState === gameStates.chooseActionCard || this.props.gameState === gameStates. chooseCardToDiscard){
       if (this.props.activePlayer.name == this.props.userName){
         actionText = "Choose which card."
       }else{
@@ -52,8 +52,8 @@ var ActionAREA = React.createClass({
           actionButtons = this.props.turn.currentEvent.actionList
           //CHECKS:------------------------------------------------------------
         } else if (this.props.turn.currentEvent.type === "check"){
-          actionText = "Roll a "+this.props.activePlayer[this.props.turn.currentEvent.stat]+
-                  " or lower to pass the "+ this.props.turn.currentEvent.stat+ " check."
+          var value = this.props.activePlayer[this.props.turn.currentEvent.stat] + this.props.turn.handicaps[this.props.turn.currentEvent.stat]
+          actionText = "Roll a "+value+" or lower to pass the "+ this.props.turn.currentEvent.stat+ " check."
           actionButtons = this.props.turn.currentEvent.actionList
         } 
       }
