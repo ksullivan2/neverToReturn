@@ -46,7 +46,8 @@ var ActionAREA = React.createClass({
 
       if (this.props.activePlayer.name == this.props.userName){
         //TURN STANDARD ACTIONS------------------------------------------------
-        if(this.props.turn.currentEvent.type === "choosePlayerAction"){
+        if(this.props.turn.currentEvent.type === "choosePlayerAction" 
+          || this.props.turn.currentEvent.type === "move"){
           actionText = "Choose your action."
 
           actionButtons = this.props.turn.currentEvent.actionList

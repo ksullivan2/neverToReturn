@@ -129,6 +129,7 @@ gameLogic.prototype.pruneActionsList = function(first_argument) {
 		this.turn.currentEvent.actionList  = this.turn.currentEvent.actionList .filter(function(action){return (action !== MOVE_FORWARD)})
 	}
 
+
 	console.log(this.turn.currentEvent.actionList)
 	//ADD PLAYER-SPECIFIC ACTIONS HERE
 	
@@ -193,7 +194,7 @@ gameLogic.prototype.addActionToEndTurnQueue = function(source, event){
 	this.turn.endTurnQueue.push(event)
 }
 
-gameLogic.prototype.addToImmediateQueue = function(source, event){
+gameLogic.prototype.addActionToImmediateQueue = function(source, event){
 	this.preprocessEvent(source,event)
 	this.turn.immediateQueue.push(event)
 }
@@ -206,6 +207,10 @@ gameLogic.prototype.preprocessEvent = function(source, event){
 		} else{
 			event.actionList = CHECK_ACTIONS
 		}
+	}
+
+	else if (event.type ==="move"){
+		event.actionList = [MOVE_FORWARD, MOVE_BACKWARD]
 	}
 
 	event.source = source
@@ -235,17 +240,24 @@ gameLogic.prototype.updateHandicap = function(stat, value){
 
 
 //MOVING---------------------------------------
-gameLogic.prototype.movePlayer = function(userName, movement){
-	//move: pos is forward, neg is backward
+gameLogic.prototype.movePlayer = function(userName, direction){
+	if (direction == "forward"){
+		var directionKey = 1
+	} else if (direction == "backward"){
+		var directionKey = -1
+	} else {
+		console.log("INVALID DIRECTION IN MOVEPLAYER")
+		return
+	}
 
 	var player = this.findPlayerByUserName(userName)
 	
 	//update the neckLocations' lists of players
 	this.removePlayerFromLocation(player.location, player.name);
-	this.addPlayerToLocation(player.location+(1*movement), player.name);
+	this.addPlayerToLocation(player.location+(1*directionKey), player.name);
 
 	//update the location of the player object
-	player.location += (1*movement);
+	player.location += (1*directionKey);
 
 	this.collectOnEncounterEffects();
 }

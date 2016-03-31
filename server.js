@@ -97,14 +97,14 @@ io.on('connection', function (socket) {
 
 	socket.on("Move Forward", function(data){
     if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      processMove(data, 1)
+      processMove(data, "forward")
     }
  
   });
 
   socket.on("Move Backward", function(data){
     if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      processMove(data, -1)
+      processMove(data, "backward")
     }
     
   });
@@ -156,9 +156,9 @@ var processActionCard = function(data){
   processQueue()
 }
 
-var processMove = function(data, value){  
+var processMove = function(data, direction){  
   gameLogic.gameState = gameStates.animationsPlayingOut;
-  gameLogic.addActionToPlayerActionsQueue(data.userName, {type:"move", value: value})
+  gameLogic.addActionToPlayerActionsQueue(data.userName, {type:"move", direction: direction})
   gameLogic.decrementTurnActions();
   processQueue()
 }
@@ -171,18 +171,18 @@ var processCheck = function(){
   var dice = Math.floor(Math.random() * 10 + 1);
 
   //add an event to the front of the queue to view the result of the roll
-  gameLogic.addToImmediateQueue(null,{type: "display", value: dice})
+  gameLogic.addActionToImmediateQueue(null,{type: "display", value: dice})
 
   //all handicaps will be stored in the "turn" object, don't worry about on server
   if (gameLogic.isCheckPassed(event.target, event.stat, dice)){
     //add the check's consequences to the queue to be processed next
     for (var i = 0; i < event.ifPass.length; i++) {
-      gameLogic.addToImmediateQueue(event.source, event.ifPass[i])
+      gameLogic.addActionToImmediateQueue(event.source, event.ifPass[i])
     }
     
   } else {
     for (var i = 0; i < event.ifFail.length; i++) {
-      gameLogic.addToImmediateQueue(event.source, event.ifFail[i])
+      gameLogic.addActionToImmediateQueue(event.source, event.ifFail[i])
     } 
   }
 
@@ -195,7 +195,7 @@ processDiscardForBonus = function(data){
   gameLogic.updateHandicap(gameLogic.turn.currentEvent.stat, 2)
 
   //directly update the handicap, then immediately undo that before anything else is processed
-  gameLogic.addToImmediateQueue(data.userName, {type: "handicap", stat: gameLogic.turn.currentEvent.stat, value: -2})
+  gameLogic.addActionToImmediateQueue(data.userName, {type: "handicap", stat: gameLogic.turn.currentEvent.stat, value: -2})
 
   gameLogic.discardCard(data.userName, data.card.name)
 
@@ -276,9 +276,7 @@ var processEvent = function(event){
       gameLogic.affectMenace(target, event.type, event.value)
       break;
     
-    case "move":
-      gameLogic.movePlayer(target, event.value);
-      break;
+    
 
     case "discard":
       gameLogic.discardCard(target) 
@@ -301,7 +299,15 @@ var processEvent = function(event){
 
 
     //ANYTHING WITH PLAYER INTERACTION:
-    //event types with user interaction will return so that they don't have the timeout
+    //event types with user interaction will return instead of break so that they don't have the timeout
+    case "move":
+      console.log(event.direction)
+      if (event.direction){
+        gameLogic.movePlayer(target, event.direction);
+        break;
+      }
+      //else fall-through
+      
     case "check": 
       //fall-through
 
