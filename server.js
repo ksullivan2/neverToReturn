@@ -139,6 +139,7 @@ var processActionCard = function(data){
   for (var i = 0; i < data.card.actions.length; i++) {
     gameLogic.addActionToPlayerActionsQueue(data.userName, data.card.actions[i])
   }
+  gameLogic.discardCard(data.userName, data.card.name)
   gameLogic.decrementTurnActions();
   processQueue()
 }

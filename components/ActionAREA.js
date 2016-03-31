@@ -29,6 +29,16 @@ var ActionAREA = React.createClass({
       actionButtons = ["Start Game"]
       actionText = "Waiting for all players to join..."
     }
+    else if (this.props.gameState === gameStates.chooseActionCard){
+      console.log("chooseActionCard")
+      if (this.props.activePlayer.name == this.props.userName){
+        actionText = "Choose which card to play."
+      }else{
+        actionText = "It is "+this.props.activePlayer.name+"'s turn to choose an action.";
+      }
+
+    }
+
     else if (this.props.gameState === gameStates.waitingForPlayerInput){
       
       actionText = "It is "+this.props.activePlayer.name+"'s turn to choose an action.";

@@ -243,16 +243,24 @@ gameLogic.prototype.replenishHand = function(player){
 	// }
 }
 
-gameLogic.prototype.discardCard = function(userName, index){
+gameLogic.prototype.discardCard = function(userName, cardName){
 	var player = this.findPlayerByUserName(userName)
+
 	
 	if (player.hand.length ===0){
 		return false;
 	}
 
 	//could be random OR NOT
-	if (!index){
-		index = Math.floor(Math.random()*player.hand.length)
+	if (cardName){
+		for (var i = 0; i < player.hand.length; i++) {
+			if (player.hand[i].name === cardName){
+				var index = i
+				break;
+			}
+		}
+	} else{
+		var index = Math.floor(Math.random()*player.hand.length)
 	}
 
 	player.hand.splice(index, 1)
