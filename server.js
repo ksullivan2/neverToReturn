@@ -200,13 +200,7 @@ processDiscardForBonus = function(data){
   gameLogic.discardCard(data.userName, data.card.name)
 
   //make sure the button doesn't show up if there are no cards left
-  //TO DO: MOVE THIS CHECK TO GAMELOGIC
-  if (gameLogic.activePlayer.hand.length === 0){
-    gameLogic.turn.currentEvent.actionList = gameLogic.turn.currentEvent.actionList.filter(
-      function(action){return action !== "Discard For Bonus"})
-  }
-
-
+  gameLogic.pruneActionsList()
 
   io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
 }
@@ -313,6 +307,7 @@ var processEvent = function(event){
 
     case "choosePlayerAction":
       gameLogic.gameState = gameStates.waitingForPlayerInput;
+      gameLogic.pruneActionsList()
       io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
       return
   }

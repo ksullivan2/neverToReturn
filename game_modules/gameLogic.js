@@ -101,21 +101,12 @@ const STANDARD_ACTIONS = [MOVE_FORWARD,MOVE_BACKWARD,ACTION_CARD];
 const CHECK_ACTIONS = [ROLL_CHECK, DISCARD_FOR_BONUS];
 const CARD_CHOICE = [OPTION_1, OPTION_2]
 
-function Turn(activePlayer){
-	//filter standard actions list if the player is on first or last space
-	var standardActions = STANDARD_ACTIONS
-	if (activePlayer.location === 0){
-		var standardActions = standardActions.filter(function(action){return (action !== MOVE_BACKWARD)})
-	} else if (activePlayer.location === 6){
-		var standardActions = standardActions.filter(function(action){return (action !== MOVE_FORWARD)})
-	}
-
-
+function Turn(){
   this.currentEvent = null;
   //these arrays will be filled with objects/events to fire and will always be resolved in order
   this.immediateQueue = [];
   this.terrainEffectsQueue = [{type: "desperationCheck"}];
-  this.playerActionsQueue = [{type: "choosePlayerAction", actionList: standardActions}];
+  this.playerActionsQueue = [{type: "choosePlayerAction", actionList: STANDARD_ACTIONS}];
   this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"addDrawCardsEvent"}]
 
   //these are various stat effects and checks per turn
@@ -125,8 +116,26 @@ function Turn(activePlayer){
   this.stopped = false;
 }
 
+gameLogic.prototype.pruneActionsList = function(first_argument) {
+
+	if (this.activePlayer.hand.length === 0){
+		this.turn.currentEvent.actionList  = this.turn.currentEvent.actionList .filter(function(action){
+			return action !== DISCARD_FOR_BONUS && action!== ACTION_CARD })
+	}
+
+	if (this.activePlayer.location === 0){
+		this.turn.currentEvent.actionList  = this.turn.currentEvent.actionList .filter(function(action){return (action !== MOVE_BACKWARD)})
+	} else if (this.activePlayer.location === 6){
+		this.turn.currentEvent.actionList  = this.turn.currentEvent.actionList .filter(function(action){return (action !== MOVE_FORWARD)})
+	}
+
+	console.log(this.turn.currentEvent.actionList)
+	//ADD PLAYER-SPECIFIC ACTIONS HERE
+	
+};
+
 gameLogic.prototype.initializeTurn = function(){
-	this.turn = new Turn(this.activePlayer);
+	this.turn = new Turn();
 	this.collectTurnStartEffects();
 }
 
