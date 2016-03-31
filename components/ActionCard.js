@@ -19,7 +19,8 @@ var ActionCard = React.createClass({
 	},
 
 	handleClick: function(){
-		socket.emit("Action Card", {userName: userName, card: card})
+		console.log("clicked ", this.props.card.name)
+		socket.emit("Action Card", {userName: this.props.userName, card: this.props.card})
 	},
 
 

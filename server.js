@@ -133,14 +133,17 @@ io.on('connection', function (socket) {
 });
 
 
-//SOCKET EVENT PROCESSERS----------------------------------------------------------------------------------
+//SOCKET ACTION PROCESSERS----------------------------------------------------------------------------------
 var processActionCard = function(data){
   //data is username and card
-
+  for (var i = 0; i < data.card.actions.length; i++) {
+    gameLogic.addActionToPlayerActionsQueue(data.userName, data.card.actions[i])
+  }
+  gameLogic.decrementTurnActions();
+  processQueue()
 }
 
-
-var processMove = function(data, value)  
+var processMove = function(data, value){  
   gameLogic.gameState = gameStates.animationsPlayingOut;
   gameLogic.addActionToPlayerActionsQueue(data.userName, {type:"move", value: value})
   gameLogic.decrementTurnActions();

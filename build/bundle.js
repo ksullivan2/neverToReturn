@@ -29878,7 +29878,8 @@
 	var gameStates = {
 		gatherPlayers: 0,
 		waitingForPlayerInput: 1,
-		animationsPlayingOut: 2
+		animationsPlayingOut: 2,
+		chooseActionCard: 3
 	};
 
 	module.exports = gameStates;
@@ -30012,7 +30013,8 @@
 	            'div',
 	            { className: 'layoutDIV', id: 'MyCardsDIV', onMouseOut: self.handleMouseOut },
 	            cardsInHand.map(function (eachCard) {
-	              return React.createElement(ActionCard, { card: eachCard.card, key: eachCard.key, offset: eachCard.offset, handleMouseOver: self.handleMouseOver });
+	              return React.createElement(ActionCard, { card: eachCard.card, key: eachCard.key, offset: eachCard.offset,
+	                handleMouseOver: self.handleMouseOver, userName: self.props.userName });
 	            })
 	          );
 	        }
@@ -30040,36 +30042,44 @@
 	var ReactMotion = __webpack_require__(168);
 	var Motion = ReactMotion.Motion;
 	var spring = ReactMotion.spring;
+	var socket = io();
 
 	// props are:
 	//   card: ActionCard
 	//	offset: int
 	// handleMouseOver: function
+	// userName: ""
 
 	var ActionCard = React.createClass({
-	  displayName: 'ActionCard',
+		displayName: 'ActionCard',
 
 
-	  handleMouseOver: function handleMouseOver() {
-	    this.props.handleMouseOver(this.props.card.name);
-	  },
+		handleMouseOver: function handleMouseOver() {
+			this.props.handleMouseOver(this.props.card.name);
+		},
 
-	  render: function render() {
-	    var self = this;
+		handleClick: function handleClick() {
+			console.log("clicked ", card.name);
+			socket.emit("Action Card", { userName: userName, card: card });
+		},
 
-	    return React.createElement(
-	      Motion,
-	      { defaultStyle: { left: 0 },
-	        style: { left: spring(self.props.offset) } },
-	      function (interpolatingStyle) {
-	        return React.createElement(
-	          'div',
-	          { className: 'actionCard', style: { left: interpolatingStyle.left + "%" }, onMouseOver: self.handleMouseOver },
-	          React.createElement('img', { src: self.props.card.imgSRC, className: 'actionCardImage' })
-	        );
-	      }
-	    );
-	  }
+		render: function render() {
+			var self = this;
+
+			return React.createElement(
+				Motion,
+				{ defaultStyle: { left: 0 },
+					style: { left: spring(self.props.offset) } },
+				function (interpolatingStyle) {
+					return React.createElement(
+						'div',
+						{ className: 'actionCard', style: { left: interpolatingStyle.left + "%" },
+							onMouseOver: self.handleMouseOver, onClick: self.handleClick },
+						React.createElement('img', { src: self.props.card.imgSRC, className: 'actionCardImage' })
+					);
+				}
+			);
+		}
 	});
 
 	module.exports = ActionCard;
