@@ -67,6 +67,21 @@ body {
   width:45%;
 }
 
+#TurnStatDIV{
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  width: 20%;
+}
+
+#debugDIV{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: inline-flex;
+  flex-direction: column;
+}
+
 #NeckDIV{
   top:0;
   right:0;
@@ -96,13 +111,7 @@ body {
   position: relative;
 }
 
-#debugDIV{
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  display: inline-flex;
-  flex-direction: column;
-}
+
 
 
 

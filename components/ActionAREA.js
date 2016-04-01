@@ -2,6 +2,7 @@ var React = require('react');
 var $ = require('jquery');
 var gameStates = require('../game_modules/gameStates.js');
 var ActionButton = require('./ActionButton.js')
+var TurnStatDIV = require('./TurnStatDIV.js')
 
 
 //props are:
@@ -46,13 +47,17 @@ var ActionAREA = React.createClass({
 
       if (this.props.activePlayer.name == this.props.userName){
         //TURN STANDARD ACTIONS------------------------------------------------
-        if(this.props.turn.currentEvent.type === "choosePlayerAction" 
-          || this.props.turn.currentEvent.type === "move"){
+        if(this.props.turn.currentEvent.type === "choosePlayerAction" ){
           actionText = "Choose your action."
-
           actionButtons = this.props.turn.currentEvent.actionList
-          //CHECKS:------------------------------------------------------------
-        } else if (this.props.turn.currentEvent.type === "check"){
+
+        }else if (this.props.turn.currentEvent.type === "move"){
+          actionText = "Choose which direction to move."
+          actionButtons = this.props.turn.currentEvent.actionList
+          
+        } 
+        //CHECKS:------------------------------------------------------------
+        else if (this.props.turn.currentEvent.type === "check"){
           var value = this.props.activePlayer[this.props.turn.currentEvent.stat] + this.props.turn.handicaps[this.props.turn.currentEvent.stat]
           actionText = "Roll a "+value+" or lower to pass the "+ this.props.turn.currentEvent.stat+ " check."
           actionButtons = this.props.turn.currentEvent.actionList
@@ -74,6 +79,7 @@ var ActionAREA = React.createClass({
         {actionButtons.map(function(text){
           return <ActionButton text={text} key={text} userName={self.props.userName}/> })
         }
+        <TurnStatDIV turn={this.props.turn}/>
 
       </div>
     )
