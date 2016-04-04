@@ -50,8 +50,8 @@
 	var ReactDOM = __webpack_require__(158);
 	var OpponentsDIV = __webpack_require__(159);
 	var ActionAREA = __webpack_require__(162);
-	var MyCardsDIV = __webpack_require__(166);
-	var NeckDIV = __webpack_require__(182);
+	var MyCardsDIV = __webpack_require__(167);
+	var NeckDIV = __webpack_require__(183);
 	var $ = __webpack_require__(163);
 
 	var socket = io();
@@ -19963,6 +19963,7 @@
 	var $ = __webpack_require__(163);
 	var gameStates = __webpack_require__(164);
 	var ActionButton = __webpack_require__(165);
+	var TurnStatDIV = __webpack_require__(166);
 
 	//props are:
 	//   gameState: int(enum)
@@ -20002,12 +20003,15 @@
 
 	      if (this.props.activePlayer.name == this.props.userName) {
 	        //TURN STANDARD ACTIONS------------------------------------------------
-	        if (this.props.turn.currentEvent.type === "choosePlayerAction" || this.props.turn.currentEvent.type === "move") {
+	        if (this.props.turn.currentEvent.type === "choosePlayerAction") {
 	          actionText = "Choose your action.";
-
 	          actionButtons = this.props.turn.currentEvent.actionList;
-	          //CHECKS:------------------------------------------------------------
-	        } else if (this.props.turn.currentEvent.type === "check") {
+	        } else if (this.props.turn.currentEvent.type === "move") {
+	          actionText = "Choose which direction to move.";
+	          actionButtons = this.props.turn.currentEvent.actionList;
+	        }
+	        //CHECKS:------------------------------------------------------------
+	        else if (this.props.turn.currentEvent.type === "check") {
 	            var value = this.props.activePlayer[this.props.turn.currentEvent.stat] + this.props.turn.handicaps[this.props.turn.currentEvent.stat];
 	            actionText = "Roll a " + value + " or lower to pass the " + this.props.turn.currentEvent.stat + " check.";
 	            actionButtons = this.props.turn.currentEvent.actionList;
@@ -20030,7 +20034,8 @@
 	      ),
 	      actionButtons.map(function (text) {
 	        return React.createElement(ActionButton, { text: text, key: text, userName: self.props.userName });
-	      })
+	      }),
+	      React.createElement(TurnStatDIV, { turn: this.props.turn })
 	    );
 	  }
 	});
@@ -29936,7 +29941,29 @@
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var ActionCard = __webpack_require__(167);
+
+	var TurnStatDIV = React.createClass({
+	  displayName: 'TurnStatDIV',
+
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      { className: 'layoutDIV', id: 'TurnStatDIV' },
+	      'TurnStatDIV'
+	    );
+	  }
+	});
+
+	module.exports = TurnStatDIV;
+
+/***/ },
+/* 167 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+	var ActionCard = __webpack_require__(168);
 	var gameStates = __webpack_require__(164);
 
 	// props are:
@@ -30039,13 +30066,13 @@
 	module.exports = MyCardsDIV;
 
 /***/ },
-/* 167 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var ReactMotion = __webpack_require__(168);
+	var ReactMotion = __webpack_require__(169);
 	var Motion = ReactMotion.Motion;
 	var spring = ReactMotion.spring;
 	var socket = io();
@@ -30091,7 +30118,7 @@
 	module.exports = ActionCard;
 
 /***/ },
-/* 168 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30100,34 +30127,34 @@
 
 	function _interopRequire(obj) { return obj && obj.__esModule ? obj['default'] : obj; }
 
-	var _Motion = __webpack_require__(169);
+	var _Motion = __webpack_require__(170);
 
 	exports.Motion = _interopRequire(_Motion);
 
-	var _StaggeredMotion = __webpack_require__(176);
+	var _StaggeredMotion = __webpack_require__(177);
 
 	exports.StaggeredMotion = _interopRequire(_StaggeredMotion);
 
-	var _TransitionMotion = __webpack_require__(177);
+	var _TransitionMotion = __webpack_require__(178);
 
 	exports.TransitionMotion = _interopRequire(_TransitionMotion);
 
-	var _spring = __webpack_require__(179);
+	var _spring = __webpack_require__(180);
 
 	exports.spring = _interopRequire(_spring);
 
-	var _presets = __webpack_require__(180);
+	var _presets = __webpack_require__(181);
 
 	exports.presets = _interopRequire(_presets);
 
 	// deprecated, dummy warning function
 
-	var _reorderKeys = __webpack_require__(181);
+	var _reorderKeys = __webpack_require__(182);
 
 	exports.reorderKeys = _interopRequire(_reorderKeys);
 
 /***/ },
-/* 169 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30138,27 +30165,27 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _mapToZero = __webpack_require__(170);
+	var _mapToZero = __webpack_require__(171);
 
 	var _mapToZero2 = _interopRequireDefault(_mapToZero);
 
-	var _stripStyle = __webpack_require__(171);
+	var _stripStyle = __webpack_require__(172);
 
 	var _stripStyle2 = _interopRequireDefault(_stripStyle);
 
-	var _stepper3 = __webpack_require__(172);
+	var _stepper3 = __webpack_require__(173);
 
 	var _stepper4 = _interopRequireDefault(_stepper3);
 
-	var _performanceNow = __webpack_require__(173);
+	var _performanceNow = __webpack_require__(174);
 
 	var _performanceNow2 = _interopRequireDefault(_performanceNow);
 
-	var _raf = __webpack_require__(174);
+	var _raf = __webpack_require__(175);
 
 	var _raf2 = _interopRequireDefault(_raf);
 
-	var _shouldStopAnimation = __webpack_require__(175);
+	var _shouldStopAnimation = __webpack_require__(176);
 
 	var _shouldStopAnimation2 = _interopRequireDefault(_shouldStopAnimation);
 
@@ -30373,7 +30400,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 170 */
+/* 171 */
 /***/ function(module, exports) {
 
 	
@@ -30397,7 +30424,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 171 */
+/* 172 */
 /***/ function(module, exports) {
 
 	
@@ -30423,7 +30450,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 172 */
+/* 173 */
 /***/ function(module, exports) {
 
 	
@@ -30471,7 +30498,7 @@
 	// array reference around.
 
 /***/ },
-/* 173 */
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
@@ -30510,10 +30537,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 174 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(173)
+	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(174)
 	  , root = typeof window === 'undefined' ? global : window
 	  , vendors = ['moz', 'webkit']
 	  , suffix = 'AnimationFrame'
@@ -30589,7 +30616,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 175 */
+/* 176 */
 /***/ function(module, exports) {
 
 	
@@ -30625,7 +30652,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 176 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30636,27 +30663,27 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _mapToZero = __webpack_require__(170);
+	var _mapToZero = __webpack_require__(171);
 
 	var _mapToZero2 = _interopRequireDefault(_mapToZero);
 
-	var _stripStyle = __webpack_require__(171);
+	var _stripStyle = __webpack_require__(172);
 
 	var _stripStyle2 = _interopRequireDefault(_stripStyle);
 
-	var _stepper3 = __webpack_require__(172);
+	var _stepper3 = __webpack_require__(173);
 
 	var _stepper4 = _interopRequireDefault(_stepper3);
 
-	var _performanceNow = __webpack_require__(173);
+	var _performanceNow = __webpack_require__(174);
 
 	var _performanceNow2 = _interopRequireDefault(_performanceNow);
 
-	var _raf = __webpack_require__(174);
+	var _raf = __webpack_require__(175);
 
 	var _raf2 = _interopRequireDefault(_raf);
 
-	var _shouldStopAnimation = __webpack_require__(175);
+	var _shouldStopAnimation = __webpack_require__(176);
 
 	var _shouldStopAnimation2 = _interopRequireDefault(_shouldStopAnimation);
 
@@ -30892,7 +30919,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 177 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30903,31 +30930,31 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _mapToZero = __webpack_require__(170);
+	var _mapToZero = __webpack_require__(171);
 
 	var _mapToZero2 = _interopRequireDefault(_mapToZero);
 
-	var _stripStyle = __webpack_require__(171);
+	var _stripStyle = __webpack_require__(172);
 
 	var _stripStyle2 = _interopRequireDefault(_stripStyle);
 
-	var _stepper3 = __webpack_require__(172);
+	var _stepper3 = __webpack_require__(173);
 
 	var _stepper4 = _interopRequireDefault(_stepper3);
 
-	var _mergeDiff = __webpack_require__(178);
+	var _mergeDiff = __webpack_require__(179);
 
 	var _mergeDiff2 = _interopRequireDefault(_mergeDiff);
 
-	var _performanceNow = __webpack_require__(173);
+	var _performanceNow = __webpack_require__(174);
 
 	var _performanceNow2 = _interopRequireDefault(_performanceNow);
 
-	var _raf = __webpack_require__(174);
+	var _raf = __webpack_require__(175);
 
 	var _raf2 = _interopRequireDefault(_raf);
 
-	var _shouldStopAnimation = __webpack_require__(175);
+	var _shouldStopAnimation = __webpack_require__(176);
 
 	var _shouldStopAnimation2 = _interopRequireDefault(_shouldStopAnimation);
 
@@ -31385,7 +31412,7 @@
 	// that you've unmounted but that's still animating. This is where it lives
 
 /***/ },
-/* 178 */
+/* 179 */
 /***/ function(module, exports) {
 
 	
@@ -31498,7 +31525,7 @@
 	// to loop through and find a key's index each time), but I no longer care
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31511,7 +31538,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _presets = __webpack_require__(180);
+	var _presets = __webpack_require__(181);
 
 	var _presets2 = _interopRequireDefault(_presets);
 
@@ -31526,7 +31553,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -31541,7 +31568,7 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -31564,15 +31591,15 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var LocationDIV = __webpack_require__(183);
-	var PlayerPiece = __webpack_require__(185);
-	var NeckCanvas = __webpack_require__(186);
+	var LocationDIV = __webpack_require__(184);
+	var PlayerPiece = __webpack_require__(186);
+	var NeckCanvas = __webpack_require__(187);
 	var socket = io();
 
 	//props are:
@@ -31613,13 +31640,13 @@
 	module.exports = NeckDIV;
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var LocationCard = __webpack_require__(184);
+	var LocationCard = __webpack_require__(185);
 
 	// props are:
 	//   location: Location
@@ -31719,13 +31746,13 @@
 	module.exports = LocationDIV;
 
 /***/ },
-/* 184 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var ReactMotion = __webpack_require__(168);
+	var ReactMotion = __webpack_require__(169);
 	var Motion = ReactMotion.Motion;
 	var spring = ReactMotion.spring;
 
@@ -31763,13 +31790,13 @@
 	module.exports = LocationCard;
 
 /***/ },
-/* 185 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var ReactMotion = __webpack_require__(168);
+	var ReactMotion = __webpack_require__(169);
 	var Motion = ReactMotion.Motion;
 	var spring = ReactMotion.spring;
 
@@ -31826,13 +31853,13 @@
 	module.exports = PlayerPiece;
 
 /***/ },
-/* 186 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var PlayerPiece = __webpack_require__(185);
+	var PlayerPiece = __webpack_require__(186);
 
 	//props are:
 	//  players: {playerName: Player}
