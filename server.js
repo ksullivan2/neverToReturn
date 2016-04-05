@@ -37,6 +37,9 @@ server.listen(process.env.PORT || 3000, function(){
 //game-specific libraries------------------------------------------------------------------------------------------------------------------
 var Game = require("./game_modules/gameLogic.js");
 var gameStates = require("./game_modules/gameStates.js");
+const STANDARD_PLAYER_ACTIONS = require("./CONFIG FILES/standardActions.js").standardPlayerActions;
+
+
 
 var gameLogic = new Game();
 
@@ -95,19 +98,45 @@ io.on('connection', function (socket) {
   });
 
 
-	socket.on("Move Forward", function(data){
+	socket.on(STANDARD_PLAYER_ACTIONS.MOVE_FORWARD.buttonText, function(data){
     if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
       processMove(data, "forward")
     }
  
   });
 
-  socket.on("Move Backward", function(data){
+  socket.on(STANDARD_PLAYER_ACTIONS.MOVE_BACKWARD.buttonText, function(data){
     if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
       processMove(data, "backward")
     }
     
   });
+
+  socket.on(STANDARD_PLAYER_ACTIONS.ACTION_CARD.buttonText, function(data){
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      gameLogic.gameState = gameStates.chooseActionCard;
+      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
+    }
+  })
+
+  socket.on(STANDARD_PLAYER_ACTIONS.TRADE_MENACE_FOR_MONSTER.buttonText, function (data){
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      processTakeMenaceToCreateMonster(data)
+    }
+  })
+
+  socket.on(STANDARD_PLAYER_ACTIONS.REFILL_HAND.buttonText, function(data){
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      processRefillHand(data)
+    }
+  })
+
+  socket.on(STANDARD_PLAYER_ACTIONS.DISCARD_AND_DRAW.buttonText, function(data){
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      gameLogic.gameState = gameStates.chooseCardToDiscard;
+      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
+    }
+  })
 
   socket.on("Roll Check", function(data){
     //check for gameState so that we can't get a double-press
@@ -117,12 +146,6 @@ io.on('connection', function (socket) {
     
   });
 
-  socket.on("Play Action Card", function(data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      gameLogic.gameState = gameStates.chooseActionCard;
-      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
-    }
-  })
 
   socket.on("Action Card Pressed", function(data){
     if (gameLogic.gameState === gameStates.chooseActionCard && data.userName === gameLogic.activePlayer.name){
@@ -144,17 +167,7 @@ io.on('connection', function (socket) {
     }
   })
 
-  socket.on("Heal 2 P/M, Create Monster", function (data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      processTakeMenaceToCreateMonster(data)
-    }
-  })
-
-  socket.on('Take 1P, 1M, Refill Hand', function(data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      processRefillHand(data)
-    }
-  })
+  
 
   socket.on("Pain", function(data){
     if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
@@ -168,15 +181,6 @@ io.on('connection', function (socket) {
       addMenaceToCurrentEvent("madness")
     }
   })
-
-  socket.on("Discard 1, Draw 1", function(data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      gameLogic.gameState = gameStates.chooseCardToDiscard;
-      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
-    }
-  })
-
-
 
 });
 

@@ -9,7 +9,6 @@ var neckLocation = require("./neckLocation.js");
 const PLAYER_COLORS = require("../CONFIG FILES/visualConfig.js").playerColors;
 const STANDARD_PLAYER_ACTIONS = require("../CONFIG FILES/standardActions.js").standardPlayerActions;
 const TURN_ACTIONS = require("../CONFIG FILES/standardActions.js").turnActions;
-console.log(TURN_ACTIONS)
 
 
 

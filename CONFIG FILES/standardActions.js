@@ -32,7 +32,7 @@ var turnActions = {
 
 }
 
-
+//if any of the ALL_CAPS names change, they must be changed in both server and gameLogic files!
 var standardPlayerActions = {
 	MOVE_FORWARD:  
 	{
