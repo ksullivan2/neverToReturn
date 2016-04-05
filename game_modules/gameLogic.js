@@ -41,7 +41,7 @@ gameLogic.prototype.initializeGame = function() {
 	//deal action cards to each player
 	for (var i in this.players){
 		this.assignPlayerCard(this.players[i], "homelyVillager")
-		this.replenishHand(this.players[i])
+		this.refillHand(this.players[i].name)
 	}
 	//the server will handle the "new turn" command
 };
@@ -87,11 +87,13 @@ gameLogic.prototype.isCheckPassed = function(target, menace, dice){
 }
 
 //TURNS/QUEUES-----------------------------------------------------------------------------------------------
-
+//STANDARD ACTIONS
 const MOVE_FORWARD = "Move Forward"
 const MOVE_BACKWARD = "Move Backward"
 const ACTION_CARD = "Play Action Card"
+const DISCARD_AND_DRAW = "Discard 1, Draw 1"
 const TRADE_MENACE_FOR_MONSTER = "Heal 2 P/M, Create Monster"
+const REFILL_HAND = "Take 1P, 1M, Refill Hand"
 
 const ROLL_CHECK = "Roll Check"
 const DISCARD_FOR_BONUS = "Discard For Bonus"
@@ -103,7 +105,7 @@ const PAIN = "Pain"
 const MADNESS = "Madness"
 
 
-const STANDARD_ACTIONS = [MOVE_FORWARD,MOVE_BACKWARD,ACTION_CARD, TRADE_MENACE_FOR_MONSTER];
+const STANDARD_ACTIONS = [MOVE_FORWARD,MOVE_BACKWARD,ACTION_CARD, TRADE_MENACE_FOR_MONSTER, DISCARD_AND_DRAW, REFILL_HAND];
 const CHECK_ACTIONS = [ROLL_CHECK, DISCARD_FOR_BONUS];
 const CARD_CHOICE = [OPTION_1, OPTION_2]
 const MENACE_TYPES = [PAIN, MADNESS]
@@ -136,6 +138,11 @@ gameLogic.prototype.pruneActionsList = function() {
 	if (this.activePlayer.hand.length === 0){
 		filterAction(DISCARD_FOR_BONUS)
 		filterAction(ACTION_CARD)
+		filterAction(DISCARD_AND_DRAW)
+	}
+
+	if (this.activePlayer.hand.length >= 5){
+		filterAction(REFILL_HAND)
 	}
 
 	//check if they're at either end of the neck
@@ -305,8 +312,10 @@ gameLogic.prototype.addPlayerToLocation = function(locationIndex, name){
 }
 
 //ACTION CARDS---------------------------------------
-gameLogic.prototype.replenishHand = function(player){
+gameLogic.prototype.refillHand = function(userName){
 	//DUMMY METHOD FOR LIMITED ASSETS
+	var player = this.findPlayerByUserName(userName)
+
 	player.hand = [new cardTypes.actionCard("cannibalism"),
 	new cardTypes.actionCard("filthyWateringHole"),
 	new cardTypes.actionCard("questionableFlensing"),

@@ -129,7 +129,11 @@ io.on('connection', function (socket) {
       processActionCard(data)
     }
     if (gameLogic.gameState === gameStates.chooseCardToDiscard && data.userName === gameLogic.activePlayer.name){
-      processDiscardForBonus(data)
+      if (gameLogic.turn.currentEvent.type === "check"){
+        processDiscardForBonus(data)
+      } else if (gameLogic.turn.currentEvent.type ==="choosePlayerAction"){
+        processDiscardAndDraw(data)
+      }
     }
   })
 
@@ -146,6 +150,12 @@ io.on('connection', function (socket) {
     }
   })
 
+  socket.on('Take 1P, 1M, Refill Hand', function(data){
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      processRefillHand(data)
+    }
+  })
+
   socket.on("Pain", function(data){
     if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
       addMenaceToCurrentEvent("pain")
@@ -159,11 +169,36 @@ io.on('connection', function (socket) {
     }
   })
 
+  socket.on("Discard 1, Draw 1", function(data){
+    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
+      gameLogic.gameState = gameStates.chooseCardToDiscard;
+      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
+    }
+  })
+
+
 
 });
 
 
 //SOCKET ACTION PROCESSERS----------------------------------------------------------------------------------
+var processDiscardAndDraw = function(data){
+  gameLogic.gameState = gameStates.animationsPlayingOut;
+  gameLogic.discardCard(data.userName, data.card.name)
+  gameLogic.addActionToImmediateQueue(data.userName, {type: "draw", value: 1})
+  gameLogic.decrementTurnActions();
+  processQueue()
+}
+
+var processRefillHand = function(data){
+  gameLogic.gameState = gameStates.animationsPlayingOut;
+  gameLogic.refillHand(data.userName)
+  gameLogic.addActionToImmediateQueue(data.userName, {type: "pain", value: -1})
+  gameLogic.addActionToImmediateQueue(data.userName, {type: "madness", value: -1})
+  gameLogic.decrementTurnActions();
+  processQueue()
+}
+
 var addMenaceToCurrentEvent = function(menace){
   gameLogic.turn.currentEvent.menace = menace
   processEvent(gameLogic.turn.currentEvent)
