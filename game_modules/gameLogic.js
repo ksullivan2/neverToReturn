@@ -91,12 +91,12 @@ gameLogic.prototype.isCheckPassed = function(target, menace, dice){
 
 //TURNS/QUEUES-----------------------------------------------------------------------------------------------
 //STANDARD ACTIONS
-// const MOVE_FORWARD = "Move Forward"
-// const MOVE_BACKWARD = "Move Backward"
-// const ACTION_CARD = "Play Action Card"
-// const DISCARD_AND_DRAW = "Discard 1, Draw 1"
-// const TRADE_MENACE_FOR_MONSTER = "Heal 2 P/M, Create Monster"
-// const REFILL_HAND = "Take 1P, 1M, Refill Hand"
+const MOVE_FORWARD = "Move Forward"
+const MOVE_BACKWARD = "Move Backward"
+const ACTION_CARD = "Play Action Card"
+const DISCARD_AND_DRAW = "Discard 1, Draw 1"
+const TRADE_MENACE_FOR_MONSTER = "Heal 2 P/M, Create Monster"
+const REFILL_HAND = "Take 1P, 1M, Refill Hand"
 
 const ROLL_CHECK = "Roll Check"
 const DISCARD_FOR_BONUS = "Discard For Bonus"
