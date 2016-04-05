@@ -310,7 +310,7 @@ var processEvent = function(event){
       break;
 
     case "discard":
-      for (var i = 0; i < event.value.length; i++) {
+      for (var i = 0; i < event.value; i++) {
         gameLogic.discardCard(target) 
       }
       break;

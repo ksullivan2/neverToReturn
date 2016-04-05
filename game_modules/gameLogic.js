@@ -352,6 +352,7 @@ gameLogic.prototype.dealCard = function(userName){
 
 //MONSTERS------------------------------------------------------------------------------------------------------------
 gameLogic.prototype.createMonster = function(userName, menace) {
+	var self = this;
 	// temporarily always creates monster in same space
 
 	if (menace === "pain"){
@@ -365,6 +366,10 @@ gameLogic.prototype.createMonster = function(userName, menace) {
 	var player = this.findPlayerByUserName(userName)
 
 	this.neck[player.location].addCard(card)
+
+	card.onEncounter.forEach(function(event){
+		self.addActionToTerrainQueue(card.name, event)
+	})
 }
 
 
