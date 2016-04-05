@@ -123,23 +123,47 @@ function Turn(){
   this.stopped = false;
 }
 
-gameLogic.prototype.pruneActionsList = function(first_argument) {
+
+gameLogic.prototype.pruneActionsList = function() {
+	var self = this;
+	
+	var filterAction = function(actionToFilter) {
+		self.turn.currentEvent.actionList = self.turn.currentEvent.actionList.filter(function(action){
+		return (action !== actionToFilter)})
+	}
+
 	//check if there are cards left in their hand
 	if (this.activePlayer.hand.length === 0){
-		this.turn.currentEvent.actionList  = this.turn.currentEvent.actionList .filter(function(action){
-			return action !== DISCARD_FOR_BONUS && action!== ACTION_CARD })
+		filterAction(DISCARD_FOR_BONUS)
+		filterAction(ACTION_CARD)
 	}
 
 	//check if they're at either end of the neck
 	if (this.activePlayer.location === 0){
-		this.turn.currentEvent.actionList  = this.turn.currentEvent.actionList .filter(function(action){return (action !== MOVE_BACKWARD)})
+		filterAction(MOVE_BACKWARD)
 	} else if (this.activePlayer.location === 6){
-		this.turn.currentEvent.actionList  = this.turn.currentEvent.actionList .filter(function(action){return (action !== MOVE_FORWARD)})
+		filterAction(MOVE_FORWARD)
+	}
+
+	//check if there is enough damage to menace to create a monster
+	if (this.activePlayer.pain === this.activePlayer.card.pain && this.activePlayer.madness === this.activePlayer.card.madness){
+		filterAction(TRADE_MENACE_FOR_MONSTER)
+	}
+
+	if (this.turn.currentEvent.type === "tradeMenaceForMonster"){
+		if (this.activePlayer.pain === this.activePlayer.card.pain){
+			filterAction(PAIN)
+		}
+		if (this.activePlayer.madness === this.activePlayer.card.madness){
+			filterAction(MADNESS)
+		}
 	}
 
 	//ADD PLAYER-SPECIFIC ACTIONS HERE
-	
+
 };
+
+
 
 gameLogic.prototype.initializeTurn = function(){
 	this.turn = new Turn();
