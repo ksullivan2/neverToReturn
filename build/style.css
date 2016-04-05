@@ -1,3 +1,7 @@
+*{
+  font-family: 'Patrick Hand SC', sans-serif;
+}
+
 body {
   margin: 0;
 }
@@ -37,6 +41,10 @@ body {
   margin: 2%;
 }
 
+/*.PlayerDIV p span{
+  font-size: 18px;
+}*/
+
 .PlayerDIVThumbnail{
   position: absolute;
   right: 0;
@@ -65,6 +73,15 @@ body {
   right: 0;
   height:45%; 
   width:45%;
+}
+
+.actionButton{
+  vertical-align: text-top;
+  display: block;
+  width: 70%;
+  height: 12%;
+  font-size: 20px;
+
 }
 
 #TurnStatDIV{

@@ -20,12 +20,9 @@ var ActionButton = React.createClass({
 
 
   render: function () {
-    var buttonStyle = {margin: 'auto', 
-                    width: '100px', 
-                    height: '50px'};
-    
+
     return (
-      <button onClick={this.handleClick} className="actionButton" style={buttonStyle}>
+      <button onClick={this.handleClick} className="actionButton" >
       	{this.props.text}
       </button>
     )

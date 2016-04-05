@@ -20000,21 +20000,21 @@
 	    } else if (this.props.gameState === gameStates.waitingForPlayerInput) {
 
 	      actionText = "It is " + this.props.activePlayer.name + "'s turn to choose an action.";
+	      actionButtons = this.props.turn.currentEvent.actionList;
 
 	      if (this.props.activePlayer.name == this.props.userName) {
-	        //TURN STANDARD ACTIONS------------------------------------------------
+	        //PLAYER CHOICES------------------------------------------------
 	        if (this.props.turn.currentEvent.type === "choosePlayerAction") {
 	          actionText = "Choose your action.";
-	          actionButtons = this.props.turn.currentEvent.actionList;
 	        } else if (this.props.turn.currentEvent.type === "move") {
 	          actionText = "Choose which direction to move.";
-	          actionButtons = this.props.turn.currentEvent.actionList;
+	        } else if (this.props.turn.currentEvent.type === "createMonster" || this.props.turn.currentEvent.type === "tradeMenaceForMonster") {
+	          actionText = "Choose which type of monster.";
 	        }
 	        //CHECKS:------------------------------------------------------------
 	        else if (this.props.turn.currentEvent.type === "check") {
-	            var value = this.props.activePlayer[this.props.turn.currentEvent.stat] + this.props.turn.handicaps[this.props.turn.currentEvent.stat];
-	            actionText = "Roll a " + value + " or lower to pass the " + this.props.turn.currentEvent.stat + " check.";
-	            actionButtons = this.props.turn.currentEvent.actionList;
+	            var value = this.props.activePlayer[this.props.turn.currentEvent.menace] + this.props.turn.handicaps[this.props.turn.currentEvent.menace];
+	            actionText = "Roll a " + value + " or lower to pass the " + this.props.turn.currentEvent.menace + " check.";
 	          }
 	      }
 	    } else if (this.props.gameState === gameStates.animationsPlayingOut) {
@@ -29899,7 +29899,7 @@
 /* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	var React = __webpack_require__(1);
 	var socket = io();
@@ -29910,7 +29910,7 @@
 	//   userName: ""
 
 	var ActionButton = React.createClass({
-	  displayName: 'ActionButton',
+	  displayName: "ActionButton",
 
 	  componentDidMount: function componentDidMount() {},
 
@@ -29920,13 +29920,10 @@
 	  },
 
 	  render: function render() {
-	    var buttonStyle = { margin: 'auto',
-	      width: '100px',
-	      height: '50px' };
 
 	    return React.createElement(
-	      'button',
-	      { onClick: this.handleClick, className: 'actionButton', style: buttonStyle },
+	      "button",
+	      { onClick: this.handleClick, className: "actionButton" },
 	      this.props.text
 	    );
 	  }
