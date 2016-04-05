@@ -1,0 +1,37 @@
+{
+	"monsterType": "madness",
+	"hitPoints": 1,
+
+	"onEncounter": 
+	[
+		{
+			"type": "discard",
+			"value": 2
+		}
+	],
+	"onTurnStart": 
+	[
+		{
+			"type": "check",
+			"stat": "madness",
+			"onPass": 
+			[
+				{
+					"type": "monsterDamage",
+					"value": 1
+				}
+			],
+			"onFail": 
+			[
+				{
+					"type": "madness",
+					"value": -1
+				},
+				{
+					"type": "discard",
+					"value": 2
+				}
+			]
+		}
+	]
+}

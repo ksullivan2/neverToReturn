@@ -21,14 +21,16 @@ function terrainCard(name){
 }
 
 
-function monsterCard(){
-	this.name = "";
-	this.imgSRC = "";
-	this.type = "madness";
-	this.hitPoints = 2;
+function monsterCard(name){
+	var config = require("../CONFIG FILES/cardConfigs/monsterCards/"+name+".json")
+
+	this.name = name;
+	this.imgSRC = "assets/monsterCards/"+name+".jpg";
+	this.menace = config.menace;
+	this.hitPoints = config.hitPoints;
 	
-	this.onEncounter = [];
-	this.onTurnStart = [];
+	this.onEncounter = config.onEncounter;
+	this.onTurnStart = config.onTurnStart;
 		
 	//keeps track of if card has been revealed yet
 	this.isRevealed = false;

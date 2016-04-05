@@ -1,0 +1,25 @@
+{
+	"monsterType": "pain",
+	"hitPoints": 1,
+
+	"onEncounter": [],
+	"onTurnStart": 
+	[
+		{
+			"type": "check",
+			"stat": "pain",
+			"onPass": [],
+			"onFail": 
+			[
+				{
+					"type": "pain",
+					"value": -1
+				},
+				{
+					"type": "discard",
+					"value": 2
+				}
+			]
+		}
+	]
+}

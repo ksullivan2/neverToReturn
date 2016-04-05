@@ -279,7 +279,9 @@ var processEvent = function(event){
       break;
 
     case "discard":
-      gameLogic.discardCard(target) 
+      for (var i = 0; i < event.value.length; i++) {
+        gameLogic.discardCard(target) 
+      }
       break;
 
     case "draw":
