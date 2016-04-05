@@ -20000,9 +20000,10 @@
 	    } else if (this.props.gameState === gameStates.waitingForPlayerInput) {
 
 	      actionText = "It is " + this.props.activePlayer.name + "'s turn to choose an action.";
-	      actionButtons = this.props.turn.currentEvent.actionList;
 
 	      if (this.props.activePlayer.name == this.props.userName) {
+	        actionButtons = this.props.turn.currentEvent.actionList;
+
 	        //PLAYER CHOICES------------------------------------------------
 	        if (this.props.turn.currentEvent.type === "choosePlayerAction") {
 	          actionText = "Choose your action.";

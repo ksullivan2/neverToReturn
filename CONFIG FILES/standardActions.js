@@ -1,7 +1,7 @@
 //These are the "standard player actions" that are allowed on each turn 
 //"buttonText" is what will show to the user
 
-
+//these are the actions that will happen on EVERY turn
 var turnActions = {
 	immediate: 
 	[
@@ -32,6 +32,7 @@ var turnActions = {
 
 }
 
+//These are the actions that are available to the user as standard actions each turn.
 //if any of the ALL_CAPS names change, they must be changed in both server and gameLogic files!
 var standardPlayerActions = {
 	MOVE_FORWARD:  

@@ -1,5 +1,6 @@
 "use strict";
 
+
 var cardTypes = require("./cardTypes.js");
 var Player = require("./player.js");
 var gameStates = require("./gameStates.js");
@@ -89,28 +90,14 @@ gameLogic.prototype.isCheckPassed = function(target, menace, dice){
 }
 
 //TURNS/QUEUES-----------------------------------------------------------------------------------------------
-//STANDARD ACTIONS
-const MOVE_FORWARD = "Move Forward"
-const MOVE_BACKWARD = "Move Backward"
-const ACTION_CARD = "Play Action Card"
-const DISCARD_AND_DRAW = "Discard 1, Draw 1"
-const TRADE_MENACE_FOR_MONSTER = "Heal 2 P/M, Create Monster"
-const REFILL_HAND = "Take 1P, 1M, Refill Hand"
+const ROLL_CHECK = {buttonText: "Roll Check"}
+const DISCARD_FOR_BONUS = {buttonText: "Discard For Bonus"}
 
-const ROLL_CHECK = "Roll Check"
-const DISCARD_FOR_BONUS = "Discard For Bonus"
+const PAIN = {buttonText: "Pain"}
+const MADNESS = {buttonText: "Madness"}
 
-const OPTION_1 = "Option 1"
-const OPTION_2 = "Option 2"
-
-const PAIN = "Pain"
-const MADNESS = "Madness"
-
-
-// const STANDARD_ACTIONS = [MOVE_FORWARD,MOVE_BACKWARD,ACTION_CARD, TRADE_MENACE_FOR_MONSTER, DISCARD_AND_DRAW, REFILL_HAND];
-const CHECK_ACTIONS = [ROLL_CHECK, DISCARD_FOR_BONUS];
-const CARD_CHOICE = [OPTION_1, OPTION_2]
-const MENACE_TYPES = [PAIN, MADNESS]
+const CHECK_ACTIONS = [ROLL_CHECK.buttonText, DISCARD_FOR_BONUS.buttonText];
+const MENACE_TYPES = [PAIN.buttonText, MADNESS.buttonText]
 
 function Turn(){
   this.currentEvent = null;
@@ -193,28 +180,35 @@ gameLogic.prototype.collectOnEncounterEffects = function(){
 	})
 }
 
-gameLogic.prototype.addActionToTerrainQueue = function(source, event){
-	this.preprocessEvent(source,event)
+gameLogic.prototype.addActionToTerrainQueue = function(source, originalEvent){
+	var event = this.preprocessEvent(source,originalEvent)
 	this.turn.terrainEffectsQueue.push(event)
 }
 
-gameLogic.prototype.addActionToPlayerActionsQueue = function(source, event){
-	this.preprocessEvent(source,event)
+gameLogic.prototype.addActionToPlayerActionsQueue = function(source, originalEvent){
+	var event = this.preprocessEvent(source,originalEvent)
 	this.turn.playerActionsQueue.push(event)
 }
 
-gameLogic.prototype.addActionToEndTurnQueue = function(source, event){
-	this.preprocessEvent(source,event)
+gameLogic.prototype.addActionToEndTurnQueue = function(source, originalEvent){
+	var event = this.preprocessEvent(source,originalEvent)
 	this.turn.endTurnQueue.push(event)
 }
 
-gameLogic.prototype.addActionToImmediateQueue = function(source, event){
-	this.preprocessEvent(source,event)
+gameLogic.prototype.addActionToImmediateQueue = function(source, originalEvent){
+	var event = this.preprocessEvent(source,originalEvent)
 	this.turn.immediateQueue.push(event)
 }
 
 
-gameLogic.prototype.preprocessEvent = function(source, event){
+gameLogic.prototype.preprocessEvent = function(source, originalEvent){
+	//to avoid passing around references to the same objects (since we will be editing these objects later)
+	//we create a new event object each time
+
+	
+	var event = (JSON.parse(JSON.stringify(originalEvent)));
+	
+
 	event.source = source
 
 	if (!event.actionList){
@@ -233,7 +227,7 @@ gameLogic.prototype.preprocessEvent = function(source, event){
 			break;
 
 		case "move":
-			event.actionList = [MOVE_FORWARD, MOVE_BACKWARD]
+			event.actionList = [STANDARD_PLAYER_ACTIONS.MOVE_FORWARD.buttonText, STANDARD_PLAYER_ACTIONS.MOVE_BACKWARD.buttonText]
 			break;
 
 		case "tradeMenaceForMonster":
@@ -241,6 +235,8 @@ gameLogic.prototype.preprocessEvent = function(source, event){
 			break;
 
 	} 
+
+	return event;
 	
 }
 
@@ -249,30 +245,30 @@ gameLogic.prototype.pruneActionsList = function() {
 	
 	var filterAction = function(actionToFilter) {
 		self.turn.currentEvent.actionList = self.turn.currentEvent.actionList.filter(function(action){
-		return (action !== actionToFilter)})
+		return (action !== actionToFilter.buttonText)})
 	}
 
 	//check if there are cards left in their hand
 	if (this.activePlayer.hand.length === 0){
 		filterAction(DISCARD_FOR_BONUS)
-		filterAction(ACTION_CARD)
-		filterAction(DISCARD_AND_DRAW)
+		filterAction(STANDARD_PLAYER_ACTIONS.ACTION_CARD)
+		filterAction(STANDARD_PLAYER_ACTIONS.DISCARD_AND_DRAW)
 	}
 
 	if (this.activePlayer.hand.length >= 5){
-		filterAction(REFILL_HAND)
+		filterAction(STANDARD_PLAYER_ACTIONS.REFILL_HAND)
 	}
 
 	//check if they're at either end of the neck
 	if (this.activePlayer.location === 0){
-		filterAction(MOVE_BACKWARD)
+		filterAction(STANDARD_PLAYER_ACTIONS.MOVE_BACKWARD)
 	} else if (this.activePlayer.location === 6){
-		filterAction(MOVE_FORWARD)
+		filterAction(STANDARD_PLAYER_ACTIONS.MOVE_FORWARD)
 	}
 
 	//check if there is enough damage to menace to create a monster
 	if (this.activePlayer.pain === this.activePlayer.card.pain && this.activePlayer.madness === this.activePlayer.card.madness){
-		filterAction(TRADE_MENACE_FOR_MONSTER)
+		filterAction(STANDARD_PLAYER_ACTIONS.TRADE_MENACE_FOR_MONSTER)
 	}
 
 	if (this.turn.currentEvent.type === "tradeMenaceForMonster"){
