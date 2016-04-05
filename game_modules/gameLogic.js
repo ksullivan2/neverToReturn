@@ -6,7 +6,10 @@ var gameStates = require("./gameStates.js");
 var neckLocation = require("./neckLocation.js");
 
 //CONFIG FILE IMPORTS
-var playerColors = require("../CONFIG FILES/visualConfig.js").playerColors;
+const PLAYER_COLORS = require("../CONFIG FILES/visualConfig.js").playerColors;
+const STANDARD_PLAYER_ACTIONS = require("../CONFIG FILES/standardActions.js").standardPlayerActions;
+const TURN_ACTIONS = require("../CONFIG FILES/standardActions.js").turnActions;
+console.log(TURN_ACTIONS)
 
 
 
@@ -88,12 +91,12 @@ gameLogic.prototype.isCheckPassed = function(target, menace, dice){
 
 //TURNS/QUEUES-----------------------------------------------------------------------------------------------
 //STANDARD ACTIONS
-const MOVE_FORWARD = "Move Forward"
-const MOVE_BACKWARD = "Move Backward"
-const ACTION_CARD = "Play Action Card"
-const DISCARD_AND_DRAW = "Discard 1, Draw 1"
-const TRADE_MENACE_FOR_MONSTER = "Heal 2 P/M, Create Monster"
-const REFILL_HAND = "Take 1P, 1M, Refill Hand"
+// const MOVE_FORWARD = "Move Forward"
+// const MOVE_BACKWARD = "Move Backward"
+// const ACTION_CARD = "Play Action Card"
+// const DISCARD_AND_DRAW = "Discard 1, Draw 1"
+// const TRADE_MENACE_FOR_MONSTER = "Heal 2 P/M, Create Monster"
+// const REFILL_HAND = "Take 1P, 1M, Refill Hand"
 
 const ROLL_CHECK = "Roll Check"
 const DISCARD_FOR_BONUS = "Discard For Bonus"
@@ -105,7 +108,7 @@ const PAIN = "Pain"
 const MADNESS = "Madness"
 
 
-const STANDARD_ACTIONS = [MOVE_FORWARD,MOVE_BACKWARD,ACTION_CARD, TRADE_MENACE_FOR_MONSTER, DISCARD_AND_DRAW, REFILL_HAND];
+// const STANDARD_ACTIONS = [MOVE_FORWARD,MOVE_BACKWARD,ACTION_CARD, TRADE_MENACE_FOR_MONSTER, DISCARD_AND_DRAW, REFILL_HAND];
 const CHECK_ACTIONS = [ROLL_CHECK, DISCARD_FOR_BONUS];
 const CARD_CHOICE = [OPTION_1, OPTION_2]
 const MENACE_TYPES = [PAIN, MADNESS]
@@ -114,9 +117,9 @@ function Turn(){
   this.currentEvent = null;
   //these arrays will be filled with objects/events to fire and will always be resolved in order
   this.immediateQueue = [];
-  this.terrainEffectsQueue = [{type: "desperationCheck"}];
-  this.playerActionsQueue = [{type: "choosePlayerAction", actionList: STANDARD_ACTIONS}];
-  this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"addDrawCardsEvent"}]
+  this.terrainEffectsQueue = [];
+  this.playerActionsQueue = [];
+  this.endTurnQueue = [];
 
   //these are various effects and checks per turn
   this.numberOfActions = 1;
@@ -174,8 +177,26 @@ gameLogic.prototype.pruneActionsList = function() {
 
 gameLogic.prototype.initializeTurn = function(){
 	this.turn = new Turn();
+	this.parseTurnActionsConfig();
 	this.collectTurnStartEffects();
 }
+
+gameLogic.prototype.parseTurnActionsConfig = function(first_argument) {
+	var self = this;
+
+	TURN_ACTIONS.immediate.forEach(function(event){
+		self.addActionToImmediateQueue(null, event)
+	})
+	TURN_ACTIONS.terrain.forEach(function(event){
+		self.addActionToTerrainQueue(null, event)
+	})
+	TURN_ACTIONS.playerActions.forEach(function(event){
+		self.addActionToPlayerActionsQueue(null, event)
+	})
+	TURN_ACTIONS.endTurn.forEach(function(event){
+		self.addActionToEndTurnQueue(null, event)
+	})
+};
 
 gameLogic.prototype.decrementTurnActions = function(){
 	this.turn.numberOfActions -= 1
@@ -241,7 +262,17 @@ gameLogic.prototype.addActionToImmediateQueue = function(source, event){
 
 
 gameLogic.prototype.preprocessEvent = function(source, event){
-	if (event.type === "check"){
+	if (!event.actionList){
+		event.actionList = [];
+	}
+
+	if (event.type === "choosePlayerAction"){
+		for (var action in STANDARD_PLAYER_ACTIONS){
+			event.actionList.push(STANDARD_PLAYER_ACTIONS[action].buttonText)
+		}
+	}
+
+	else if (event.type === "check"){
 		event.actionList = CHECK_ACTIONS
 	}
 
@@ -408,7 +439,7 @@ gameLogic.prototype.addPlayer = function(name, socketID) {
 			return false;
 		}
 	}
-	var tempPlayer = new Player(name, numPlayers, playerColors[numPlayers], socketID);
+	var tempPlayer = new Player(name, numPlayers, PLAYER_COLORS[numPlayers], socketID);
 	this.players[tempPlayer.name] = tempPlayer;
 	this.addPlayerToLocation(0,tempPlayer.name);
 
