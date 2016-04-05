@@ -7,9 +7,9 @@
 	[
 		{
 			"type": "check",
-			"stat": "pain",
-			"onPass": [],
-			"onFail": 
+			"menace": "pain",
+			"ifPass": [],
+			"ifFail": 
 			[
 				{
 					"type": "pain",

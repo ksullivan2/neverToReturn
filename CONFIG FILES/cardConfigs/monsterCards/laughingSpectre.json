@@ -13,15 +13,15 @@
 	[
 		{
 			"type": "check",
-			"stat": "madness",
-			"onPass": 
+			"menace": "madness",
+			"ifPass": 
 			[
 				{
 					"type": "monsterDamage",
 					"value": 1
 				}
 			],
-			"onFail": 
+			"ifFail": 
 			[
 				{
 					"type": "madness",

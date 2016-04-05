@@ -91,15 +91,22 @@ gameLogic.prototype.isCheckPassed = function(target, menace, dice){
 const MOVE_FORWARD = "Move Forward"
 const MOVE_BACKWARD = "Move Backward"
 const ACTION_CARD = "Play Action Card"
+const TRADE_MENACE_FOR_MONSTER = "Heal 2 P/M, Create Monster"
+
 const ROLL_CHECK = "Roll Check"
 const DISCARD_FOR_BONUS = "Discard For Bonus"
+
 const OPTION_1 = "Option 1"
 const OPTION_2 = "Option 2"
 
+const PAIN = "Pain"
+const MADNESS = "Madness"
 
-const STANDARD_ACTIONS = [MOVE_FORWARD,MOVE_BACKWARD,ACTION_CARD];
+
+const STANDARD_ACTIONS = [MOVE_FORWARD,MOVE_BACKWARD,ACTION_CARD, TRADE_MENACE_FOR_MONSTER];
 const CHECK_ACTIONS = [ROLL_CHECK, DISCARD_FOR_BONUS];
 const CARD_CHOICE = [OPTION_1, OPTION_2]
+const MENACE_TYPES = [PAIN, MADNESS]
 
 function Turn(){
   this.currentEvent = null;
@@ -109,7 +116,7 @@ function Turn(){
   this.playerActionsQueue = [{type: "choosePlayerAction", actionList: STANDARD_ACTIONS}];
   this.endTurnQueue = [{type: "checkForLostPlayers"},{type:"addDrawCardsEvent"}]
 
-  //these are various stat effects and checks per turn
+  //these are various effects and checks per turn
   this.numberOfActions = 1;
   this.handicaps = {pain: 0, madness: 0}
   this.cardsToDraw = 0;
@@ -117,12 +124,13 @@ function Turn(){
 }
 
 gameLogic.prototype.pruneActionsList = function(first_argument) {
-
+	//check if there are cards left in their hand
 	if (this.activePlayer.hand.length === 0){
 		this.turn.currentEvent.actionList  = this.turn.currentEvent.actionList .filter(function(action){
 			return action !== DISCARD_FOR_BONUS && action!== ACTION_CARD })
 	}
 
+	//check if they're at either end of the neck
 	if (this.activePlayer.location === 0){
 		this.turn.currentEvent.actionList  = this.turn.currentEvent.actionList .filter(function(action){return (action !== MOVE_BACKWARD)})
 	} else if (this.activePlayer.location === 6){
@@ -203,15 +211,15 @@ gameLogic.prototype.addActionToImmediateQueue = function(source, event){
 
 gameLogic.prototype.preprocessEvent = function(source, event){
 	if (event.type === "check"){
-		if (this.activePlayer.hand.length === 0){
-			event.actionList = CHECK_ACTIONS.filter(function(action){return (action !== DISCARD_FOR_BONUS)})
-		} else{
-			event.actionList = CHECK_ACTIONS
-		}
+		event.actionList = CHECK_ACTIONS
 	}
 
 	else if (event.type ==="move"){
 		event.actionList = [MOVE_FORWARD, MOVE_BACKWARD]
+	}
+
+	else if (event.type === "tradeMenaceForMonster"){
+		event.actionList = MENACE_TYPES
 	}
 
 	event.source = source
@@ -234,8 +242,8 @@ gameLogic.prototype.affectMenace = function(userName, menace, value) {
 	}
 };
 
-gameLogic.prototype.updateHandicap = function(stat, value){
-	this.turn.handicaps[stat] += value
+gameLogic.prototype.updateHandicap = function(menace, value){
+	this.turn.handicaps[menace] += value
 }
 
 
@@ -272,7 +280,7 @@ gameLogic.prototype.addPlayerToLocation = function(locationIndex, name){
 	this.neck[locationIndex].playersOnLocation.push(name);
 }
 
-//CARDS---------------------------------------
+//ACTION CARDS---------------------------------------
 gameLogic.prototype.replenishHand = function(player){
 	//DUMMY METHOD FOR LIMITED ASSETS
 	player.hand = [new cardTypes.actionCard("cannibalism"),
@@ -316,6 +324,23 @@ gameLogic.prototype.dealCard = function(userName){
 
 	player.hand.push(new cardTypes.actionCard("endlessMeander"))
 	//remove card from deck when I create the deck...
+}
+
+//MONSTERS------------------------------------------------------------------------------------------------------------
+gameLogic.prototype.createMonster = function(userName, menace) {
+	// temporarily always creates monster in same space
+
+	if (menace === "pain"){
+		var card = new cardTypes.monsterCard("burrowingFlies")
+	} else if (menace === "madness"){
+		var card = new cardTypes.monsterCard("laughingSpectre")
+	} else {
+		console.log("createMonster had an invalid type")
+	}
+
+	var player = this.findPlayerByUserName(userName)
+
+	this.neck[player.location].addCard(card)
 }
 
 
