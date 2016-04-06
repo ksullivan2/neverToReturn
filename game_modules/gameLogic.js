@@ -245,7 +245,7 @@ gameLogic.prototype.pruneActionsList = function() {
 	
 	var filterAction = function(actionToFilter) {
 		self.turn.currentEvent.actionList = self.turn.currentEvent.actionList.filter(function(action){
-		return (action !== actionToFilter)})
+		return (action.buttonText !== actionToFilter.buttonText)})
 	}
 
 	//check if there are cards left in their hand
