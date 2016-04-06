@@ -124,8 +124,6 @@ io.on('connection', function (socket) {
 
         case STANDARD_PLAYER_ACTIONS.DISCARD_AND_DRAW.buttonText:
           processStandardAction(data, "DISCARD_AND_DRAW")
-          // gameLogic.gameState = gameStates.chooseCardToDiscard;
-          // io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic}); 
           break;  
 
 
@@ -135,8 +133,7 @@ io.on('connection', function (socket) {
           break;
 
         case "Discard For Bonus":
-          gameLogic.gameState = gameStates.chooseActionCard
-          ;
+          gameLogic.gameState = gameStates.chooseActionCard;
           io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
           break;
 
@@ -160,6 +157,7 @@ io.on('connection', function (socket) {
       
       //since this optional action happens in the middle of processing another
       //it can't be in the normal flow, and needs a custom function
+      //I don't love this... maybe think of a better way
       if (gameLogic.turn.currentEvent.type === "check"){
         processDiscardForBonus(data)
       }
