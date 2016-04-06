@@ -93,57 +93,64 @@ io.on('connection', function (socket) {
   });
 
 //buttons in action area----------------------------------------------------------------------
-  socket.on('Start Game', function(){
-    startGame();
-  });
+  socket.on("action button pressed", function(data){
+    if (data.buttonText === "Start Game"){
+      startGame();
+    }
 
-
-	socket.on(STANDARD_PLAYER_ACTIONS.MOVE_FORWARD.buttonText, function(data){
+    //WAITING FOR PLAYER INPUT (STANDARD ACTIONS)
     if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      processMove(data, "forward")
+      switch (data.buttonText){
+
+        case STANDARD_PLAYER_ACTIONS.MOVE_FORWARD.buttonText:
+          processMove(data, "forward")
+          break;
+
+        case STANDARD_PLAYER_ACTIONS.MOVE_BACKWARD.buttonText:
+          processMove(data, "backward")
+          break;
+
+        case STANDARD_PLAYER_ACTIONS.ACTION_CARD.buttonText:
+          gameLogic.gameState = gameStates.chooseActionCard;
+          io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
+          break;
+
+        case STANDARD_PLAYER_ACTIONS.TRADE_MENACE_FOR_MONSTER.buttonText:
+          processTakeMenaceToCreateMonster(data)
+          break;
+
+        case STANDARD_PLAYER_ACTIONS.REFILL_HAND.buttonText:
+          processRefillHand(data)
+          break;  
+
+        case STANDARD_PLAYER_ACTIONS.DISCARD_AND_DRAW.buttonText:
+          gameLogic.gameState = gameStates.chooseCardToDiscard;
+          io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic}); 
+          break;  
+
+
+        //CHECKS
+        case "Roll Check":
+          processCheck();
+          break;
+
+        case "Discard For Bonus":
+          gameLogic.gameState = gameStates.chooseCardToDiscard;
+          io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
+          break;
+
+
+        //menace buttons
+        case "Pain":
+          addMenaceToCurrentEvent("pain")
+          break;
+
+        case "Madness":
+          addMenaceToCurrentEvent("madness")
+          break;
+      }
     }
  
-  });
-
-  socket.on(STANDARD_PLAYER_ACTIONS.MOVE_BACKWARD.buttonText, function(data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      processMove(data, "backward")
-    }
-    
-  });
-
-  socket.on(STANDARD_PLAYER_ACTIONS.ACTION_CARD.buttonText, function(data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      gameLogic.gameState = gameStates.chooseActionCard;
-      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
-    }
-  })
-
-  socket.on(STANDARD_PLAYER_ACTIONS.TRADE_MENACE_FOR_MONSTER.buttonText, function (data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      processTakeMenaceToCreateMonster(data)
-    }
-  })
-
-  socket.on(STANDARD_PLAYER_ACTIONS.REFILL_HAND.buttonText, function(data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      processRefillHand(data)
-    }
-  })
-
-  socket.on(STANDARD_PLAYER_ACTIONS.DISCARD_AND_DRAW.buttonText, function(data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      gameLogic.gameState = gameStates.chooseCardToDiscard;
-      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
-    }
-  })
-
-  socket.on("Roll Check", function(data){
-    //check for gameState so that we can't get a double-press
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      processCheck();
-    }
-    
   });
 
 
@@ -160,27 +167,6 @@ io.on('connection', function (socket) {
     }
   })
 
-  socket.on("Discard For Bonus", function(data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      gameLogic.gameState = gameStates.chooseCardToDiscard;
-      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
-    }
-  })
-
-  
-
-  socket.on("Pain", function(data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      addMenaceToCurrentEvent("pain")
-    }
-  })
-
-
-  socket.on("Madness", function(data){
-    if (gameLogic.gameState === gameStates.waitingForPlayerInput && data.userName === gameLogic.activePlayer.name){
-      addMenaceToCurrentEvent("madness")
-    }
-  })
 
 });
 
