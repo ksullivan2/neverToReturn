@@ -135,7 +135,8 @@ io.on('connection', function (socket) {
           break;
 
         case "Discard For Bonus":
-          gameLogic.gameState = gameStates.chooseCardToDiscard;
+          gameLogic.gameState = gameStates.chooseActionCard
+          ;
           io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
           break;
 
@@ -157,6 +158,10 @@ io.on('connection', function (socket) {
   socket.on("Action Card Pressed", function(data){
     if (gameLogic.gameState === gameStates.chooseActionCard && data.userName === gameLogic.activePlayer.name){
       
+      if (gameLogic.turn.currentEvent.type === "check"){
+        processDiscardForBonus(data)
+      }
+
       //also check event.cardFate
       switch (gameLogic.turn.currentEvent.cardFate){
         case "discard":
@@ -164,7 +169,7 @@ io.on('connection', function (socket) {
           break;
 
         case "play":
-          processActionCard(data)
+          playActionCard(data)
           break;
       }
 
@@ -172,15 +177,6 @@ io.on('connection', function (socket) {
 
     }
 
-
-    if (gameLogic.gameState === gameStates.chooseCardToDiscard && data.userName === gameLogic.activePlayer.name){
-      if (gameLogic.turn.currentEvent.type === "check"){
-        processDiscardForBonus(data)
-      } 
-      // else if (gameLogic.turn.currentEvent.type ==="choosePlayerAction"){
-      //   processDiscardAndDraw(data)
-      // }
-    }
   })
 
 
@@ -196,12 +192,9 @@ var processStandardAction = function(data, nameOfAction){
   })
 
   processQueue()
-
-
 }
 
-
-var processActionCard = function(data){
+var playActionCard = function(data){
   //data is username and card
   for (var i = 0; i < data.card.actions.length; i++) {
     gameLogic.addActionToPlayerActionsQueue(data.userName, data.card.actions[i])
@@ -211,25 +204,10 @@ var processActionCard = function(data){
   
 }
 
-
-var processDiscardAndDraw = function(data){
-  gameLogic.gameState = gameStates.animationsPlayingOut;
-  gameLogic.discardCard(data.userName, data.card.name)
-  gameLogic.addActionToImmediateQueue(data.userName, {type: "draw", value: 1})
-  gameLogic.decrementTurnActions();
-  processQueue()
-}
-
-
 var addMenaceToCurrentEvent = function(menace){
   gameLogic.turn.currentEvent.menace = menace
   processEvent(gameLogic.turn.currentEvent)
 }
-
-
-
-
-
 
 
 var processCheck = function(){
@@ -377,8 +355,6 @@ var processEvent = function(event){
 
     //ANYTHING WITH PLAYER INTERACTION:
     //event types with user interaction will return instead of break so that they don't have the timeout
-    
-
     case "tradeMenaceForMonster":
       if (event.menace){
         gameLogic.createMonster(target, event.menace);
