@@ -19991,7 +19991,7 @@
 	    if (this.props.gameState === gameStates.gatherPlayers) {
 	      actionButtons = ["Start Game"];
 	      actionText = "Waiting for all players to join...";
-	    } else if (this.props.gameState === gameStates.chooseActionCard || this.props.gameState === gameStates.chooseCardToDiscard) {
+	    } else if (this.props.gameState === gameStates.chooseActionCard) {
 	      if (this.props.activePlayer.name == this.props.userName) {
 	        actionText = "Choose which card.";
 	      } else {
@@ -29890,8 +29890,7 @@
 		gatherPlayers: 0,
 		waitingForPlayerInput: 1,
 		animationsPlayingOut: 2,
-		chooseActionCard: 3,
-		chooseCardToDiscard: 4
+		chooseActionCard: 3
 	};
 
 	module.exports = gameStates;

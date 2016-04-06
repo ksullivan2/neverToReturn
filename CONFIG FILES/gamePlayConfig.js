@@ -65,7 +65,8 @@ var standardPlayerActions = {
 		"actions": 
 		[
 			{
-				"type": "playActionCard"
+				"type": "chooseActionCard",
+				"cardFate": "play"
 			}
 		]
 	},
@@ -76,7 +77,8 @@ var standardPlayerActions = {
 		"actions": 
 		[
 			{
-				"type": "discard"
+				"type": "chooseActionCard",
+				"cardFate": "discard"
 			},
 			{
 				"type": "draw",
@@ -90,6 +92,7 @@ var standardPlayerActions = {
 		"buttonText": "Heal 2 P/M, Create Monster",
 		"actions": 
 		[
+		//CHANGE THIS TO OPTIONS INSTEAD OF HARD CODING
 			{
 				"type": "tradeMenaceForMonster"
 			}

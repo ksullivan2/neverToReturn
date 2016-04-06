@@ -103,17 +103,11 @@ io.on('connection', function (socket) {
       switch (data.buttonText){
 
         case STANDARD_PLAYER_ACTIONS.MOVE_FORWARD.buttonText:
-          // processMove(data, "forward")
           processStandardAction(data, "MOVE_FORWARD")
           break;
 
         case STANDARD_PLAYER_ACTIONS.MOVE_BACKWARD.buttonText:
-          processStandardAction(data, "MOVE_FORWARD")
-          break;
-
-        case STANDARD_PLAYER_ACTIONS.ACTION_CARD.buttonText:
-          gameLogic.gameState = gameStates.chooseActionCard;
-          io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
+          processStandardAction(data, "MOVE_BACKWARD")
           break;
 
         case STANDARD_PLAYER_ACTIONS.TRADE_MENACE_FOR_MONSTER.buttonText:
@@ -124,9 +118,14 @@ io.on('connection', function (socket) {
           processStandardAction(data, "REFILL_HAND")
           break;  
 
+        case STANDARD_PLAYER_ACTIONS.ACTION_CARD.buttonText:
+          processStandardAction(data, "ACTION_CARD")
+          break;
+
         case STANDARD_PLAYER_ACTIONS.DISCARD_AND_DRAW.buttonText:
-          gameLogic.gameState = gameStates.chooseCardToDiscard;
-          io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic}); 
+          processStandardAction(data, "DISCARD_AND_DRAW")
+          // gameLogic.gameState = gameStates.chooseCardToDiscard;
+          // io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic}); 
           break;  
 
 
@@ -157,14 +156,30 @@ io.on('connection', function (socket) {
 
   socket.on("Action Card Pressed", function(data){
     if (gameLogic.gameState === gameStates.chooseActionCard && data.userName === gameLogic.activePlayer.name){
-      processActionCard(data)
+      
+      //also check event.cardFate
+      switch (gameLogic.turn.currentEvent.cardFate){
+        case "discard":
+          gameLogic.addActionToImmediateQueue(data.userName, {type: "discard", cardName: data.card.name, value: 1})
+          break;
+
+        case "play":
+          processActionCard(data)
+          break;
+      }
+
+      processQueue()
+
     }
+
+
     if (gameLogic.gameState === gameStates.chooseCardToDiscard && data.userName === gameLogic.activePlayer.name){
       if (gameLogic.turn.currentEvent.type === "check"){
         processDiscardForBonus(data)
-      } else if (gameLogic.turn.currentEvent.type ==="choosePlayerAction"){
-        processDiscardAndDraw(data)
-      }
+      } 
+      // else if (gameLogic.turn.currentEvent.type ==="choosePlayerAction"){
+      //   processDiscardAndDraw(data)
+      // }
     }
   })
 
@@ -177,12 +192,23 @@ var processStandardAction = function(data, nameOfAction){
   gameLogic.gameState = gameStates.animationsPlayingOut;
   gameLogic.decrementTurnActions();
   STANDARD_PLAYER_ACTIONS[nameOfAction].actions.forEach(function(event){
-    gameLogic.addActionToImmediateQueue(data.userName, event)
+    gameLogic.addActionToPlayerActionsQueue(data.userName, event)
   })
 
   processQueue()
 
 
+}
+
+
+var processActionCard = function(data){
+  //data is username and card
+  for (var i = 0; i < data.card.actions.length; i++) {
+    gameLogic.addActionToPlayerActionsQueue(data.userName, data.card.actions[i])
+  }
+  gameLogic.discardCard(data.userName, data.card.name)
+  gameLogic.incrementCardsToDraw(1);
+  
 }
 
 
@@ -200,16 +226,7 @@ var addMenaceToCurrentEvent = function(menace){
   processEvent(gameLogic.turn.currentEvent)
 }
 
-var processActionCard = function(data){
-  //data is username and card
-  for (var i = 0; i < data.card.actions.length; i++) {
-    gameLogic.addActionToPlayerActionsQueue(data.userName, data.card.actions[i])
-  }
-  gameLogic.discardCard(data.userName, data.card.name)
-  gameLogic.decrementTurnActions();
-  gameLogic.incrementCardsToDraw(1);
-  processQueue()
-}
+
 
 
 
@@ -332,7 +349,7 @@ var processEvent = function(event){
 
     case "discard":
       for (var i = 0; i < event.value; i++) {
-        gameLogic.discardCard(target) 
+        gameLogic.discardCard(target, event.cardName) 
       }
       break;
 
@@ -360,6 +377,8 @@ var processEvent = function(event){
 
     //ANYTHING WITH PLAYER INTERACTION:
     //event types with user interaction will return instead of break so that they don't have the timeout
+    
+
     case "tradeMenaceForMonster":
       if (event.menace){
         gameLogic.createMonster(target, event.menace);
@@ -383,6 +402,11 @@ var processEvent = function(event){
       gameLogic.pruneActionsList()
       io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic})
       return
+
+    case "chooseActionCard":
+      gameLogic.gameState = gameStates.chooseActionCard;
+      io.sockets.emit("update gameLogic in view", {gameLogic: gameLogic});
+      return;
   }
 
   gameLogic.gameState = gameStates.animationsPlayingOut; 

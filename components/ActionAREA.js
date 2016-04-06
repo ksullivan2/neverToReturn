@@ -34,7 +34,7 @@ var ActionAREA = React.createClass({
     }
 
 
-    else if (this.props.gameState === gameStates.chooseActionCard || this.props.gameState === gameStates. chooseCardToDiscard){
+    else if (this.props.gameState === gameStates.chooseActionCard){
       if (this.props.activePlayer.name == this.props.userName){
         actionText = "Choose which card."
       }else{
@@ -48,7 +48,7 @@ var ActionAREA = React.createClass({
 
       if (this.props.activePlayer.name == this.props.userName){
         actionButtons = this.props.turn.currentEvent.actionList
-        
+
         //PLAYER CHOICES------------------------------------------------
         if (this.props.turn.currentEvent.type === "choosePlayerAction" ){
           actionText = "Choose your action."
