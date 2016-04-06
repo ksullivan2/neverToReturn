@@ -158,11 +158,13 @@ io.on('connection', function (socket) {
   socket.on("Action Card Pressed", function(data){
     if (gameLogic.gameState === gameStates.chooseActionCard && data.userName === gameLogic.activePlayer.name){
       
+      //since this optional action happens in the middle of processing another
+      //it can't be in the normal flow, and needs a custom function
       if (gameLogic.turn.currentEvent.type === "check"){
         processDiscardForBonus(data)
       }
 
-      //also check event.cardFate
+      
       switch (gameLogic.turn.currentEvent.cardFate){
         case "discard":
           gameLogic.addActionToImmediateQueue(data.userName, {type: "discard", cardName: data.card.name, value: 1})
