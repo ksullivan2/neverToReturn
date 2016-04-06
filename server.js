@@ -37,7 +37,7 @@ server.listen(process.env.PORT || 3000, function(){
 //game-specific libraries------------------------------------------------------------------------------------------------------------------
 var Game = require("./game_modules/gameLogic.js");
 var gameStates = require("./game_modules/gameStates.js");
-const STANDARD_PLAYER_ACTIONS = require("./CONFIG FILES/standardActions.js").standardPlayerActions;
+const STANDARD_PLAYER_ACTIONS = require("./CONFIG FILES/gamePlayConfig.js").standardPlayerActions;
 
 
 

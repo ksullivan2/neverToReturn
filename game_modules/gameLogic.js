@@ -8,8 +8,8 @@ var neckLocation = require("./neckLocation.js");
 
 //CONFIG FILE IMPORTS
 const PLAYER_COLORS = require("../CONFIG FILES/visualConfig.js").playerColors;
-const STANDARD_PLAYER_ACTIONS = require("../CONFIG FILES/standardActions.js").standardPlayerActions;
-const TURN_ACTIONS = require("../CONFIG FILES/standardActions.js").turnActions;
+const STANDARD_PLAYER_ACTIONS = require("../CONFIG FILES/gamePlayConfig.js").standardPlayerActions;
+const TURN_ACTIONS = require("../CONFIG FILES/gamePlayConfig.js").turnActions;
 
 
 
