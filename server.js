@@ -94,6 +94,8 @@ io.on('connection', function (socket) {
 
 //buttons in action area----------------------------------------------------------------------
   socket.on("action button pressed", function(data){
+    console.log("action button pressed", data)
+
     if (data.buttonText === "Start Game"){
       startGame();
     }

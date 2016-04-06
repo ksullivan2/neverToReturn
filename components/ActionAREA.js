@@ -29,7 +29,7 @@ var ActionAREA = React.createClass({
 
 
   	if (this.props.gameState === gameStates.gatherPlayers){
-      actionButtons = ["Start Game"]
+      actionButtons = [{buttonText:"Start Game"}]
       actionText = "Waiting for all players to join..."
     }
 
@@ -45,8 +45,6 @@ var ActionAREA = React.createClass({
     else if (this.props.gameState === gameStates.waitingForPlayerInput){
       
       actionText = "It is "+this.props.activePlayer.name+"'s turn to choose an action.";
-
-      if (this.props.activePlayer.name == this.props.userName){
         actionButtons = this.props.turn.currentEvent.actionList
 
         //PLAYER CHOICES------------------------------------------------
@@ -66,9 +64,7 @@ var ActionAREA = React.createClass({
           actionText = "Roll a "+value+" or lower to pass the "+ this.props.turn.currentEvent.menace+ " check."
         } 
       }
-    }
-
-
+    
     else if (this.props.gameState === gameStates.animationsPlayingOut){
       actionText = "Resolving: "+this.props.turn.currentEvent.type;
       if (this.props.turn.currentEvent.type === "display"){
@@ -81,8 +77,8 @@ var ActionAREA = React.createClass({
       <div className="layoutDIV" id='ActionAREA'>
 
         <h2 style={{display:"block"}}>{actionText}</h2>
-        {actionButtons.map(function(text){
-          return <ActionButton text={text} key={text} userName={self.props.userName}/> })
+        {actionButtons.map(function(action){
+          return <ActionButton action={action} key={action.buttonText} userName={self.props.userName}/> })
         }
         <TurnStatDIV turn={this.props.turn}/>
 

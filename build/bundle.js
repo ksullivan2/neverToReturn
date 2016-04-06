@@ -19989,7 +19989,7 @@
 	    var actionText = "";
 
 	    if (this.props.gameState === gameStates.gatherPlayers) {
-	      actionButtons = ["Start Game"];
+	      actionButtons = [{ buttonText: "Start Game" }];
 	      actionText = "Waiting for all players to join...";
 	    } else if (this.props.gameState === gameStates.chooseActionCard) {
 	      if (this.props.activePlayer.name == this.props.userName) {
@@ -20000,24 +20000,21 @@
 	    } else if (this.props.gameState === gameStates.waitingForPlayerInput) {
 
 	      actionText = "It is " + this.props.activePlayer.name + "'s turn to choose an action.";
+	      actionButtons = this.props.turn.currentEvent.actionList;
 
-	      if (this.props.activePlayer.name == this.props.userName) {
-	        actionButtons = this.props.turn.currentEvent.actionList;
-
-	        //PLAYER CHOICES------------------------------------------------
-	        if (this.props.turn.currentEvent.type === "choosePlayerAction") {
-	          actionText = "Choose your action.";
-	        } else if (this.props.turn.currentEvent.type === "move") {
-	          actionText = "Choose which direction to move.";
-	        } else if (this.props.turn.currentEvent.type === "createMonster" || this.props.turn.currentEvent.type === "tradeMenaceForMonster") {
-	          actionText = "Choose which type of monster.";
-	        }
-	        //CHECKS:------------------------------------------------------------
-	        else if (this.props.turn.currentEvent.type === "check") {
-	            var value = this.props.activePlayer[this.props.turn.currentEvent.menace] + this.props.turn.handicaps[this.props.turn.currentEvent.menace];
-	            actionText = "Roll a " + value + " or lower to pass the " + this.props.turn.currentEvent.menace + " check.";
-	          }
+	      //PLAYER CHOICES------------------------------------------------
+	      if (this.props.turn.currentEvent.type === "choosePlayerAction") {
+	        actionText = "Choose your action.";
+	      } else if (this.props.turn.currentEvent.type === "move") {
+	        actionText = "Choose which direction to move.";
+	      } else if (this.props.turn.currentEvent.type === "createMonster" || this.props.turn.currentEvent.type === "tradeMenaceForMonster") {
+	        actionText = "Choose which type of monster.";
 	      }
+	      //CHECKS:------------------------------------------------------------
+	      else if (this.props.turn.currentEvent.type === "check") {
+	          var value = this.props.activePlayer[this.props.turn.currentEvent.menace] + this.props.turn.handicaps[this.props.turn.currentEvent.menace];
+	          actionText = "Roll a " + value + " or lower to pass the " + this.props.turn.currentEvent.menace + " check.";
+	        }
 	    } else if (this.props.gameState === gameStates.animationsPlayingOut) {
 	      actionText = "Resolving: " + this.props.turn.currentEvent.type;
 	      if (this.props.turn.currentEvent.type === "display") {
@@ -20033,8 +20030,8 @@
 	        { style: { display: "block" } },
 	        actionText
 	      ),
-	      actionButtons.map(function (text) {
-	        return React.createElement(ActionButton, { text: text, key: text, userName: self.props.userName });
+	      actionButtons.map(function (action) {
+	        return React.createElement(ActionButton, { action: action, key: action.buttonText, userName: self.props.userName });
 	      }),
 	      React.createElement(TurnStatDIV, { turn: this.props.turn })
 	    );
@@ -29915,8 +29912,8 @@
 	  componentDidMount: function componentDidMount() {},
 
 	  handleClick: function handleClick() {
-	    console.log(this.props.text + " button clicked by ", this.props.userName);
-	    socket.emit("action button pressed", { buttonText: this.props.text.toString(), userName: this.props.userName });
+	    console.log(this.props.action.buttonText + " button clicked by ", this.props.userName);
+	    socket.emit("action button pressed", { buttonText: this.props.action.buttonText, userName: this.props.userName });
 	  },
 
 	  render: function render() {
@@ -29924,7 +29921,7 @@
 	    return React.createElement(
 	      "button",
 	      { onClick: this.handleClick, className: "actionButton" },
-	      this.props.text
+	      this.props.action.buttonText
 	    );
 	  }
 	});

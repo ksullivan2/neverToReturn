@@ -12,8 +12,8 @@ var ActionButton = React.createClass({
   },
 
   handleClick: function(){
-    console.log(this.props.text+" button clicked by ",this.props.userName)
-      socket.emit("action button pressed", {buttonText: this.props.text.toString(), userName: this.props.userName});
+    console.log(this.props.action.buttonText+" button clicked by ",this.props.userName)
+      socket.emit("action button pressed", {buttonText: this.props.action.buttonText, userName: this.props.userName});
     
   },
 
@@ -23,7 +23,7 @@ var ActionButton = React.createClass({
 
     return (
       <button onClick={this.handleClick} className="actionButton" >
-      	{this.props.text}
+      	{this.props.action.buttonText}
       </button>
     )
   }

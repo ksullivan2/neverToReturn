@@ -96,8 +96,8 @@ const DISCARD_FOR_BONUS = {buttonText: "Discard For Bonus"}
 const PAIN = {buttonText: "Pain"}
 const MADNESS = {buttonText: "Madness"}
 
-const CHECK_ACTIONS = [ROLL_CHECK.buttonText, DISCARD_FOR_BONUS.buttonText];
-const MENACE_TYPES = [PAIN.buttonText, MADNESS.buttonText]
+const CHECK_ACTIONS = [ROLL_CHECK, DISCARD_FOR_BONUS];
+const MENACE_TYPES = [PAIN, MADNESS]
 
 function Turn(){
   this.currentEvent = null;
@@ -218,7 +218,7 @@ gameLogic.prototype.preprocessEvent = function(source, originalEvent){
 	switch (event.type){
 		case "choosePlayerAction":
 			for (var action in STANDARD_PLAYER_ACTIONS){
-				event.actionList.push(STANDARD_PLAYER_ACTIONS[action].buttonText)
+				event.actionList.push({buttonText: STANDARD_PLAYER_ACTIONS[action].buttonText})
 			}
 			break;
 
@@ -227,7 +227,7 @@ gameLogic.prototype.preprocessEvent = function(source, originalEvent){
 			break;
 
 		case "move":
-			event.actionList = [STANDARD_PLAYER_ACTIONS.MOVE_FORWARD.buttonText, STANDARD_PLAYER_ACTIONS.MOVE_BACKWARD.buttonText]
+			event.actionList = [STANDARD_PLAYER_ACTIONS.MOVE_FORWARD, STANDARD_PLAYER_ACTIONS.MOVE_BACKWARD]
 			break;
 
 		case "tradeMenaceForMonster":
@@ -245,7 +245,7 @@ gameLogic.prototype.pruneActionsList = function() {
 	
 	var filterAction = function(actionToFilter) {
 		self.turn.currentEvent.actionList = self.turn.currentEvent.actionList.filter(function(action){
-		return (action !== actionToFilter.buttonText)})
+		return (action !== actionToFilter)})
 	}
 
 	//check if there are cards left in their hand
