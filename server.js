@@ -103,11 +103,12 @@ io.on('connection', function (socket) {
       switch (data.buttonText){
 
         case STANDARD_PLAYER_ACTIONS.MOVE_FORWARD.buttonText:
-          processMove(data, "forward")
+          // processMove(data, "forward")
+          processStandardAction(data, "MOVE_FORWARD")
           break;
 
         case STANDARD_PLAYER_ACTIONS.MOVE_BACKWARD.buttonText:
-          processMove(data, "backward")
+          processStandardAction(data, "MOVE_FORWARD")
           break;
 
         case STANDARD_PLAYER_ACTIONS.ACTION_CARD.buttonText:
@@ -116,11 +117,11 @@ io.on('connection', function (socket) {
           break;
 
         case STANDARD_PLAYER_ACTIONS.TRADE_MENACE_FOR_MONSTER.buttonText:
-          processTakeMenaceToCreateMonster(data)
+          processStandardAction(data, "TRADE_MENACE_FOR_MONSTER")
           break;
 
         case STANDARD_PLAYER_ACTIONS.REFILL_HAND.buttonText:
-          processRefillHand(data)
+          processStandardAction(data, "REFILL_HAND")
           break;  
 
         case STANDARD_PLAYER_ACTIONS.DISCARD_AND_DRAW.buttonText:
@@ -172,6 +173,19 @@ io.on('connection', function (socket) {
 
 
 //SOCKET ACTION PROCESSERS----------------------------------------------------------------------------------
+var processStandardAction = function(data, nameOfAction){
+  gameLogic.gameState = gameStates.animationsPlayingOut;
+  gameLogic.decrementTurnActions();
+  STANDARD_PLAYER_ACTIONS[nameOfAction].actions.forEach(function(event){
+    gameLogic.addActionToImmediateQueue(data.userName, event)
+  })
+
+  processQueue()
+
+
+}
+
+
 var processDiscardAndDraw = function(data){
   gameLogic.gameState = gameStates.animationsPlayingOut;
   gameLogic.discardCard(data.userName, data.card.name)
@@ -180,14 +194,6 @@ var processDiscardAndDraw = function(data){
   processQueue()
 }
 
-var processRefillHand = function(data){
-  gameLogic.gameState = gameStates.animationsPlayingOut;
-  gameLogic.refillHand(data.userName)
-  gameLogic.addActionToImmediateQueue(data.userName, {type: "pain", value: -1})
-  gameLogic.addActionToImmediateQueue(data.userName, {type: "madness", value: -1})
-  gameLogic.decrementTurnActions();
-  processQueue()
-}
 
 var addMenaceToCurrentEvent = function(menace){
   gameLogic.turn.currentEvent.menace = menace
@@ -205,19 +211,9 @@ var processActionCard = function(data){
   processQueue()
 }
 
-var processTakeMenaceToCreateMonster = function(data){
-  gameLogic.gameState = gameStates.animationsPlayingOut;
-  gameLogic.addActionToImmediateQueue(data.userName, {type: "tradeMenaceForMonster"})
-  gameLogic.decrementTurnActions();
-  processQueue()
-}
 
-var processMove = function(data, direction){  
-  gameLogic.gameState = gameStates.animationsPlayingOut;
-  gameLogic.addActionToImmediateQueue(data.userName, {type:"move", direction: direction})
-  gameLogic.decrementTurnActions();
-  processQueue()
-}
+
+
 
 var processCheck = function(){
   gameLogic.gameState = gameStates.animationsPlayingOut;
@@ -348,6 +344,10 @@ var processEvent = function(event){
 
     case "handicap":
       gameLogic.updateHandicap(event.menace, event.value)
+      break;
+
+    case "refillHand":
+      gameLogic.refillHand(event.target)
       break;
 
 

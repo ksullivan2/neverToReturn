@@ -90,7 +90,9 @@ var standardPlayerActions = {
 		"buttonText": "Heal 2 P/M, Create Monster",
 		"actions": 
 		[
-
+			{
+				"type": "tradeMenaceForMonster"
+			}
 		]
 	},
 
