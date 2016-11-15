@@ -19,6 +19,28 @@ var TurnStatDIV = require('./TurnStatDIV.js')
 //   chooseActionCard: 3,
 //   chooseCardToDiscard: 4
 
+var actionAreaConfig = function(props){
+  GATHER_PLAYERS: {
+    actionButtons: [{buttonText:"Start Game"}],
+    actionText: "Waiting for all players to join..."
+  },
+
+  CHOOSE_ACTION_CARD: {
+    actionButtons: [],
+    actionText: function(){
+      if (isActivePlayer(props)){
+        return "Choose which card."
+      }else{
+        return "It is "+props.activePlayer.name+"'s turn to choose an action.";
+      }
+    }
+  }
+}
+
+function isActivePlayer(props){
+  return props.activePlayer.name === props.userName
+}
+
 var ActionAREA = React.createClass({
 	
   render: function () {
@@ -28,10 +50,10 @@ var ActionAREA = React.createClass({
     var actionText = ""
 
 
-  	if (this.props.gameState === gameStates.gatherPlayers){
-      actionButtons = [{buttonText:"Start Game"}]
-      actionText = "Waiting for all players to join..."
-    }
+  	// if (this.props.gameState === gameStates.gatherPlayers){
+   //    actionButtons = [{buttonText:"Start Game"}]
+   //    actionText = "Waiting for all players to join..."
+   //  }
 
 
     else if (this.props.gameState === gameStates.chooseActionCard){
